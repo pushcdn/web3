@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Separation of Variables – Tim Anderson</title>
+
+        <meta charset="utf-8" />
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0'>
+
+    
+    <meta name="description" content="Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. ">
+    <meta property="og:description" content="Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. " />
+    
+    <meta name="author" content="Tim Anderson" />
+
+    
+    <meta property="og:title" content="Separation of Variables" />
+    <meta property="twitter:title" content="Separation of Variables" />
+    
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" type="text/css" href="../../../style.css" />
+    <link rel="alternate" type="application/rss+xml" title="Tim Anderson - Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. " href="../../../feed.xml" />
+
+<!-- 
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+ -->
+
+  <!-- Created with Jekyll Now - http://github.com/barryclark/jekyll-now -->
+  </head>
+
+  <body>
+    <div class="wrapper-masthead">
+      <div class="container">
+        <header class="masthead clearfix">
+          <a href="../../../index.html" class="site-avatar"><img src="../../../assets/images-general/duck.jpg" /></a>
+
+          <div class="site-info">
+            <h1 class="site-name"><a href="../../../index.html">Tim Anderson</a></h1>
+            <!-- <p class="site-description">Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. </p> -->
+          </div>
+
+          <nav>
+            <a href="../../../Research/index.html">Research</a>
+            <a href="../../../Publications/index.html">Publications</a>
+            <a href="../../index.html">Resources</a>
+            <a href="../../../Misc/index.html">Misc</a>
+            <!-- <a href="/Blog/">Blog</a> -->
+            <a href="../../../About/index.html">About</a>
+          </nav>
+        </header>
+      </div>
+    </div>
+
+    <div id="main" role="main" class="container">
+          <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<!-- 
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    });
+
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+    </script>
+<style>
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+</style>
+ -->
+<article class="page">
+
+  <h1>Separation of Variables</h1>
+
+  <div class="entry">
+    <h3 id="takeaways">Takeaways</h3>
+
+<ul>
+  <li>Goal is to algebraically rearrange ODE to be in the form \(g(y)dy = h(x) dx\) then integrate both sides and solve for \(y\)</li>
+  <li>The ODE must be <em>separable</em> i.e. able to be put in this form in order to apply separation of variables. Non-separable ODEs cannot be solved via separation of variables</li>
+  <li>This method is only for first order ODEs (or an ODE that can be stated as a first order equation e.g. by making an appropriate substitution), but can be applied to any separable ODE (even nonlinear)</li>
+  <li>The hardest steps are in algebraically separating the equation and performing the integration, so make sure you are sharp in both of these areas</li>
+</ul>
+
+<h3 id="overview">Overview</h3>
+
+<p>Separation of variables is both the simplest and the most difficult solution you will do this quarter. It is simple because the calculus is actually <em>incredibly</em> straight forward (you will only ever have to do one integral for all of these methods), but the difficult part is that this method is very open-ended i.e. there aren’t any “plug and chug” sorts of results or shortcuts we can give. Computationally this method is quite simple, but it takes a lot of facility with algebra to carry out accurately and efficiently.</p>
+
+<p>The basic idea here is having a <em>separable</em> ODE. That is, we want to be able to put our ODE into the form</p>
+
+\[g(y)dy = h(x) dx\]
+
+<p>where we can just integrate both sides to arrive at a solution. Note that we are only actually doing one integral when carrying out this method, so naturally this means the method can only apply to first order ODEs. However, it doesn’t matter if the ODE is linear or nonlinear or homogeneous or inhomogeneous—the only condition for using separation of variables is separability of the ODE.</p>
+
+<p>The main challenge in this method is arranging the ODE to be in this form. However, do not despair, we have a few main tools we use to do this. Namely, our toolbox consists of:</p>
+
+<ol>
+  <li>Algebraic Manipulations</li>
+  <li>Substitutions</li>
+</ol>
+
+<p>Below, we outline these methods and give a few examples. However, please note that these are just examples, and separation of variables requires a lot of practice to recognize patterns in the ODE to make the appropriate manipulation or substitution. Unlike other solution methods in this course, there are no nice closed form results or shortcuts, so it is up to you to do most of the work to setup the problem so the method can be applied.</p>
+
+<h3 id="algebraic-manipulations">Algebraic Manipulations</h3>
+
+<p>The first and most important tool in separation of variables is algebraic manipulations. Essentially, you’ll be handed an ODE, and your job is to algebraically manipulate both sides to eventually get a separable equation. This is exactly what you’ve been doing since Calc I when you solved very simple ODEs. (Actually, separation of variables is exactly that same method, just in CME 102 we treat it a bit more rigorously and give you more advanced problems.)</p>
+
+<p>You all know algebra, so we won’t spend too much time hammering this point. I will offer one example that’s a bit unintuitive. Quite often you will see ODEs of the form:</p>
+
+\[y' = f(x,y)\]
+
+<p>that have some sort of polynomial structure to the right hand side. An example would be:</p>
+
+\[y' = yx^2 +2xy + y + 5x^2 + 10x + 5\]
+
+<p>The right side looks kind of like a polynomial, so when you see something like this it is worth seeing if you can factor this into separable terms. A good first step is to group all of the \(y\) terms together:
+\(y' = y(x^2 + 2x + 1) + 5x^2 + 10x + 5\)</p>
+
+<p>Now notice that I can factor the term \(x^2 + 2x + 1\) out of both terms. Doing this, I arrive at:</p>
+
+\[y' = (y+5)(x^2 + 2x + 1)\]
+
+<p>which is a separable ODE! So, by applying a clever algebraic manipulation, we were able to arrive at an ODE we can solve via separation of variables.</p>
+
+<p>To finish the solution, we simply divide through and integrate:</p>
+
+\[\begin{align*}
+y' &amp;= (y+5)(x^2 + 2x + 1) \\
+\frac{dy}{y + 5} &amp;= (x^2 + 2x + 1)dx \\
+\ln (y + 5) &amp;= \frac{1}{3}x^3 + x^2 + x + C \\
+y &amp;= Ce^{\frac{1}{3}x^3 + x^2 + x} -5 \quad \blacksquare 
+\end{align*}\]
+
+<h3 id="substitution-method">Substitution Method</h3>
+
+<p>The must more difficult type of separation of variables is the “substitution method”. However, it’s important to note that “substitution method” isn’t a separate method at all, it is just another way of doing separation of variables.</p>
+
+<p>The substitution method is actually <em>very</em> similar to generalized coordinate transforms in CME 100. Indeed, they are actually the same method in principle—transform the problem into a different space where the integration is easier to carry out. In CME 100, this was to compute definite integrals; in CME 102, we are doing the transformation to make the ODE separable, and thus integrable.</p>
+
+<p>Here, we will just walk through an example (similar to the one above) that employs a substitution to demonstrate the general idea. However, please keep in mind that the type of subsitution presented here is not by any means the only kind of subsistution out there (several others are given in the course reader and section worksheet), and the best way to improve with this method is just to practice with as many example problems as you can.</p>
+
+<p>Consider the ODE:</p>
+
+\[y' = 5y^2 + 10xy + 5x^2\]
+
+<p>Once again, the right hand side has some sort of polynomial structure, so a good place to start is with trying to factor this side. First we can factor out \(5\) from this side:</p>
+
+\[y' = 5(y^2 + 2xy + x^2)\]
+
+<p>From here, notice that the right side is just \(5(y+x)^2\). This gives us:</p>
+
+\[y' = 5(y+x)^2\]
+
+<p>It may feel a bit awkward doing a factorization with \(x\) included like this, but this is perfectly valid to do and you should feel comfortable employing this kind of trick.</p>
+
+<p>Now, we need to put it into a separable form. When you’re doing a substitution, the goal is <em>not</em> to manipulate the equation to be a separable form, but to manipulate the equation to be in a form where it becomes separable when I make a substitution. Here, if we can find some way to store \(y + x\) in one variable that I solve for, then we’ll be done. To do this, we naturally make the substitution:</p>
+
+\[u = y + x\]
+
+<p>and take the derivative:</p>
+
+\[u' = y' + 1\]
+
+<p>Now, using this substitution we have an ODE of the form:</p>
+
+\[u' - 1 = 5u^2\]
+
+<p>which after a bit of manipulation becomes:</p>
+
+\[\frac{1}{5u^2 + 1}du = dx\]
+
+<p>From here, we can integrate this to find:
+\(\begin{align*}
+\int \frac{1}{5u^2 + 1}du &amp;= \int dx \\
+\frac{1}{\sqrt{5}} \tan^{-1}(\sqrt{5}u) &amp;= x + C \\
+u(x) = \frac{1}{\sqrt{5}} \tan (\sqrt{5}x + C) \quad\blacksquare
+\end{align*}\)</p>
+
+<p>and plugging back in to find \(y\) we have:</p>
+
+\[y = \frac{1}{\sqrt{5}} \tan (\sqrt{5}(y+x) + C) - x \quad \blacksquare\]
+
+<p>Notice that \(y\) appears on both sides of the equation and cannot be solved out for algebraically. This type of solution is called an <em>implicit</em> solution, since we cannot explicitly express \(y\).</p>
+
+<h3 id="concluding-remarks">Concluding Remarks</h3>
+
+<p>Separation of variables is a <em>very</em> powerful solution method—indeed, many of the methods for the rest of the quarter have some relation or basis in separation of variables—but leaves a lot of work to the user (you) to actually carry out the method. For algebraic manipulations, it is a matter of recognizing patterns in the ODE and using this to rearrange into separable form. For substitutions, you need to examine the ODE to find a term that appears in multiple places that you can substitute to make the solution tenable, and the challenge is picking the right substitution and applying it correctly. In the end, there aren’t any clean straight forward results, so the onus is on you, the student and mathematician, to apply the correct method and carry it out.</p>
+
+
+  </div>
+</article>
+
+    </div>
+
+    <div class="wrapper-footer">
+      <div class="container">
+        <footer class="footer">
+          
+<a href="mailto:timothy.isaac.anderson@gmail.com"><i class="svg-icon email"></i></a>
+
+
+<a href="https://github.com/timanderson1994"><i class="svg-icon github"></i></a>
+<a href="https://instagram.com/timmydingdong"><i class="svg-icon instagram"></i></a>
+<a href="https://www.linkedin.com/in/timanderson1994"><i class="svg-icon linkedin"></i></a>
+
+
+
+
+
+
+        </footer>
+      </div>
+    </div>
+
+    
+
+  </body>
+</html>

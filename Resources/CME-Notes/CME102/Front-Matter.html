@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Front Matter – Tim Anderson</title>
+
+        <meta charset="utf-8" />
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0'>
+
+    
+    <meta name="description" content="Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. ">
+    <meta property="og:description" content="Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. " />
+    
+    <meta name="author" content="Tim Anderson" />
+
+    
+    <meta property="og:title" content="Front Matter" />
+    <meta property="twitter:title" content="Front Matter" />
+    
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" type="text/css" href="../../../style.css" />
+    <link rel="alternate" type="application/rss+xml" title="Tim Anderson - Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. " href="../../../feed.xml" />
+
+<!-- 
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+ -->
+
+  <!-- Created with Jekyll Now - http://github.com/barryclark/jekyll-now -->
+  </head>
+
+  <body>
+    <div class="wrapper-masthead">
+      <div class="container">
+        <header class="masthead clearfix">
+          <a href="../../../index.html" class="site-avatar"><img src="../../../assets/images-general/duck.jpg" /></a>
+
+          <div class="site-info">
+            <h1 class="site-name"><a href="../../../index.html">Tim Anderson</a></h1>
+            <!-- <p class="site-description">Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. </p> -->
+          </div>
+
+          <nav>
+            <a href="../../../Research/index.html">Research</a>
+            <a href="../../../Publications/index.html">Publications</a>
+            <a href="../../index.html">Resources</a>
+            <a href="../../../Misc/index.html">Misc</a>
+            <!-- <a href="/Blog/">Blog</a> -->
+            <a href="../../../About/index.html">About</a>
+          </nav>
+        </header>
+      </div>
+    </div>
+
+    <div id="main" role="main" class="container">
+          <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<!-- 
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    });
+
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+    </script>
+<style>
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+</style>
+ -->
+<article class="page">
+
+  <h1>Front Matter</h1>
+
+  <div class="entry">
+    <h3 id="takeaways">Takeaways</h3>
+<p>At the beginning of every section of these notes, I will write the major takeaways for that section, since sometimes the important points can get lost in the fray.</p>
+
+<ul>
+  <li>CME 102 is about solving differential equations i.e. an equation involving a function \(y(x)\) and at least one of its derivatives</li>
+  <li>This class focuses on solution methods, which are essentially algorithms for solving a differential equation of a given form. For each of these, focus first on conceptual understanding, then practicing the algorithm for finding the solution.</li>
+  <li>CME 100 is listed as a prereq but really isn’t necessary. You just need a strong background in Calc I/II</li>
+  <li>To study, read course reader material the night before, annotate the course reader during lecture, and review the course reader (with your notes) the evening after lecture</li>
+  <li>All of you are capable of earning an A in this class—it’s just a matter of working for it.</li>
+</ul>
+
+<h3 id="what-cme-102-is-all-about">What CME 102 is All About</h3>
+
+<p>To give a characteristically unhelpful answer, CME 102 is about ordinary differential equations for engineering applications. A differential equation (as we will discuss ad naseum in the next section of notes) is an equation that relates a function to at least one of its derivatives. For example:</p>
+
+\[y'' = y^2 + x + 1\]
+
+<p>The equation involves a differential term of a function, hence the name <em>differential</em> equations.</p>
+
+<p>This leads to an important next point though: differential equations by definition involve derivatives, and therefore means we are studying the change in a function \(y\) over its domain \(x\). In engineering, we are always interested in studying systems—indeed, you could argue that engineers <em>only</em> study systems. (This is put very nicely in the introduction to Chap. 5 of Prof. Brad Osgood’s EE 261 course reader—a phenomenal course by a phenomenal teacher that you should all take someday, but I digress.) Whether the system is thermal, fluid, financial, climate, circuitry, communicaitons, etc., we are really just interested in analyzing and predicting the evolution of systems over time or space. Differential equations are important because they are the mathematical engine we use to study change over time.</p>
+
+<p>Now for the specifics of CME 102, this course is really about developing methods for efficiently solving for \(y\) given the relation \(0 = f(x,y, y', ...)\). To do this, we use the structure of \(f(\cdot)\) and occasionally known properties of the function \(y(x)\) to find a solution.</p>
+
+<p>Learning solution methods really breaks down into two steps:</p>
+<ol>
+  <li>Building a conceptual understanding of the solution method i.e. motivation, physical intuition, mathematical properties</li>
+  <li>Following a step-by-step algorithm/methodology to arrive at a solution for a specific problem.</li>
+</ol>
+
+<p>Indeed, these steps hold true for any computationally-heavy (i.e. not proof-based) mathematics course, but in differential equations it is especially true. We first identify the type of problem, then just follow step-by-step methods of arriving at a solution. If you can follow this workflow, this class will be very easy for you.</p>
+
+<h3 id="what-are-the-actual-prerequisites">What are the <em>actual</em> prerequisites?</h3>
+
+<p>Although it is traditionally listed as the prerequisite, CME 100 is not actually a prereq for this class. Instead, what’s more important is that you have strong facility with single variable calculus. Even though this isn’t a class in how to compute integrals (unlike CME 100), you’re going to have to do a lot of integration and occasionally derivation, and it’s paramount that you feel comfortable doing this. The litmus test I always used is, can you compute:</p>
+
+\[\int \frac{1}{4 + x^2} dx\]
+
+<p>in your head? If yes, then you should be more than ready for this class. If not, then I would <em>strongly</em> advise you to take some time this week to brush up on your Calc I/II material, since you are going to be asked to do harder integrals than this in this course, and you aren’t allowed to use Wolfram during an exam.</p>
+
+<h3 id="how-to-study-for-cme-102">How to study for CME 102</h3>
+
+<p>My dad was a college statistics teacher at Fresno State for many years, and something he always told students about was “Randy’s Recipe for Success” (his name is Randy). This was basically an outline of what students needed to do to succeed in his class. In that same vein, I’ll present to you Tim’s Recipe for Success in CME 102:</p>
+
+<ol>
+  <li>
+    <p>Read through the material the <strong>night before</strong> lecture. This is a habit I picked up when I was in CME 104, and I can tell you it made a huge difference in both my performance and my stress level. (If you think you can get by without a course reader, then I suppose a Step 0 would be to buy a course reader.)</p>
+  </li>
+  <li>
+    <p><strong>Go to lecture</strong> and <em>annotate</em> your course reader. Too often I see students in lecture or section scrambling to write down every detail that’s written on the board and every word out of the professor’s or TA’s mouth. The course reader typically follows closely with lecture, so save yourself the hassle and write directly on the course reader.</p>
+  </li>
+  <li>
+    <p>Study over the material the same day after lecture: learning math—especially methods for computing answers like in CME 102—is <em>all</em> about repetition and consistency. If you make three passes over the material (the night before, during lecture, and immediately afterwards), you will be learning the material thoroughly and efficiently.</p>
+  </li>
+</ol>
+
+<h3 id="closing-remarks">Closing Remarks</h3>
+
+<p>An amazing analogy I first heard from my undergraduate advisor and mentor Prof. Margot Gerritsen was that mathematics is like weightlifting. It doesn’t matter where you start: with enough time, effort, and dedication, anyone can reach their goals. Some may find it easier to get stronger, some may gain strength more slowly, but in the end what matters most is consistency, hard work, and developing a routine that works in sync with yourself.</p>
+
+<p>I know many of you may feel intimidated by this class, and that’s perfectly understandable. This class is definitely non-trivial—people like to say it’s easier than CME 100 or 104, that’s not saying much—and especially if you have a weaker high school background, then this class can be rough.</p>
+
+<p>However, it doesn’t matter is you have a poor background or think you’re just “not a math person” or say you’re a “fuzzy” instead of a “techie”. (Saying you’re a “math person” or a “non-math person” is completely ridiculous anyways, since besides those few who have placed high at the International Math Olympiad or won a Fields Medal, I’d contend very few of us are really “math people”.) What really matters in the end is putting in the work necessary to do well. Just like with Prof. Gerritsen’s analogy, we may not all start in the same place and we may not all learn at the same speed or in the same style, but with discipline and consistency, all of us can get there. All of you reading this are capable of earning an A in CME 102—it is just up to you to work for it.</p>
+
+
+  </div>
+</article>
+
+    </div>
+
+    <div class="wrapper-footer">
+      <div class="container">
+        <footer class="footer">
+          
+<a href="mailto:timothy.isaac.anderson@gmail.com"><i class="svg-icon email"></i></a>
+
+
+<a href="https://github.com/timanderson1994"><i class="svg-icon github"></i></a>
+<a href="https://instagram.com/timmydingdong"><i class="svg-icon instagram"></i></a>
+<a href="https://www.linkedin.com/in/timanderson1994"><i class="svg-icon linkedin"></i></a>
+
+
+
+
+
+
+        </footer>
+      </div>
+    </div>
+
+    
+
+  </body>
+</html>

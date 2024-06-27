@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Laplace Transforms – Tim Anderson</title>
+
+        <meta charset="utf-8" />
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0'>
+
+    
+    <meta name="description" content="Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. ">
+    <meta property="og:description" content="Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. " />
+    
+    <meta name="author" content="Tim Anderson" />
+
+    
+    <meta property="og:title" content="Laplace Transforms" />
+    <meta property="twitter:title" content="Laplace Transforms" />
+    
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" type="text/css" href="../../../style.css" />
+    <link rel="alternate" type="application/rss+xml" title="Tim Anderson - Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. " href="../../../feed.xml" />
+
+<!-- 
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+ -->
+
+  <!-- Created with Jekyll Now - http://github.com/barryclark/jekyll-now -->
+  </head>
+
+  <body>
+    <div class="wrapper-masthead">
+      <div class="container">
+        <header class="masthead clearfix">
+          <a href="../../../index.html" class="site-avatar"><img src="../../../assets/images-general/duck.jpg" /></a>
+
+          <div class="site-info">
+            <h1 class="site-name"><a href="../../../index.html">Tim Anderson</a></h1>
+            <!-- <p class="site-description">Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. </p> -->
+          </div>
+
+          <nav>
+            <a href="../../../Research/index.html">Research</a>
+            <a href="../../../Publications/index.html">Publications</a>
+            <a href="../../index.html">Resources</a>
+            <a href="../../../Misc/index.html">Misc</a>
+            <!-- <a href="/Blog/">Blog</a> -->
+            <a href="../../../About/index.html">About</a>
+          </nav>
+        </header>
+      </div>
+    </div>
+
+    <div id="main" role="main" class="container">
+          <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<!-- 
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    });
+
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+    </script>
+<style>
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+</style>
+ -->
+<article class="page">
+
+  <h1>Laplace Transforms</h1>
+
+  <div class="entry">
+    <h3 id="takeaways">Takeaways</h3>
+
+<ul>
+  <li>
+    <p><strong>Laplace transforms turn a differential equation into an algebraic equation</strong></p>
+  </li>
+  <li>
+    <p>The Laplace transform of a function is defined as:</p>
+  </li>
+</ul>
+
+<p>\[ F(s) = \mathcal{L}(f(t)) = \int_0^\infty f(t) e^{-st} dt \]</p>
+
+<ul>
+  <li>
+    <p>The Laplace transform is invertible, meaning that \(\mathcal{L}(f(t)) = F(s)\) implies \(\mathcal{L}^{-1}(F(s)) = f(t)\). This is how we invert the Laplace transform, since the inverse Laplace transform formula is very difficult to work with and not well-defined in many cases.</p>
+  </li>
+  <li>
+    <p>When solving ODEs, we <strong>always</strong> look up the Laplace transform of a function from a transform table. We also rely on tables to find inverse transforms.</p>
+  </li>
+  <li>
+    <p>To solve a linear ODE using Laplace transform, we take the transform of both sides according to our Laplace transform theorems, algebraically rearrange to solve for \(F(s)\), and take the inverse transform to find \(f(t)\)</p>
+  </li>
+</ul>
+
+<h3 id="overview">Overview</h3>
+
+<p>Applying Laplace transforms to differential equations is motivated by two primary reasons:</p>
+
+<ol>
+  <li>Not all inputs or forcing functions to a dynamic system (which we model with ODEs) can be represented by functions that work with the solution methods we’ve studied so far.</li>
+  <li>Solving a problem in the time domain is sometimes very hard, but if we transform the problem to be with respect to a different variable, the problem becomes much easier.</li>
+</ol>
+
+<p>Laplace transforms are often applied in controls and robotics, in particular because they are so good at handling (1). To use a controls example, consider guiding a spacecraft to stay in orbit. We can expect most inputs to the system to be things like collisions with small pieces of space debris, which would be a single hit to the spacecraft and then nothing else (we refer to this hit as an <strong>impulse</strong>). How could we model this? We know from the mass-spring section that we start modeling with Newton’s second law \(F= ma\), but how do we model these hits from the debris?</p>
+
+<p>Here’s a more tangible example: suppose I have an RLC circuit that is at steady state. How could I model suddenly applying an AC voltage source somewhere in the circuit? Well, we know that we have to start with Kirchoff’s voltage law to derive the equation, and the AC source will be some sort of sinusoid, but how do we model it turning on at a certain time point?</p>
+
+<p>To solve these problems, we need to introduce a new class of non-smooth (i.e. non-differentiable) and discontinuous functions to model these kinds of inputs, and then develop the mathematical toolbox to work with them. Laplace transforms are the main tool we use for doing this.</p>
+
+<p>The basic workflow for solving problems with Laplace transforms is:</p>
+
+<p><img src="../../../assets/notes-figures/laplace-workflow.png" alt="Laplace transform workflow" /></p>
+
+<p>Oftentimes, we’ll be presented with a problem where solving it in the time domain is incredibly difficult or even impossible. Laplace transforms allow us to translate the problem into an equivalent problem in the Laplace domain that is much easier to solve, solve the equivalent problem there, then convert our solution back to the time domain i.e. the solution to the original problem.</p>
+
+<p>Below, we outline the basics of Laplace transforms, how to compute forward and inverse transforms, and how these apply to differential equations. While I’ve tried to include any relevant or helpful theory, the fact is that the theory of Laplace transforms (i.e. where they come from, what the “\(s\)-domain” really is) is very involved, and unfortunately we have to skip a lot of it to avoid this section of notes being many, many times longer.</p>
+
+<h3 id="laplace-transform-definition">Laplace Transform Definition</h3>
+
+<p>The basic definition of the Laplace transform is given by the formula:</p>
+
+\[\begin{gather}
+F(s) = \mathcal{L}(f(t)) = \int_0^\infty f(t) e^{-st} dt
+\end{gather}\]
+
+<p>We denote the <em>Laplace transform operator</em> as \(\mathcal{L}\{\cdot\}\). This operator just means that when we apply it to a function, it plugs the function into the above integral and computes the output. The Laplace transform is a map from the \(t\) to the \(s\) domain, and is known as an <em>integral transform</em> because it performs this mapping by taking an integral.</p>
+
+<p><strong>What is this \(s\)?</strong> Well, the unhelpful (but correct) answer is that \(s\) doesn’t <em>really</em> have any meaning here other than being a placeholder. When you use Laplace transforms for more advanced applications such as in control theory and signal processing, \(s\) takes on some physical meaning, but in other applications e.g. statistics, it is just a placeholder. The big idea is that we rephrase the problem in terms of \(s\), solve it in terms of \(s\), then convert things back to being in terms of \(t\).</p>
+
+<p><strong>Where does it come from?</strong> Well, there’s also no real good explanation for that. The general consensus amongst mathematical historians is that the Laplace transform was simply written down by Pierre-Simon Laplace one day because he realized that using it allowed him to easily compute many things in probability. There are some justifications out there, but in reality none of them are rigorous: the Laplace transform just works, and that’s why we use it.</p>
+
+<p>Now that we’re done with the (sufficiently unhelpful) preliminaries, we can get down to actually computing and working with Laplace transforms.</p>
+
+<h3 id="forward-transforms">Forward Transforms</h3>
+
+<p>We’ll first deal with forward transforms. We refer to taking the Laplace transform of something as taking the <em>forward transform</em>, since we are going into the Laplace domain. You take the forward transform of a function \(f(t)\) simply by computing the integral above:</p>
+
+\[F(s) = \int_0^\infty f(t) e^{-st} dt\]
+
+<p>Beyond the formula, what’s important to note is that <strong>the Laplace transform of a function is only defined for \(t &gt; 0\) and \(s &gt;0\)</strong>. This is a very important detail to keep in mind: when working with Laplace transforms: time has a definite starting point.</p>
+
+<p>For computing the transform, let’s work through a quick example. Consider \(f(t) = 2t\):</p>
+
+\[\begin{align}
+F(s) &amp;= \int_0^\infty 2t e^{-st} dt \\
+&amp;= \left. - \frac{1}{s} 2t e^{-st} \right|_0^\infty - 2\frac{-1}{s}\int_0^\infty e^{-st}dt \\
+&amp;= 2\frac{1}{s}\int_0^\infty e^{-st}dt \\
+&amp;= -2 \frac{1}{s^2} \left. e^{-st} \right|_0^\infty \\
+&amp;= \frac{2}{s^2}
+\end{align}\]
+
+<p>The actual transform is pretty straightforward to compute, but requires a fair amount of integration by parts. For this reason, we use a <em>Laplace transform table</em> to do the bulk of the heavy lifting. A transform table (given in your course reader or easily found online) just contains a list of common functions and their Laplace transforms. Nearly all functions you’ll work with will have a Laplace transform that is on the table or is easy to derive using the table and some of the theorems discussed below.</p>
+
+<h3 id="inverse-transforms">Inverse Transforms</h3>
+
+<p>Inverse transforms are much trickier to compute—indeed, they are not really possible to compute by hand. While there exists a formula for inverse Laplace transforms, we do not use it because it is big and ugly and altogether unhelpful as anything besides a theoretical tool.</p>
+
+<p>Instead of trying to compute the inverse transform by hand, we rely on the <em>invertibility</em> property of the Laplace transform. The invertibility property says that if \(F(s)\) is the forward transform of \(f(t)\), then \(f(t)\) is the inverse transform of \(F(s)\). Basically, the inverse Laplace transform operator \(\mathcal{L}^{-1}\{\cdot\}\) just reverses the forward Laplace transform operator.</p>
+
+<p>To see an example, consider:</p>
+
+\[\begin{gather}
+F(s) = \frac{1}{s^2 + 9}
+\end{gather}\]
+
+<p>From the table, this <em>looks</em> a lot like the transform of a sine function, although we need to rearrange it a bit:</p>
+
+\[\begin{gather}
+F(s) = \frac{1}{3} \frac{3}{s^2 + 9}
+\end{gather}\]
+
+<p>Much better. Now it looks exactly like the Laplace transform of a sine, and we can simply take the inverse Laplace transform by matching to what’s on the table:</p>
+
+\[\begin{gather}
+\mathcal{L}\left\{ \frac{1}{3} \frac{3}{s^2 + 9} \right\} = \frac{1}{3} \sin(3t)
+\end{gather}\]
+
+<p>While simple, this example illustrates the very basic parts of the workflow for deriving Laplace transforms. Specifically, we take the \(F(s)\), rearrange it a bit to look like one of the \(F(s)\) on the table, then take the inverse transform by simply writing down what the original function must have been based on the table.</p>
+
+<p>Finding inverse Laplace transforms with a table is quite tricky, so be sure to practice this thoroughly. You do not want to end up in a situation, especially on an exam, where you’ve solved the problem correctly but then cannot take the inverse transform.</p>
+
+<h3 id="derivative-theorems">Derivative Theorems</h3>
+
+<p>Now we arrive at the first important theorems in Laplace transforms: the derivative theorems. The derivative theorems are really more just identities that arise from the Laplace transform formula, but they are exceedingly useful.</p>
+
+<p>The first relates the derivatives of a function \(f(t)\) to its Laplace transform:</p>
+
+\[\begin{gather}
+\mathcal{L}(f'(t)) = s F(s) - f(0) \\
+\mathcal{L}(f''(t)) = s^2 F(s) - sf(0) - f'(0)
+\end{gather}\]
+
+<p>A quick note here is that sometimes you’ll see the phrase “zero initial conditions”. This means that \(f(0) = f'(0) = 0\), so a derivative in the \(t\) domain just because multiplication by \(s\) in the \(s\) domain. You will not always have zero initial conditions, but when you do it is very nice and makes the math much cleaner.</p>
+
+<p>Next we have the Laplace transform of an integral:</p>
+
+\[\begin{gather}
+\mathcal{L}\left[ \int_0^t f(\tau) d\tau \right] = \frac{F(s)}{s}
+\end{gather}\]
+
+<p>This theorem can be a bit tricky to work with, but can sometimes make your life much easier. Consider the following function:</p>
+
+\[\begin{gather}
+F(s) = \frac{1}{s^3 + 4s}
+\end{gather}\]
+
+<p>Instead of doing a partial fraction decomposition as we might be tempted to do, not that we can write this as:</p>
+
+\[\begin{gather}
+\frac{1}{s^3 + 4s} = \frac{1}{2s} \frac{2}{s^2 + 4}
+\end{gather}\]
+
+<p>Now, let \(G(s) = 2 / (s^2 + 4)\) and \(g(t) = \sin(2t)\). Then, we can rewrite the above as:</p>
+
+\[\begin{gather}
+\frac{1}{2s} \frac{2}{s^2 + 4} = \frac{G(s)}{2s} = \frac{1}{2} \mathcal{L}\left\{\int_0^t g(\tau) d\tau \right\} = \mathcal{L}\{F(s)\}
+\end{gather}\]
+
+<p>Taking the inverse transform:</p>
+
+\[\begin{gather}
+\mathcal{L}^{-1}\left\{ \frac{G(s)}{2s} \right\} = \frac{1}{2}\int_0^t \sin(2\tau) d\tau  = f(t) \\
+f(t) = \frac{1}{2} \left[ 1 - \cos(2t)\right]
+\end{gather}\]
+
+<p>By using the integral identity above, we were able to avoid using partial fractions. Keep in mind that with Laplace transforms, there’s often more than one way to compute the transform or inverse transform; it is really just a matter of finding the fastest/easiest method.</p>
+
+<p>Finally, we have the last derivative theorem (which is actually given as a transform pair in the course reader):</p>
+
+\[\begin{gather}
+\mathcal{L}\left\{t^n f(t)\right\} = (-1)^n F^{(n)}(s) 
+\end{gather}\]
+
+<p>This theorem is very useful for when you’re trying to invert a function in the \(s\) domain that doesn’t appear in the table, but one of its derivatives does. A typical example is \(F(s) = \ln(s + a)\):</p>
+
+\[\begin{gather}
+F(s) = \ln(s + a) \\
+\frac{d}{ds} F(s) = \frac{1}{s + a} \\
+-F'(s) = - \frac{1}{s + a} \\
+\mathcal{L}^{-1}\{-F'(s)\} = tf(t) \\
+tf(t) = \mathcal{L}^{-1}\left\{ - \frac{1}{s + a} \right\} = -e^{-at} \\
+f(t) = -\frac{e^{-at}}{t}
+\end{gather}\]
+
+<p>The most important thing to notice with all of these theorems is that differentiation in one domain is equivalent to multiplication in another domain. This is part of the true power of Laplace transforms: we are able to change a differential operation into a simple algebraic one, and algebraic operations are much, much easier to work with.</p>
+
+<p>As far as solving for forward or inverse transforms, a good general rule is that if the function you’re trying to transform or invert does not appear anywhere on the table, then you probably need to apply one of these theorems. Facility with the derivative theorems is incredibly useful for finding the fastest method for computing forward and inverse Laplace transforms, and can make your life much easier when working with ODEs.</p>
+
+<p>Next, we take a brief digression to discuss non-smooth functions and time shifting, but then we’ll loop back and combine all of these to show how these tools (and in particular the derivative theorems) allow you to efficiently solve ODEs.</p>
+
+<h3 id="non-smooth-functions">Non-Smooth Functions</h3>
+
+<p>The biggest advantage of Laplace transforms when modeling dyanmic systems with ODEs is that Laplace transforms are <em>very</em> good at handling non-smooth or discontinuous functions. For our purposes here, there are two main discontinuous functions we’ll look at: delta functions and step functions. These are important because when combined with other, more conventional functions, we can create a very wide range of physically-realistic functions to use as inputs to a system of differential equations.</p>
+
+<p>First up is the <strong>delta function</strong> (or <strong>Dirac delta</strong> as it is sometimes known, after the prolific 20th century mathematician and physicist Paul Dirac). The delta function is an instantaneous impulse of a unit of energy. The equation for a delta is:</p>
+
+\[\begin{gather}
+\delta(t - t_0) = \begin{cases} \infty &amp; t = t_0 \\ 0 &amp; \text{otherwise} \end{cases}
+\end{gather}\]
+
+<p>A delta function has the property:</p>
+
+\[\int_{-\infty}^\infty \delta(t)dt = 1\]
+
+<p>This integral is actually not well defined, and its derivation is quite difficult and a major sticking point for mathematicians. But alas, we are engineers and delta functions are quite useful, so we will persevere.</p>
+
+<p>A delta function is an <em>impulse</em> in that it represents an input that inputs all of its energy into the system in a single instance e.g. a piece of rock striking a spacecraft or a robotic arm being struck by someone bumping into it. As you will see, even though it does not satisfy mathematicians, it is a very nice mathematical object to work with and makes our lives easier in many applications.</p>
+
+<p>Next we have the <strong>Heavisie step function</strong> (named after Oliver Heaviside, a late 19th/early 20th century British mathematician). A step function is defined as:</p>
+
+\[\begin{gather}
+u(t - t_0) = \begin{cases} 1 &amp; t &gt; t_0 \\ 0 &amp; \text{otherwise} \end{cases}
+\end{gather}\]
+
+<p>(where we don’t worry about what happens at \(t = t_0\)).</p>
+
+<p>Heaviside step functions represent an “on switch”: if we multiply a function by a Heaviside step function \(u(t - t^*)\), it is like the function “turns on” at \(t^*\). You can imagine how this would be useful; in electrical circuits, for example, we might want to have a some sort of voltage source start at a certain point in time, so a step function makes this possible to represent mathematically.</p>
+
+<h3 id="shift-theorems">Shift Theorems</h3>
+
+<p>The next two theorems we need to cover are what we’ll call the shift theorems. A shift is basically where the argument to a function is offset by some amount. (For example, in the previous section an impulse of the form \(\delta(t - a)\) is known as a <em>shifted delta</em>.)</p>
+
+<p>With Laplace transforms, there are two types of shifts: \(t\)-shifts and \(s\)-shifts. Each of these have an associated transform pair. For \(t\)-shifts (when the function is offset by some amount in the \(t\)-domain), we have:</p>
+
+\[\begin{gather}
+\mathcal{L}\{u(t-a)f(t-a)\} = e^{-as} F(s)
+\end{gather}\]
+
+<p>and for \(s\)-shifts:</p>
+
+\[\begin{gather}
+\mathcal{L}\left\{e^{at}f(t)\right\} = F(s - a)
+\end{gather}\]
+
+<p>In both cases, multiplication by an exponential in one domain is equivalent to a shift in the other domain. (Both of these theorems directly follow from the definition of the Laplace transform, but we leave their derivation as an exercise.)</p>
+
+<p>To see how these are applied in practice, let’s first compute a transform for a function with a \(t\)-shift:</p>
+
+\[\begin{align}
+f(t) &amp;= u(t-a)\cos(t) \\
+&amp;= u(t-a)\cos(t-a + a) \\
+&amp;= u(t-a)\cos(t-a)\cos(a) - u(t-a)\sin(t-a)\sin(a) \\
+\mathcal{L}\{f(t)\} &amp;= \cos(a)e^{-as}\frac{s}{s^2 + 1} - \sin(a) e^{-as}\frac{1}{s^2 + 1}
+\end{align}\]
+
+<p>Similarly for an \(s\)-shift:</p>
+
+\[\begin{align}
+F(s) &amp;= \frac{2}{s^2 + 2s + 5} \\
+&amp;= \frac{2}{s^2 + 2s + 1 + 4} \\
+&amp;= \frac{2}{(s + 1)^2 + 4}\\
+f(t) &amp;= e^{-t} \sin(2t)
+\end{align}\]
+
+<p>The shift theorems are reasonably easy to apply, but it is sometimes hard to spot the exact manipulation you need to make. A few things to always keep an eye out for:</p>
+
+<ul>
+  <li>Completing the square</li>
+  <li>Multiplying and dividing by the same quantity to make it appear in one part of the equation</li>
+  <li>Trigonometric identities</li>
+</ul>
+
+<p>In general though, this just takes a lot of practice, so be sure to devote plenty of extra study time to this topic.</p>
+
+<h3 id="computing-laplace-transforms">Computing Laplace Transforms</h3>
+
+<p>As a quick summary, below is a list of steps to follow for computing Laplace transforms:</p>
+
+<ol>
+  <li>Check if function is on the Laplace transform table. If it is not, then apply as necessary:
+    <ul>
+      <li>Algebraic manipulations (e.g. trig identities)</li>
+      <li>Partial fraction decompositions</li>
+      <li>Derivative theorems</li>
+    </ul>
+  </li>
+  <li>Note any shifts that occur, or make any necessary manipulations so that the shift theorems apply</li>
+  <li>Take the forward or inverse transform. When applying shifts, first apply the shift from the domain you’re <em>coming from</em>, then apply the shift for the domain you’re <em>going to</em></li>
+</ol>
+
+<p>In general, you just need to practice computing Laplace transforms. Plenty of examples are given in the worksheets and review keys, and many more are accessible online.</p>
+
+<h3 id="solving-odes-with-laplace-transform">Solving ODEs with Laplace Transform</h3>
+
+<p>Here’s where the magic happens: we can put all of the above principles together to use Laplace transforms to solve ODEs. To see how this works, let’s work through an example of a LRC circuit with a voltage course that is only on for a short period of time. For the sake of argument, let \(L = C = 1\) and \(R=2\) in the equation, and we will keep things simple and use zero intiial conditions. For the input, let \(V(t)\) be an AC current \(\sin(2 \pi t)\) that is turned on at \(t = 1\) and off at \(t = 5\):</p>
+
+\[\begin{gather}
+i'' + 2i' + i = V'(t), \qquad i(0) = 0, \; i'(0) = 0
+\end{gather}\]
+
+<p>When you’re solving ODEs with Laplace transforms, you will almost always be dealing with some sort of piecewise or discontinuous inputs. (If you do not have these in the ODE, then there’s very little point of going to all the trouble to use Laplace transforms.) Consequently, it’s very important to figure out how to rewrite discontinuous or piecewise inputs.</p>
+
+<p>Let’s write out \(V(t)\) as describe by the problem:</p>
+
+\[\begin{gather}
+V(t) = \begin{cases} 0 &amp; t &lt; 1 \\ \sin(2\pi t) &amp; 1 &lt; t \end{cases}
+\end{gather}\]
+
+<p>We need to re-express this in a way that we can apply Laplace transforms, and the way we do this is using step functions. Step functions work as a(n):</p>
+
+<ul>
+  <li>“on-switch” when we multiply by \(u(t-a)\)</li>
+  <li>“off-switch” when we multiply by \(1 - u(t - a)\)</li>
+  <li>“window function” when we multiply by \(u(t - a) - u(t-b)\) (with \(b &gt; a\)). Basically it cuts off the function at \(t = a\) and \(t = b\)</li>
+</ul>
+
+<p>We have an input that turns on at a certain point (\(t = 1\)) and stays on, so we want to use an on-switch. Therefore, we can re-express \(V(t)\) as:</p>
+
+\[\begin{gather}
+V(t) = u(t - 1) \sin(2\pi t) 
+\end{gather}\]
+
+<p>Finally, notice that \(V'(t)\) is what appears in the ODE, so we need to take the derivative of this. When you’re taking derivatives of a function that contains a step function, you can ignore the step function in the derivative. That is, we just treat the step function as a constant, then take the derivative of whatever it’s being multiplied by. Using this, we find:</p>
+
+\[\begin{gather}
+V'(t) = 2\pi u(t - 1) \cos(2\pi t) 
+\end{gather}\]
+
+<p>Now we can plug this into the ODE:</p>
+
+\[\begin{gather}
+i'' + 2i' + i = 2\pi u(t - 1) \cos(2\pi t)
+\end{gather}\]
+
+<p>Notice that:</p>
+
+<ol>
+  <li>We cannot solve this ODE using a method we’ve seen so far (e.g. undetermined coefficents)</li>
+  <li>We <em>can</em> take the Laplace transform of both sides.</li>
+</ol>
+
+<p>Laplace transform converts things like shifting and differentiation into multiplication and division, so when we have an ODE with <em>discontinuous</em> inputs, it’s logical to apply Laplace transform to it.</p>
+
+<p>Before we take the Laplace transform of the right side though, we need to rearrange things a bit. Remember that with a \(t\) shift, \(t\) needs to be shifted by the same amount in every part of the term. We need to remedy this before taking a Laplace transform:</p>
+
+\[\begin{align}
+2\pi u(t - 1) \cos(2\pi t) &amp;= 2 \pi u(t-1) \cos(2\pi (t-1 +1)) \\
+&amp;= 2 \pi u(t-1) (\cos(2\pi (t-1))\cos(2\pi) - \sin(2\pi (t-1))\sin(2\pi)) \\
+&amp;= 2 \pi u(t-1)\cos(2\pi (t-1))
+\end{align}\]
+
+<p>Now we can take the Laplace transform of both sides:</p>
+
+\[\begin{gather}
+s^2I(s) + 2sI(s) + I(s) = 2 \pi e^{-s}\frac{s}{s^2 + 4 \pi^2} 
+\end{gather}\]
+
+<p>From here, we simply algebraically rearrange things and solve for \(I(s)\):</p>
+
+\[\begin{align}
+s^2I(s) + 2sI(s) + I(s) &amp;= 2 \pi e^{-s}\frac{s}{s^2 + 4 \pi^2}  \\
+I(s)(s^2 + 2s + 1) &amp;= 2 \pi e^{-s}\frac{s}{s^2 + 4 \pi^2}  \\
+I(s) &amp;= 2\pi e^{-s} \frac{s}{(s^2 + 4\pi^2)(s^2 + 2s + 1)} \\
+&amp;= 2\pi e^{-s} \frac{s}{(s^2 + 4\pi^2)(s+1)^2} \\
+&amp;= 2\pi e^{-s} \left[ \frac{-4 \pi^2 s + s + 8 \pi^2}{(1 + 4 \pi^2)^2 (s^2 + 4 \pi^2)} + \frac{4 \pi^2 - 1}{(1 + 4 \pi^2)^2 (s + 1)} + \frac{1}{(-1 - 4 \pi^2) (s + 1)^2} \right]
+\end{align}\]
+
+<p>From here, we need to take the inverse transform. After a lot of algebra, this becomes:</p>
+
+\[i(t) = \frac{2 \pi}{(1 + 4 \pi^2)^2} u(t-1) \left[e^{-(t-1)} ((4 \pi^2 +1)t - 8\pi^2) - 4 \pi \sin(2 \pi (t-1)) + (4 \pi^2 - 1) \cos(2 \pi (t-1))\right]\]
+
+<p>This solution is a bit messy, but this example demonstrates the general workflow for solving ODEs using Laplace transform:</p>
+
+<ol>
+  <li>Put both sides of the ODE into a form that we can take the Laplace transform of (change piecewise functions to “single line” functions)</li>
+  <li>Take Laplace transform of both sides of the equation</li>
+  <li>Algebraically solve for the Laplace transform of the function we want to find.
+    <ul>
+      <li>If we are solving a system of ODEs with Laplace transform, we need to solve a system of linear equations to find the Laplace transforms of the functions of interest.</li>
+    </ul>
+  </li>
+  <li>Take the inverse transform(s) to find the solution(s) to the ODE</li>
+</ol>
+
+<p>Laplace transforms reduce differential equations to algebraic equations, and for this reason they are extremely useful.</p>
+
+<h3 id="closing-remarks">Closing Remarks</h3>
+
+<p>As you can see, Laplace transforms are incredibly useful for solving differential equations. Indeed, they are one of—if not the most—useful topics you learn in CME 102. They are really just the beginning though. There are all kinds of integral transforms out there, from Fourier transforms (which form the backbone of modern signal processing and imaging) to wavelet transforms (which is the basis of JPEG compression). There is an entire field of applied mathematics known as <em>computational harmonic analysis</em> dedicated to developing efficient methods and exploring applications of integral transforms like these. In fact, large parts of this field was developed at Stanford by David Donoho and Emanuel Candes, both professors in the statistics department.</p>
+
+<p>We’ve given you just a taste of this field here, but I hope you will consider exploring these topics in the future. They are truly fascinating in their own right, and their applications have brought us everything from modern medicine to artificial intelligence to cellular communications. Laplace transforms are just the beginning of a field of mathematics that’s given birth to the modern data-driven world.</p>
+
+
+  </div>
+</article>
+
+    </div>
+
+    <div class="wrapper-footer">
+      <div class="container">
+        <footer class="footer">
+          
+<a href="mailto:timothy.isaac.anderson@gmail.com"><i class="svg-icon email"></i></a>
+
+
+<a href="https://github.com/timanderson1994"><i class="svg-icon github"></i></a>
+<a href="https://instagram.com/timmydingdong"><i class="svg-icon instagram"></i></a>
+<a href="https://www.linkedin.com/in/timanderson1994"><i class="svg-icon linkedin"></i></a>
+
+
+
+
+
+
+        </footer>
+      </div>
+    </div>
+
+    
+
+  </body>
+</html>

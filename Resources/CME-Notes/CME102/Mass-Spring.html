@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Mass-Spring Systems – Tim Anderson</title>
+
+        <meta charset="utf-8" />
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0'>
+
+    
+    <meta name="description" content="Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. ">
+    <meta property="og:description" content="Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. " />
+    
+    <meta name="author" content="Tim Anderson" />
+
+    
+    <meta property="og:title" content="Mass-Spring Systems" />
+    <meta property="twitter:title" content="Mass-Spring Systems" />
+    
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" type="text/css" href="../../../style.css" />
+    <link rel="alternate" type="application/rss+xml" title="Tim Anderson - Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. " href="../../../feed.xml" />
+
+<!-- 
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+ -->
+
+  <!-- Created with Jekyll Now - http://github.com/barryclark/jekyll-now -->
+  </head>
+
+  <body>
+    <div class="wrapper-masthead">
+      <div class="container">
+        <header class="masthead clearfix">
+          <a href="../../../index.html" class="site-avatar"><img src="../../../assets/images-general/duck.jpg" /></a>
+
+          <div class="site-info">
+            <h1 class="site-name"><a href="../../../index.html">Tim Anderson</a></h1>
+            <!-- <p class="site-description">Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. </p> -->
+          </div>
+
+          <nav>
+            <a href="../../../Research/index.html">Research</a>
+            <a href="../../../Publications/index.html">Publications</a>
+            <a href="../../index.html">Resources</a>
+            <a href="../../../Misc/index.html">Misc</a>
+            <!-- <a href="/Blog/">Blog</a> -->
+            <a href="../../../About/index.html">About</a>
+          </nav>
+        </header>
+      </div>
+    </div>
+
+    <div id="main" role="main" class="container">
+          <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<!-- 
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    });
+
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+    </script>
+<style>
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+</style>
+ -->
+<article class="page">
+
+  <h1>Mass-Spring Systems</h1>
+
+  <div class="entry">
+    <h3 id="takeaways">Takeaways</h3>
+
+<ul>
+  <li>We derive the differential equation governing the displacement of each mass in our system using Newton’s second law: \[F_{net} = \underbrace{\sum_i F_i}_{\text{All forces acting on mass}} = ma = m x’’\] and solve the resulting equations using the characteristic equation and undetermined coefficients methods.</li>
+  <li>The equation of motion for a spring is Hooke’s Law: \[F = -k x\]</li>
+  <li>The equation of motion for a dashpot is: \[ F = -\beta v = -\beta x’ \]</li>
+</ul>
+
+<h3 id="overview">Overview</h3>
+
+<p>The last portion of CME 102 is focused mainly on applications of the material we’ve learned: we’ve teased applications here and there, but the focus has been solidly on the mathematics. Now that we’ve learned the bulk of the math (or enough of it), it’s time to transition to doing more applications.</p>
+
+<p>The first (and most important) one of these is <strong>mass-spring systems</strong>. You’re probably asking yourself, why do we care so much about mass-spring systems? We study these systems because a huge range of engineering problems can be modeled as/reduced down to simple mass-spring systems. A couple of these include:</p>
+
+<ul>
+  <li>Mechanical systems involving masses and springs (duh)</li>
+  <li>Solid mechanics systems: each small section of a solid material can be modeled as a spring or with damping</li>
+  <li>Fluid flow: mass-spring models are actually the starting point for deriving the equations of motion for fluids</li>
+  <li>Circuits: as you’ll see in the next section of notes, circuits actually follow a very similar form to mass-spring systems
+    <ul>
+      <li>There’s actually something called a <a href="https://en.wikipedia.org/wiki/Mechanical_computer">mechanical computer</a> which uses mass-spring systems instead of electrical circuits to perform computation</li>
+    </ul>
+  </li>
+  <li>Quantum mechanical systems: the connection is pretty complicated, and I’ll leave it at that</li>
+</ul>
+
+<p>If it makes you feel any better, back when I took this class the importance of mass-spring systems was also completely lost on me. Hopefully providing a little motivation here at the start will help you trudge through the remainder of this page.</p>
+
+<p>In what follows, we’ll first go over the basic components of a mass spring system, and how to set up the equations. From there, we’ll go through a few cases of oscillations, and point out the characteristic properties of each one.</p>
+
+<h3 id="equations-of-motion-springs-dashpots-and-newtons-second-law">Equations of Motion: Springs, Dashpots, and Newton’s Second Law</h3>
+
+<p>Mass spring systems are composed of three main components: masses, springs, and <em>dashpots</em>. We use the equations for the spring and friction (dashpot) forces in conjunction with <strong>Newton’s second law</strong> to create the equation(s) of motion for the system. To get the idea of what we’re talking about, let’s consider a very simple mass spring system:</p>
+
+<div style="margin: auto">
+<img style="width: 70%; display: block; margin: auto;" src="../../../assets/notes-figures/MassSpringFigs/mass-spring-1.png" />
+</div>
+
+<p>Let’s start with Newton’s second law. Recall (maybe) from your physics class Newton’s second law of motion:</p>
+
+\[F_{net} = ma\]
+
+<p>Here, \(a\) is the acceleration of the object, \(m\) is the mass, and \(F_{net}\) is the net force.</p>
+
+<p>This law holds for any object in motion. What is basically says is that the net force acting on an object (i.e. if we went through and tallied up everything pushing/pulling the object) is equal to the mass of the object times its acceleration. Force and acceleration are a <em>vector</em> quantities, so this law holds for each component (dimension) of the vector. Fortunately for us though, in this section (and in CME 102) we’ll only be looking at motion along one dimension, so we do not need to worry about vectors.</p>
+
+<p>Another way of writing Newton’s section law is:</p>
+
+\[\sum_i F_i = ma\]
+
+<p>where we’ve explicitly written the net force as a sum of all the forces acting on the object. This equation will become the equation of motion, but first we need to figure out what the \(F_i\) are in the sum.</p>
+
+<p><strong>Springs:</strong> The first force is the spring force. We can write the force exerted on a mass \(m\) at position \(X\) (note that this is a big \(X\)) as:</p>
+
+\[F_{spring} = -k \underbrace{\Delta X}_{\text{displacement}}\]
+
+<p>That is, the force exerted by a spring is equal to the change in stretch of the spring times the <em>spring constant</em> \(k\). (This is just Hooke’s law, for those of you who remember it from physics. But if you don’t, that’s cool too.)</p>
+
+<p>Now for something confusing: notice here that we’ve written the spring force in terms of the change in absolute position from some sort of reference. However, what is this reference? How do we figure out what \(\Delta X\) is? Well, the fact is that we don’t really need to know the <em>absolute</em> position, we just need to know the displacement from equilibrium.</p>
+
+<p>To do this, let \(x(t) = X(t) - X_{equilibrium}\). We know that there exists some sort of equilibrium position \(X_{equilibrium}\), and some absolute position \(X\), but we don’t know what these are, and sometimes we don’t even have a way to know. From here on out, we’ll write all the equations of motion in terms of the <em>displacement</em> \(x(t)\) (lower case x). Doing this, we can rewrite Hooke’s Law as:</p>
+
+\[F_{spring} = -k x\]
+
+<p>That is, the force is always in the opposite direction of the displacement (e.g. if mass moves to the left, the force exerted by the spring points to the left). One thing people get hung up on is the sign of \(x(t)\)—that is, if the \(x(t)\) is negative, shouldn’t we change the sign of the force? While this is a bit confusing, the fact is that we do not care about the sign of the displacement, we only care about the sign of the force <em>relative to</em> the displacement. In the above equation, the force is defined to be opposite the direction of the displacement, so we’re set.</p>
+
+<p><strong>Dashpots:</strong> Next we need to write the equation for a dashpost. What’s a dashpot, you ask? Great question! A dashpot is basically just an object that we use to represent friction. The force from a dashpot is given by:</p>
+
+\[F_{dashpot} = -\beta v\]
+
+<p>where \(v\) is the velocity of the object. That is, the force from the dashpot is always in the opposite direction of motion, and  proportional to the velocity. A real life example of a dashpot is a plunger on a syringe: the faster you try to pull out the syringe, the more resistance it gives. However, in real-life systems a dashpot is just there to represent any form of friction, since friction force obeys this law.</p>
+
+<p>Finally, we can write the equation of motion for the above mass-spring system. Start with Newton’s second law:</p>
+
+\[ma = \sum_i F_i = F_{spring} + F_{dashpot}\]
+
+<p>Then, insert the equations for the forces:</p>
+
+\[ma = -kx - \beta v\]
+
+<p>Note that the velocity \(v(t)\) and acceleration \(a(t)\) are just the first and second derivatives of the displacement \(x(t)\). So, we can write the above equation as:</p>
+
+\[mx'' = -kx - \beta x'\]
+
+<p>or:</p>
+
+\[mx'' + \beta x' + kx = 0\]
+
+<p>which is just a linear constant coefficient second order ODE, which we are already very familiar with.</p>
+
+<h3 id="solving-equations-of-motion-for-mass-spring-systems">Solving Equations of Motion for Mass-Spring Systems</h3>
+
+<p>While the physics behind mass-spring systems may seem difficult at first, you’ve fortunately already studied the differential equations that govern their motion. Mass spring systems in this class will <em>always</em> lead to a linear second order constant coefficient ODE. If we are only dealing with one mass, we’ll only have one equation; if there are multiple masses, we’ll have one equation for each mass.</p>
+
+<p>The general flow for solving mass-spring system problems is:</p>
+
+<ol>
+  <li>Derive the equation(s) of motion for the system by using Newton’s second law (applied separately to each mass).</li>
+  <li>Combine terms and put into standard form. The ODEs will always be linear, second order, and have constant coefficients.</li>
+  <li>Solve using the methods we have already learned (usually characteristic equation and undetermined coefficients).</li>
+</ol>
+
+<p>In the remainder of this page, we’ll look through a few cases related to mass-spring systems. As you go through these, keep this workflow in mind, and also be sure to try to relate the equations of motion back to one of the solution methods we’ve already learned. Specifically, we will be using the characteristic equation to solve the homogeneous/unforced equations, and undetermined coefficients to solve systems with external force applied to at least one mass in the system.</p>
+
+<h3 id="free-oscillations">Free Oscillations</h3>
+
+<p>The simplest type of mass-spring system is free oscillaiton, or <em>undamped motion</em>. This means that there is no damping/friction present in the system. Consider the simple system below:</p>
+
+<div style="margin: auto">
+<img style="width: 70%; display: block; margin: auto;" src="../../../assets/notes-figures/MassSpringFigs/mass-spring-2.png" />
+</div>
+
+<p>The equation of motion for this system is:</p>
+
+\[mx'' = -kx\]
+
+<p>So the solution is:</p>
+
+\[x(t) = C_1 \sin\left(\sqrt{\frac{k}{m}}t\right) + C_2 \cos\left(\sqrt{\frac{k}{m}}t\right)\]
+
+<p>Clearly, all undamped motion will be a sinusoidal solution. If we think back to the characteristic equation solution to the above ODE, undamped motion always has two conjugate, pure imaginary roots, which means the solution will always be a sinusoid.</p>
+
+<h3 id="damping">Damping</h3>
+
+<p>We now move on to damped motion. Damped motion is exactly what it sounds like: you have damping in the system i.e. there is a dashpot or other source of friction in the system. As an example, let’s look at the example from the beginning of this section of notes:</p>
+
+<div style="margin: auto">
+<img style="width: 70%; display: block; margin: auto;" src="../../../assets/notes-figures/MassSpringFigs/mass-spring-3.png" />
+</div>
+
+<p>We already saw that the equation of motion for the mass is:</p>
+
+\[mx'' + \beta x' + kx = 0\]
+
+<p>Before we go further, let’s rewrite this equation a bit so it will be in a more general form. We want to make the equation look like:</p>
+
+\[x'' + 2 \mu x' + \omega^2 x = 0\]
+
+<p>For this ODE, we can do this by substituting \(\lambda = \frac{\beta}{2m}\) and \(\omega^2 = \frac{k}{m}\). Whenever you have a mass spring system, you should <em>always</em> put the ODE in this form, since it will make it much easier to identify the below cases for damping.</p>
+
+<p>Now that we’ve rearranged the equation, we can easily solve using the characteristic equation \(x(t) = Ce^{\lambda t}\). This yields:</p>
+
+\[\lambda = -\mu \pm \sqrt{\mu^2 - \omega^2}\]
+
+<p>This should look <em>very</em> familiar to when we were classifying solutions with characteristic equation (since we’re essentially doing this again). There are three main cases for damped (unforced) motion:</p>
+
+<ul>
+  <li><strong>Overdamped motion:</strong> \(\omega^2 &lt; \mu^2\) (two distinct, real roots) which has solution:
+\(\begin{gather}
+x(t) = C_1 e^{(-\mu + \sqrt{\mu^2 - \omega^2})t} + C_2 e^{(-\mu - \sqrt{\mu^2 - \omega^2})t}
+\end{gather}\)</li>
+  <li><strong>Critically damped:</strong> \(\omega^2 = \mu^2\) (one real, repeated root)
+\(\begin{gather}
+x(t) = e^{-\mu t}(C_1 + C_2 t)
+\end{gather}\)</li>
+  <li><strong>Underdamped:</strong> \(\omega^2 &gt; \mu^2\) (two complex conjugate roots)
+\(\begin{gather}
+x(t) = e^{-\mu t} \left[ C_1 \cos\left(\sqrt{\omega^2 - \mu^2} t\right) + C_2 \sin \left(\sqrt{\omega^2 - \mu^2}t\right) \right] 
+\end{gather}\)</li>
+</ul>
+
+<p>Examples of these types of motion are shown in the plot below:</p>
+
+<div style="margin: auto">
+<img style="width: 70%; display: block; margin: auto;" src="../../../assets/notes-figures/MassSpringFigs/mass-spring-plot-1.png" />
+</div>
+
+<p>Notice that overdamped and critically damped motion look pretty similar, but are very different from underdamped motion. Underdamped motion will always be a decaying sinusoid, and therefore is easy to identify.</p>
+
+<p><em>Note:</em> you should be able to match equations to plots for mass-spring systems. A central part of doing so is having intuition for how the plot looks for each type of mass-spring system.</p>
+
+<h3 id="multiple-springs-and-dashpots">Multiple Springs and Dashpots</h3>
+
+<p>Before we move onto the hard section, we should quickly note what happens when we have multiple springs/dashpots in a system. Consider the mass-spring diagram below:</p>
+
+<div style="margin: auto">
+<img style="width: 70%; display: block; margin: auto;" src="../../../assets/notes-figures/MassSpringFigs/mass-spring-4.png" />
+</div>
+
+<p>Whenever we have multiple springs/dashpots, we follow the same procedure as before: write the force balance equation, then rearrange to be in standard form. For this system:</p>
+
+\[\begin{gather}
+mx'' = -k_1 x - \beta x' - k_2 x \\
+m x'' + \beta x' + (k_1 + k_2 )x = 0 
+\end{gather}\]
+
+<p>Notice that when we have multiple springs or dashpots, all of the damping terms and spring constants will group together with \(x'\) and \(x\), respectively.</p>
+
+<p>What if we have springs in series or parallel? Consider the mass-spring system below:</p>
+
+<div style="margin: auto">
+<img style="width: 70%; display: block; margin: auto;" src="../../../assets/notes-figures/MassSpringFigs/mass-spring-6.png" />
+</div>
+
+<p>Here, we have two springs in parallel, so we need to group these springs together:</p>
+
+<div style="margin: auto">
+<img style="width: 70%; display: block; margin: auto;" src="../../../assets/notes-figures/MassSpringFigs/mass-spring-7.png" />
+</div>
+
+<p>Notice that this looks just like the diagram from the beginning of the mulitple springs/dashpots section, so if we know all of the spring constants (i.e. can find \(k_{eq}\)), we already know the equation of motion. Springs in parallel obey a similar rule as resistors in parallel, i.e.</p>
+
+\[\frac{1}{k_{eq}} = \frac{1}{k_1} + \frac{1}{k_2}\]
+
+<p>So for this system, we have:</p>
+
+\[k_{eq} = \frac{k_2k_3}{k_2 + k_3}\]
+
+<p>Using this, we can easily write the equation of motion for the mass.</p>
+
+<h3 id="forcing-beats-and-resonance">Forcing, Beats, and Resonance</h3>
+
+<p>Now we come to forced mass-spring systems. Forced motion means there is some sort of outside force acting on the masses (i.e. motion independent of the spring or damping forces). Let’s modify the above mass-spring system slightly to include a <em>forcing</em> term i.e. something driving the mass that is driven separately from the mass:</p>
+
+<div style="margin: auto">
+<img style="width: 70%; display: block; margin: auto;" src="../../../assets/notes-figures/MassSpringFigs/mass-spring-5.png" />
+</div>
+
+<p>This is the same mass-spring system from before, but we’ve added a platform connected to \(m\) with spring that moves according to some function \(g(t)\). To derive the equation of motion for \(m\), we once again start with the force balance equation:</p>
+
+\[\begin{align}
+ma &amp;= \sum_i F_i \\
+&amp;= F_{\text{spring 1}} + F_{\text{dashpot}} + F_{\text{spring 2}} \\
+mx'' &amp;= - k_1 x - \beta x' + F_{\text{spring 2}} 
+\end{align}\]
+
+<p>Now we just need to treat the force term from the second spring. We can write the equation for the force from a spring (regardless of whether the endpoints are moving or not) as:</p>
+
+\[F_{\text{spring}} = - k \Delta L\]
+
+<p>where \(L(t)\) is the length of the spring. Now, we could go through in gory detail how to arrive at this, but I know most of you don’t really care, so I’m just going to give you the result. For a spring acting on a mass \(m\), we can write the force from the spring as:</p>
+
+\[F_{\text{spring}} = - k \left([\text{Displacement of mass}] - [\text{Displacement of other endpoint}]  \right)\]
+
+<p>Notice that this equation actually generalizes the equation when the opposite end point was fixed—if the opposite end point is attached to a wall i.e. fixed, there is no displacement. (As an aside, this is the same idea we’ll use when deriving equations for multi-degree of freedom systems below.)</p>
+
+<p>Using this, we can write the force from the second spring above as:</p>
+
+\[F_{\text{spring 2}} = - k_2 (x - g(t))\]
+
+<p>so the equation of motion becomes:</p>
+
+\[mx'' = - k_1 x - \beta x' - k_2 (x - g(t))\]
+
+<p>or</p>
+
+\[mx'' + \beta x' + (k_1 + k_2)x = k_2 g(t)\]
+
+<p>So, a forcing function will just give us an <em>inhomogeneous</em> linear second order constant coefficient ODE.</p>
+
+<p>Before we go any further, let’s recall that generalized form of the mass-spring equation, and add in a forcing term:</p>
+
+\[x'' + 2 \lambda x' + \omega^2 = r(t)\]
+
+<p>Now we have something pretty general that will be easy to work with. Typically, the forcing function will be on <em>oscillatory</em> function i.e. a sine or a cosine, so \(r(t)\) will look something like:</p>
+
+\[r(t) = F_0 \sin(\gamma t)\]
+
+<p>(It could also have a cosine, but to keep our lives easier, we’ll just stick with a sine. Notice though that all the results remain the same even if the forcing function was a cosine.)</p>
+
+<p>There’s four cases of forced mass-spring systems that we care about:</p>
+
+<ol>
+  <li>When the system is damped (and therefore has a decaying homogeneous solution)</li>
+  <li>When the system is undamped and its natural frequency \(\omega\) is very different from the forcing frequency \(\gamma\)</li>
+  <li>Undamped and \(\omega \approx \gamma\)</li>
+  <li>Undamped and \(\omega = \gamma\)</li>
+</ol>
+
+<p><strong>Case 1 (damped motion):</strong> The first case is pretty simple. When we have damping, we know that the homogeneous solution will be a decaying sinusoid, and from method of undetermined coefficients we know that the particular solution will be a sine/cosine. (See how undetermined coefficients is coming back here?) The homogeneous solution decays over time, so it is known as the <em>transient solution</em>. The particular solution is just a sine or cosine, which goes on forever, so it’s known as the <em>steady state solution</em>. (In general, when you hear “steady state solution”, you should immediately think about what the solution looks like as \(t \to \infty\).)</p>
+
+<p>For Case 1, a sample solution is shown in the plot below. Notice how the solution is a superposition of the homogeneous and particular solutions, and the homogeneous solution decays over time.</p>
+
+<div style="margin: auto">
+<img style="width: 70%; display: block; margin: auto;" src="../../../assets/notes-figures/MassSpringFigs/mass-spring-ex-1.png" />
+</div>
+
+<p><strong>Case 2 (undumped and \(\omega \neq \gamma\)):</strong> Case 2 is pretty similar to the first, except we have no damping (i.e. \(\lambda=0\)), and consequently both the homogeneous and particular solutions do not decay (they are both sinusoids with distinct frequencies). Consider the example in the plot below. Notice that the solution is a superposition of two sinusoids.</p>
+
+<div style="margin: auto">
+<img style="width: 70%; display: block; margin: auto;" src="../../../assets/notes-figures/MassSpringFigs/mass-spring-ex-2.png" />
+</div>
+
+<p><strong>Case 3 (undamped with \(\omega \approx \gamma\)):</strong> Case 3 is known as <strong>beats</strong>. This is where \(\omega \approx \gamma\) and there’s no damping, so both the homogeneous and particular solutions are sinusoids <em>and</em> we have cancellation between the homogeneous and particular solutions. An example solution is shown in the plot below. It is actually possible to show that when \(\omega \approx \gamma\), the solution will be a superposition of two sine waves with very similar frequencies, but this requires a lot of algebra to show and isn’t going to significantly improve your life, so we don’t go into it here.</p>
+
+<div style="margin: auto">
+<img style="width: 70%; display: block; margin: auto;" src="../../../assets/notes-figures/MassSpringFigs/mass-spring-ex-3.png" />
+</div>
+
+<p><strong>Case 4 (undamped with \(\omega = \gamma\)):</strong> Finally, we have Case 4. This case is known as <strong>resonance</strong>, and occurs when \(\omega=\gamma\) and we have no damping. Recall that for an ODE of the form:</p>
+
+\[x'' + \omega^2x = F_0 \sin(\omega t)\]
+
+<p>the particular solution is</p>
+
+\[x_h(t) = C_1 \sin(\omega t) + C_2 \cos(\omega t)\]
+
+<p>To solve for the particular solution, we use method of undetermined coefficients. However, \(r(t)\) here matches the homogeneous basis functions, so we need to apply the modification rule. Therefore, the particular solution will be of the form:</p>
+
+\[x_p(t) = A t \sin(\omega t) + B t \cos(\omega t)\]
+
+<p>So, we see that the particular solution grows in time. (You can think of it as a sine/cosine with the amplitude growing in time.) This is why when we have resonance, the solution blows up. An example of resonance is shown in the plot below. When looking at a plot of a solution, it is easy to spot resonance because the solution will always be growing linearly in \(t\).</p>
+
+<div style="margin: auto">
+<img style="width: 70%; display: block; margin: auto;" src="../../../assets/notes-figures/MassSpringFigs/mass-spring-ex-4.png" />
+</div>
+
+<p>I know that was a lot, but hopefully you got through it unscathed. This last section should be pretty easy in comparison.</p>
+
+<h3 id="multi-degree-of-freedom-systems">Multi-Degree of Freedom Systems</h3>
+
+<p>Finally, we have multi-degree of freedom (multi-DoF) mass-spring systems. While these look daunting at first, we’ll see that we’ve actually done most of the hard work already. Let’s start with a simple (forced) multi-DoF mass-spring system:</p>
+
+<div style="margin: auto">
+<img style="width: 70%; display: block; margin: auto;" src="../../../assets/notes-figures/MassSpringFigs/mass-spring-8.png" />
+</div>
+
+<p>When we have a multi-DoF systems, we need to write a force balance equation for <em>each</em> mass (each DoF). Intuitively this makes sense: we have two independent functions we need to solve for, so we’ll need one differential equations for each.</p>
+
+<p>Let’s start by writing the equation for Mass 1. To do this, we begin with Newton’s second law:</p>
+
+\[m_1 x_1'' = -k_1 x_1 - \beta_1 x_1' - k_2[\text{Stretch on spring 2}]\]
+
+<p>Remember from above when both end points of the spring are moving, we calculate the stretch as the difference between the displacement of the mass and the displacement of the other end. In this case, the other end is the displacement of Mass 2. So, the equation of motion for Mass 1 is:</p>
+
+\[m_1 x_1'' = -k_1 x_1 - \beta_1 x_1' - k_2(x_1 - x_2)\]
+
+<p>Similarly for Mass 2, we use Newton’s second law to write the equation of motion. Note here that we have a dashpot with two moving ends. The force from the dashpot will be opposite the direction of the <em>net</em> velocity. So, very similarly to the spring force, we calculate net velocity as velocity of the mass minus velocity of the other end. We can then write the equation of motion as follows:</p>
+
+\[m_2 x_2'' = -k_2 (x_2 - x_1) - k_3(x_2 - g(t)) - \beta_2(x_2' - g'(t))\]
+
+<p>See? Not too bad.</p>
+
+<h3 id="concluding-remarks">Concluding Remarks</h3>
+
+<p>The most important thing to takeaway about mass-spring systems is the <em>qualitative</em> characteristics of the solutions instead of the actual analytical solutions. All mass-spring system equations will boil down to linear second order constant coefficient ODEs, which we’ve already learned how to solve in great depth. The power of analyzing systems in terms of mass-spring systems is being able to model a system and quickly determine if we’ll have resonance, beats, a particular type of damping, etc. This type of analysis is far more valuable for engineering systems than being able to derive a certain solution for a certain forcing function by hand.</p>
+
+<p>Either way, just remember to start with Newton’s second law, write the force balance equation, and know how to check for the different types of motion discussed here. If you can do this, you’ll be in great shape for any mass-spring system problems you encounter.</p>
+
+
+  </div>
+</article>
+
+    </div>
+
+    <div class="wrapper-footer">
+      <div class="container">
+        <footer class="footer">
+          
+<a href="mailto:timothy.isaac.anderson@gmail.com"><i class="svg-icon email"></i></a>
+
+
+<a href="https://github.com/timanderson1994"><i class="svg-icon github"></i></a>
+<a href="https://instagram.com/timmydingdong"><i class="svg-icon instagram"></i></a>
+<a href="https://www.linkedin.com/in/timanderson1994"><i class="svg-icon linkedin"></i></a>
+
+
+
+
+
+
+        </footer>
+      </div>
+    </div>
+
+    
+
+  </body>
+</html>

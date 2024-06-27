@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Linear Second Order ODEs: Part 2 – Tim Anderson</title>
+
+        <meta charset="utf-8" />
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0'>
+
+    
+    <meta name="description" content="Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. ">
+    <meta property="og:description" content="Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. " />
+    
+    <meta name="author" content="Tim Anderson" />
+
+    
+    <meta property="og:title" content="Linear Second Order ODEs: Part 2" />
+    <meta property="twitter:title" content="Linear Second Order ODEs: Part 2" />
+    
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" type="text/css" href="../../../style.css" />
+    <link rel="alternate" type="application/rss+xml" title="Tim Anderson - Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. " href="../../../feed.xml" />
+
+<!-- 
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+ -->
+
+  <!-- Created with Jekyll Now - http://github.com/barryclark/jekyll-now -->
+  </head>
+
+  <body>
+    <div class="wrapper-masthead">
+      <div class="container">
+        <header class="masthead clearfix">
+          <a href="../../../index.html" class="site-avatar"><img src="../../../assets/images-general/duck.jpg" /></a>
+
+          <div class="site-info">
+            <h1 class="site-name"><a href="../../../index.html">Tim Anderson</a></h1>
+            <!-- <p class="site-description">Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. </p> -->
+          </div>
+
+          <nav>
+            <a href="../../../Research/index.html">Research</a>
+            <a href="../../../Publications/index.html">Publications</a>
+            <a href="../../index.html">Resources</a>
+            <a href="../../../Misc/index.html">Misc</a>
+            <!-- <a href="/Blog/">Blog</a> -->
+            <a href="../../../About/index.html">About</a>
+          </nav>
+        </header>
+      </div>
+    </div>
+
+    <div id="main" role="main" class="container">
+          <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<!-- 
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    });
+
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+    </script>
+<style>
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+</style>
+ -->
+<article class="page">
+
+  <h1>Linear Second Order ODEs: Part 2</h1>
+
+  <div class="entry">
+    <h3 id="takeaways">Takeaways</h3>
+
+<ul>
+  <li>Variation of parameters and undetermined coefficients are for inhomogeneous linear second order ODEs of the form:
+\[ y’’ + p(x) y’ + q(x)y = r(x) \]</li>
+  <li>When solving for the overall solution, you will still need to use the homogeneous equation solution methods (reduction of order, characteristic equation) to find the homogeneous part of the solution</li>
+  <li>Variation of parameters applies to <em>any</em> inhomogeneous linear second order ODE. The only requirement is that you know the basis functions (which are either given, or you solve for using one of our known methods). The solution is given by:
+\[ y_p = - y_1 \int \frac{y_2 r}{W}dx + y_2 \int \frac{y_1r}{W}dx \]
+where \(W = y_1y_2' - y_2 y_1'\) is known as the <em>Wronskian</em> of the equation.</li>
+  <li>Undetermined coefficients only applies to constant coefficient ODEs. You use the right hand side function \(r(x)\) to pick the form of the assumed solution, then plug the assumed solution into the ODE to find the coefficients in teh assumed solution.</li>
+  <li>If one of the terms in the assumed solution matches one of the homogeneous solution basis functions, you need to apply modification rule to this term by multiplying the term by \(x\) before plugging into the equation. (You will need to do this up to two times—once for each homogeneous basis function.)</li>
+</ul>
+
+<h3 id="differences-from-previous-section">Differences from Previous Section</h3>
+
+<p>The previous section of notes focused on solution methods for <em>homogeneous</em> linear second order ODEs i.e. \(r(x)=0\). In this section, we focus on <em>inhomogeneous</em> ODEs. Be sure to keep this distinction in mind: the methods presented in this section of notes—variation of parameters and undetermined coefficients—are only for inhomogeneous ODEs. It is a common mistake to confuse which methods apply to homogeneous vs. inhomogeneous problems, so I am emphasizing this point before we proceed any further. The sticking point often arises because inhomogeneous ODEs have both homogeneous and particular solutions. In this case, you will use the solution methods from the last section to solve for the homogeneous solution, then use the methods presented here to solve for the particular solution.</p>
+
+<p>Throughout this section we’ll be considering ODEs of the form:</p>
+
+\[y'' + p(x) y' + q(x)y = r(x)\]
+
+<p>This ODE is in standard form, which is important because very often the original ODE will not be in standard form (especially if the homogeneous problem is an Euler-Cauchy equation), so it is up to you to <em>first</em> put it into standard form, <em>then</em> follow the solution methods in this section. Also note that the ODE being in standard form or not does not actually matter for solving the homogeneous problem, only for solving the inhomogeneous problem.</p>
+
+<p>With all that said, let’s dive in.</p>
+
+<h3 id="variation-of-parameters">Variation of Parameters</h3>
+
+<p>Variation of parameters is the only valid method for <em>non-constant coefficient inhomogeneous linear second order ODEs</em> we learn in this class. This is a common hiccup for many students, so I want to emphasize it early on before I even explain the method.</p>
+
+<p>The main motivation for variation of parameters is this: if we know the homogeneous solution basis and the right hand side function (when the ODE is in standard form—an important point as you’ll see), then we can find the particular solution to the inhomogeneous problem as some combination of the homogeneous basis and the right hand side.</p>
+
+<p>The first step is to recognize that the particular solution cannot have any terms in common with the homogeneous basis. On a high level, this is because any term that they have in common would get absorbed into the homogeneous solution. This means that our particular solution needs to be a linear combination of the homogeneous basis solutions with each multiplied by some function of \(x\). That is, we have \(y_p\) of the form:</p>
+
+\[y_p = u_1(x)y_1(x) + u_2(x)y_2(x)\]
+
+<p>We assume in variation of parameters that we’ve already solved the homogeneous problem, so we already know \(y_1\) and \(y_2\). Therefore, the goal of the problem is to solve for \(u_1\) and \(u_2\)   .</p>
+
+<p>We first take the derivative of this assumed form of the solution:</p>
+
+\[y_p' = u_1'y_1 + u_1y_1' + u_2'y_2 + u_2y_2'\]
+
+<p>Next, we need to add an additional constraint. We choose to relate the functions \(u_1\) and \(u_2\) by requiring:</p>
+
+\[u_1' y_1 + u_2'y_2 = 0\]
+
+<p>While this assumption does have some theoretical backing, we will not go further with it here. From here, we have:</p>
+
+\[y_p' = u_1y_1' + u_2y_2'\]
+
+<p>which we differentiate again to find:</p>
+
+\[y_p'' = u_1y_1'' + u_1'y_1' + u_2y_2'' + u_2'y_2'\]
+
+<p>We then plug this into the ODE (and using that \(y_1\) and \(y_2\) are homogeneous solutions):</p>
+
+\[\begin{gather} 
+(u_1y_1'' + u_1'y_1' + u_2y_2'' + u_2'y_2') + p(x) (u_1y_1' + u_2y_2') + q(x)(u_1(x)y_1(x) + u_2(x)y_2(x)) = r(x) \\
+u_1(y_1'' + p(x) y_1' + q(x)y_1) + u_2(y_2'' + p(x) y_2' + q(x)y_2) + u_1'y_1' + u_2'y_2' = r(x) \\
+u_1'y_1' + u_2'y_2' = r(x) 
+\end{gather}\]
+
+<p>So, we now have the linear system of ODEs:</p>
+
+\[\begin{align}
+u_1' y_1 + u_2'y_2 &amp;= 0 \\
+u_1'y_1' + u_2'y_2' &amp;= r(x) 
+\end{align}\]
+
+<p>which we can solve for \(u_1'\) and \(u_2'\). When we solve the linear system, we find:</p>
+
+\[\begin{align}
+u_1' &amp;= -\frac{y_1 r(x)}{y_1y_2' - y_2y_1'} \\
+u_2' &amp;= \frac{y_2 r(x)}{y_1y_2' - y_2y_1'}
+\end{align}\]
+
+<p>We call the denominator in these equations the <em>Wronskian</em> of the ODE. The Wronskian has special theoretical importance for ODEs, but this is not taken any further in CME 102. Here, we simply denote it as \(W = y_1y_2' - y_2y_1'\). (For a short glimpse into the theoretical importance of the Wronskian, note that if \(W = 0\), we will not have a valid solution to the ODE.) After this slight change in notation, we can write the solution to the linear system as:</p>
+
+\[\begin{align}
+u_1' &amp;= -\frac{y_1 r(x)}{W} \\
+u_2' &amp;= \frac{y_2 r(x)}{W}
+\end{align}\]
+
+<p>which after we integrate becomes:</p>
+
+\[\begin{align}
+u_1 &amp;= -\int \frac{y_2 r(x)}{W} dx \\
+u_2 &amp;= \int \frac{y_1 r(x)}{W} dx
+\end{align}\]
+
+<p>Using these, we can write the final particular solution as:</p>
+
+\[\begin{gather} y_p = -y_1(x) \int \frac{y_2(x) r(x)}{W} dx + y_2(x)\int \frac{y_1(x) r(x)}{W} dx  \end{gather}\]
+
+<p>A few remarks on what we have done so far:</p>
+<ul>
+  <li>This formula is a “plug and chug” formula. This means that if you correctly solve for the homogeneous basis, you can simply calculate the Wronskian, put the ODE in standard form to find \(r(x)\), and compute the integrals to find the solution</li>
+  <li>Just to re-emphasize, the ODE must be in standard form or this method will not work. If you follow the derivation closely, you’ll notice that this would not give the correct solution to the linear equations if the ODE was not in standard form</li>
+  <li>On an exam, you should <em>never</em> rederive this formula; this is something to use (when appropriate)</li>
+</ul>
+
+<p>To close this part, let’s work through a quick problem. Consider the ODE:</p>
+
+\[y'' + 2y' + y = \cos(x)\]
+
+<p>This ODE has homogeneous solution:</p>
+
+\[y_h = e^{-x}(C_1 + C_2x)\]
+
+<p>so we have</p>
+
+\[y_1 = e^{-x} \quad y_2 = xe^{-x}\]
+
+<p>(Remember that the homogeneous basis is just the functions themselves and does not include the constants.) The ODE is already in standard form, so we can plug in to find the solution:</p>
+
+\[\begin{align}
+y_p &amp;= -y_1(x) \int \frac{y_2(x) r(x)}{W} dx + y_2(x)\int \frac{y_1(x) r(x)}{W} dx \\
+W &amp;= y_1y_2' - y_2y_1' \\
+&amp;= e^{-x}(e^{-x} - xe^{-x}) + xe^{-2x} \\
+&amp;= e^{-2x} \\
+y_p &amp;= -e^{-x} \int \frac{xe^{-x} \cos(x)}{e^{-2x}} dx + xe^{-x}\int \frac{e^{-x} \cos(x)}{e^{-2x} } dx \\
+&amp;= -e^{-x} \int xe^{x} \cos(x) dx + xe^{-x}\int e^{x} \cos(x) dx \\
+&amp;= -e^{-x} \left(\frac{1}{2} e^x ((x - 1) sin(x) + x cos(x))\right) + xe^{-x}\left( \frac{1}{2} e^x (sin(x) + cos(x))\right) \\
+&amp;= \frac{1}{2} \sin (x) \quad\blacksquare
+\end{align}\]
+
+<p>So, by simply plugging into the formula, we can arrive at the solution. While variation of parameters is a very attractive method for this reason, as we’ll see below, it may not always be the most efficient or straightforward.</p>
+
+<h3 id="undetermined-coefficients-guessing-the-solution">Undetermined Coefficients: Guessing the Solution</h3>
+
+<p>Variation of parameters is nice because it’s a “plug and chug” method: identify the right inputs to the equation, hack through the integrals, and you’ll arrive at the right solution. However, when we have a <em>constant coefficient</em> second order linear inomogeneous ODE, we can use a considerably simple method, the method of undetermined coefficients.</p>
+
+<p>The method of constant coefficients essentially reduces our differential equation into a system of algebraic equations. The general workflow for method of undetermined coefficients is:</p>
+
+<ol>
+  <li>Check that the ODE is linear and constant coefficient (in this class we only ask you to solve the second order case, but this method is readily applied to higher order ODEs as well)</li>
+  <li>Using the right hand side function \(r(x)\), guess the proper form for the solution</li>
+  <li>Take derivatives of the assumed solution and plug into the ODE</li>
+  <li>Solve for the coefficients in the assumed solution by matching coefficients in the ODE</li>
+</ol>
+
+<p>While there is a bit more book-keeping involved with undetermined coefficients, something important to keep in mind is that the method of undetermined coefficients only involves solving algebraic equations and not integration. In general, integraton is <em>much</em> harder than algebra, so even if you <em>can</em> solve a problem using variation of parameters, it is almost always better to use undetermined coefficients since there is a lower probability you will make a mistake in solving algebraic equations than computing integrals.</p>
+
+<p>Let’s walk through these steps and discuss their justification by working through an example problem. Consider the ODE:</p>
+
+\[y'' + 2y' + y = \cos(x)\]
+
+<p>It is easy to see that the ODE is linear, second order and inhomogeneous. From above, the homogeneous solution is:</p>
+
+\[y_h = e^{-x}(C_1 + C_2x)\]
+
+<p>Next, we need to pick our assumed solution. While the full table is given in Prof. Le’s course reader (or is available online elsewhere), the most important rule in all of these tables (and the last row in Prof. Le’s) is for \(r(x)\) of the form:</p>
+
+\[r(x) = x^n e^{\gamma x} \cos(\omega x) \quad \text{or} \quad x^n e^{\gamma x} \sin (\omega x)\]
+
+<p>we assume a solution of the form:</p>
+
+\[\begin{align} 
+y_p &amp;= (A_n x^n + A_{n-1}x^{n-1} + \cdots + A_1x + A_0) e^{\gamma x} \cos (\omega x) + \\
+&amp;\qquad (B_n x^n + B_{n-1}x^{n-1} + \cdots + B_1x + B_0) e^{\gamma x} \sin (\omega x) 
+\end{align}\]
+
+<p>This rule encompasses all of the others in the table (the others are just a bit more readable). In this example problem, we see that we do not have any \(x\) terms on the right hand side, so \(n = 0\). There are also no exponentials, so \(\gamma = 0\). The right hand side in the above example is a cosine with \(\omega = 1\), so we assume a solution of the form:</p>
+
+\[y_p = A \cos(x) + B \sin(x)\]
+
+<p>From here, we need to take derivatives of the assumed solution:</p>
+
+\[\begin{align}
+y_p &amp;= A \cos(x) + B \sin(x) \\
+y_p' &amp;= -A\sin(x) + B \cos(x) \\
+y_p'' &amp;= - A \cos(x) - B \sin (x)
+\end{align}\]
+
+<p>and plug into the ODE:</p>
+
+\[\begin{gather}
+y'' + 2y' + y = \cos(x) \\
+- A \cos(x) - B \sin (x) + 2 (-A\sin(x) + B \cos(x)) + A \cos(x) + B \sin(x) = \cos(x) \\
+2 B \cos(x) - 2A \sin(x) = \cos(x)
+\end{gather}\]
+
+<p>From here, we <em>match coefficients</em> to solve for \(A\) and \(B\). The argument for matching coefficients is that if we want both sides of the equation to be equal for all values of \(x\), we need the coefficients for similar terms to match. Here, we have \(\sin(x)\) and \(\cos(x)\) on both sides, so we need their coefficients to match i.e. we need:</p>
+
+\[\begin{gather}
+2B = 1 \\
+-2A = 0 
+\end{gather}\]
+
+<p>We quickly see that this has solution \(B = 1/2\) and \(A = 0\). So, now that we have solved for the coefficients, we can write down the final particular solution:</p>
+
+\[y_p = \frac{1}{2} \sin(x)\]
+
+<p>and the overall solution for the ODE:</p>
+
+\[y(x) = y_h + y_p = e^{-x}(C_1 + C_2x) + \frac{1}{2} \sin(x) \quad\blacksquare\]
+
+<p>Choosing the form of the solution is the most important part of the method of undetermined coefficients. When choosing the method, there are two facts to be aware of:</p>
+<ul>
+  <li>If you choose too many terms, the coefficients for the superfluous terms will be zero when you solve for the coefficients</li>
+  <li>If you choose too few terms, the method will fail</li>
+  <li>It is better to choose too many instead of too few terms, but too many terms makes this method inefficient (meaning you should probably use variation of parameters instead), so don’t go overboard</li>
+</ul>
+
+<h3 id="the-sticking-point-modification-rule">The Sticking Point: Modification Rule</h3>
+
+<p>While undetermined coefficients is a fairly straightforward solution method, there is a bit of a twist known as the <em>modification rule</em>. Before we proceed any further though, make sure you understand 1) what a homogeneous basis is, and 2) the basic outline of how to solve problems via undetermiend coefficients. Understanding these is absolutely critical to modification rule.</p>
+
+<p>We hinted earlier in the derivation for variation of parameters that if the particular solution has a term in common with one of the homogeneous basis functions, then that term will just get absorbed into the homogeneous basis. This is the main motivation for the modification rule. The modification rule for undetermined coefficients states that if our assumed solution has any terms in common with the homogeneous solution basis, we need to multiply those terms by \(x\). For example, if our equation had \(r(x) = e^x\) but our homogeneous solution basis was \(y_1 = e^{x}\) and \(y_2 = e^{-x}\), then our assumed solution should be \(y_p = Axe^x\) since \(e^x\), our original assumed solution, is one of the homogeneous basis functions.</p>
+
+<p>Let’s work through a short problem to demonstrate how this would work in practice. Suppose you are given the ODE:</p>
+
+\[y'' + y = \cos(x)\]
+
+<p>The homogeneous solution to this is:</p>
+
+\[y_h = A \cos(x) + B \sin(x)\]
+
+<p>For the particular solution we have \(r(x) = \cos(x)\), so we would pick \(y_p = A \sin(x) + B \cos(x)\). However, both of these terms appear in the homogeneous basis, so we need to multiply them by \(x\). This gives us an assumed solution:</p>
+
+\[y_p = A x\sin(x) + B x\cos(x)\]
+
+<p>We then take derivatives and plug this solution into the ODE to solve for the coefficients:</p>
+
+\[\begin{gather}
+y_p = A x\sin(x) + B x\cos(x) \\
+y_p'' = -A x \sin(x) + 2 A \cos(x) - 2 B \sin(x) - B x \cos(x) \\
+y'' + y = \cos(x) \\
+-A x \sin(x) + 2 A \cos(x) - 2 B \sin(x) - B x \cos(x) + A x\sin(x) + B x\cos(x) = \cos(x) \\
+2 A \cos(x) - 2 B \sin(x) = \cos(x) \\
+-2B = 0 \implies B = 0\\
+2A = 1 \implies A = \frac{1}{2} \\
+y_p = \frac{1}{2} x \sin(x) \quad\blacksquare 
+\end{gather}\]
+
+<p>So to sum up, the solution algorithm for undetermined coefficients (including the modification rule) would be:</p>
+<ol>
+  <li>Solve for the homogeneous basis</li>
+  <li>Put the ODE in standard form and pick a solution based on \(r(x)\)</li>
+  <li>If the assumed solution has any terms in common with the homogeneous basis, multiply these terms by \(x\)</li>
+  <li>If there are still any terms in common with the homogeneous basis, multiply the term by \(x\) again.</li>
+  <li>Take derivatives of the assumed solution and plug into the ODE</li>
+  <li>Match coefficients to form a linear system for the coefficients in the assumed solution</li>
+  <li>Solve the linear system for the coefficients to obtain the final solution</li>
+</ol>
+
+<p>So much time is devoted to method of undetermined coefficients in these notes because this is the single most useful solution method you learn in this class, and the method you will probably see the most in classes after CME 102.</p>
+
+<h3 id="some-final-points">Some Final Points</h3>
+
+<p>Second order linear inhomogeneous ODEs are probably the most important class of ODEs you’ll learn about this quarter. Some final notes on these types of problems:</p>
+
+<ul>
+  <li>When solving these, it is tempting to just try to always plug everything into the variation of parameters formula, but this formula can sometimes be very tricky to work through. Essentially, just because you can doesn’t mean you should.</li>
+  <li>Variation of parameters <em>only</em> applies to second order ODEs, whereas undetermined coefficients can apply to any linear constant coefficient ODE. (In CME 102, something having to do with this fact would make a great multiple choice question on an exam.)</li>
+  <li>If \(r(x)\) is separated into two or more functions \(r(x) = r_1(x) + \cdots + r_n(x)\), then for variation of parameters we would plug the entire expression into the formula, and for undetermined coefficients we pick a separate assumed solution for each term in the right hand side.</li>
+  <li>When choosing which method to use for a constant coefficient ODE, my rule of thumb is that if you have to solve for more than 3 coefficients in undetermined coefficients, you should use variation of parameters instead. Solving systems of 4 or more equations gets very tricky and time consuming, so at that point I believe it is best to just use the plug and chug approach.</li>
+</ul>
+
+
+  </div>
+</article>
+
+    </div>
+
+    <div class="wrapper-footer">
+      <div class="container">
+        <footer class="footer">
+          
+<a href="mailto:timothy.isaac.anderson@gmail.com"><i class="svg-icon email"></i></a>
+
+
+<a href="https://github.com/timanderson1994"><i class="svg-icon github"></i></a>
+<a href="https://instagram.com/timmydingdong"><i class="svg-icon instagram"></i></a>
+<a href="https://www.linkedin.com/in/timanderson1994"><i class="svg-icon linkedin"></i></a>
+
+
+
+
+
+
+        </footer>
+      </div>
+    </div>
+
+    
+
+  </body>
+</html>

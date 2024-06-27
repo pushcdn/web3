@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Numerical Methods 3 – Tim Anderson</title>
+
+        <meta charset="utf-8" />
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0'>
+
+    
+    <meta name="description" content="Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. ">
+    <meta property="og:description" content="Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. " />
+    
+    <meta name="author" content="Tim Anderson" />
+
+    
+    <meta property="og:title" content="Numerical Methods 3" />
+    <meta property="twitter:title" content="Numerical Methods 3" />
+    
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" type="text/css" href="../../../style.css" />
+    <link rel="alternate" type="application/rss+xml" title="Tim Anderson - Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. " href="../../../feed.xml" />
+
+<!-- 
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+ -->
+
+  <!-- Created with Jekyll Now - http://github.com/barryclark/jekyll-now -->
+  </head>
+
+  <body>
+    <div class="wrapper-masthead">
+      <div class="container">
+        <header class="masthead clearfix">
+          <a href="../../../index.html" class="site-avatar"><img src="../../../assets/images-general/duck.jpg" /></a>
+
+          <div class="site-info">
+            <h1 class="site-name"><a href="../../../index.html">Tim Anderson</a></h1>
+            <!-- <p class="site-description">Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. </p> -->
+          </div>
+
+          <nav>
+            <a href="../../../Research/index.html">Research</a>
+            <a href="../../../Publications/index.html">Publications</a>
+            <a href="../../index.html">Resources</a>
+            <a href="../../../Misc/index.html">Misc</a>
+            <!-- <a href="/Blog/">Blog</a> -->
+            <a href="../../../About/index.html">About</a>
+          </nav>
+        </header>
+      </div>
+    </div>
+
+    <div id="main" role="main" class="container">
+          <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<!-- 
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    });
+
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+    </script>
+<style>
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+</style>
+ -->
+<article class="page">
+
+  <h1>Numerical Methods 3</h1>
+
+  <div class="entry">
+    <h3 id="takeaways">Takeaways</h3>
+
+<ul>
+  <li>Finite difference formulas approximate derivatives by relating function values in a discritized domain</li>
+  <li>Direct method is for solving boundary value problems. We discritize the domain, insert finite difference formulas into the ODE, and use these to assemble a system of equations we can solve for the solution.</li>
+  <li>Multistep methods use multiple previous solution points to solve for the next point, and are good for solutions with lots of oscillations</li>
+  <li>Shooting method is a way of solving BVPs where we treat it as an IVP, then find the initial conditions that give a solution which satisfies the boundary conditions</li>
+</ul>
+
+<h3 id="overview">Overview</h3>
+
+<p>In this last set of notes on numerical methods, we address a <em>very</em> important class of problems: boundary value problems. These problems are extremely important both for ordinary differential equations as well as partial differential equations (which they cover in CME 104). We first go through the basics of these problems, and then a method for solving them known as the <strong>direct method</strong>.</p>
+
+<p>After this, we cover a couple remaining schemes that are important in the broader field of numerical mathematics, and are good for you to be exposed to at this early point in your engineering career. The discussion of these methods though will be relatively high-level since these are much more advanced than the other numerical methods in this course.</p>
+
+<h3 id="boundary-value-problems">Boundary Value Problems</h3>
+
+<p>A boundary value problem is a different type of ODE, but before we dive into them, let’s talk about initial value problems a bit, the type of ODEs we’ve been studying up until now in this course. By drawing parallels between initial value problems (IVPs) and boundary value problems (BVPs), hopefully BVPs will be easier to understand. Do not think of these as interchangeable though; at the bottom of these notes we briefly discuss some of the fundamental differences between BVPs and IVPs.</p>
+
+<p>IVPs are ODEs where all of the information for the problem is prescribed at the beginning of the domain. An example would be:</p>
+
+\[y'' + 4y = \cos(x), \qquad y(0) = 5, \; y'(0) = 0\]
+
+<p>Recall that initial conditions “pin down” the solution to a single solution, since we use initial conditions to solve for constants of integration. In a differential equation, the order of the equation is equal to the number of constants of integration we will have. The constants of integration function as extra degrees of freedom, and the initial conditions add extra constraints on the problem so we do not have any free parameters.</p>
+
+<p>In BVPs, instead of prescribing the information at the beginning of the domain, we prescribe it at the <em>boundaries</em> of the domain, hence why it is called a <em>boundary value</em> problem. An example of a BVP would be:</p>
+
+\[y'' + 4y = \cos(x), \qquad y(0) = 5, \; y'(\pi) = 0\]
+
+<p>See how we have defined two constraints, one at each boundary of the domain? These are known as <em>boundary conditions</em>, and understanding the different types is fundamental to working with BVPs.</p>
+
+<p>As a point to make before we move on, when it comes to solving BVPs analytically, keep in mind that we can use the same exact solution methods as we used for IVPs. For instance, the above example would be solved using characteristic equation and undetermined coefficients. The solution methods get you to the solution with the constants of integration; BVPs just define the information used to solve for these constants differently from how it’s defined for IVPs.</p>
+
+<h3 id="boundary-conditions">Boundary Conditions</h3>
+
+<p>There are three types of boundary conditions for BVPs, appropriately named Type I, II, and III. It is important to be able to quickly identify these not so much for analytical solutions, but for the numerical solutions. Specifically, you will need to treat Type II and III conditions quite differently from a Type I condition when using some of the numerical methods discussed here. For this reason, it is worth going over each condition.</p>
+
+<p>Type I boundary conditions (BCs), also known as Dirichlet (pronounced “der-i-shlay”) BCs, are where the function value is fixed at one end of the domain. In the example in the previous section, the left BC at \(x = 0\) is a Dirichlet condition since we are fixing the function value there. For a physical example, this would be like holding the temperature at one end of a heated rod at some constant, or grounding the voltage so that \(V = 0\) at the boundary.</p>
+
+<p>Type II BCs, known as Neumann BCs, is where we define the derivative at one end of the domain. In the above example, this is the type of BC we impose at \(x = \pi\). A physical version of this would be if we were modeling the temperature of a heated rod, and one end of the rod was a perfect thermal conductor such that \(T' = 0\) at that boundary.</p>
+
+<p>Type III BCs, known as Robin BCs, is where the boundary condition is defined as some relationship between the function value and its derivative at the boundary. (In CME 102, this relationship will always be linear, but in practice it may not be.) An example of a problem with a Robin BC is:</p>
+
+\[y'' + 4y = \cos(x),\qquad y(0) = 5,\; 2y(\pi) + y'(\pi) = 5\]
+
+<p>It’s difficult to define an exact physical analogue for a Robin BC, but they often arises in thermal and optical systems.</p>
+
+<p>Finally, keep in mind that <em>we need to have at least one type I BC in our problem</em>. If we don’t, then both ends are defined just in terms of derivatives, and we’re back to where we started: we still have a degree of freedom in the system.</p>
+
+<h3 id="finite-difference-formulas">Finite Difference Formulas</h3>
+
+<p>The next major topic in numerical methods we need to discuss are <strong>finite difference schemes</strong>. Finite difference schemes, in one sentence, are using the differences between the function evaluated at discrete points to approximate the function derivatives. These are incredibly important in solving differential equations, as will become apparent very shortly.</p>
+
+<p>Finite differences are in many ways a dual to the other numerical methods we’ve discussed so far. Previously (e.g. in forward Euler), we assumed that we were able to calculate the derivative at a given point, we had the function value at a specific point, and that by combining these we could calclate the next function value. In finite difference schemes, we’re assuming we have all the function values evaluated at discrete points (well call these points <em>nodes</em>), and are using these to estimate the derivative at a point.</p>
+
+<p>The simplest finite difference schemes are known as forward and backward differences. The forward difference formula is:</p>
+
+\[\begin{gather}
+y'_i = \frac{y_{i+1} - y_i}{h}
+\end{gather}\]
+
+<p>It is a <em>forward</em> difference because we’re estimating the derivative with the next function value. The backward difference formula is similarly:</p>
+
+\[\begin{gather}
+y'_i = \frac{y_{i} - y_{i-1}}{h}
+\end{gather}\]
+
+<p>We won’t dive into the accuracy analysis here (it is given in the course reader or easily found in any introductory textbook on numerical methods), but these schemes are both first order. However, similarly to when we derived the trapezoidal method, if we average these together we can obtain a second order accurate method:</p>
+
+\[\begin{gather}
+y'_i = \frac{y_{i+1} - y_{i-1}}{2h}
+\end{gather}\]
+
+<p>This is known as a <em>central difference</em> scheme, since we are using the function values at the nodes directly adjacent to the current node.</p>
+
+<p>We can also estimate second derivatives using a central difference scheme:</p>
+
+\[\begin{gather}
+y''_i = \frac{y_{i+1} - 2y_i + y_{i-1}}{h^2}
+\end{gather}\]
+
+<p>This scheme is second order accurate. The error analysis is a bit involved and unimportant to what we’ll be doing with it here. The easiest way to think of deriving this formula is applying the backward difference formula to $y’$ computed with forward differences:</p>
+
+\[y''_i = \frac{y'_i - y'_{i-1}}{h} = \frac{\frac{y_{i+1} - y_i}{h} - \frac{y_i - y_{i-1}}{h}}{h} = \frac{y_{i+1} - 2y_i + y_{i-1}}{h^2}\]
+
+<p>A couple notes before we move on to the next (much harder) part:</p>
+
+<ol>
+  <li>We can actually derive finite difference schemes for any higher order derivatives—we are not just limited to first and second derivatives (these schemes would be pretty useless if they had this limitation).</li>
+  <li>Not all higher order schemes are central difference schemes; indeed, there are many schemes known as <em>one-sided</em> schemes that only use values to the left or right.</li>
+</ol>
+
+<p>With that said, let the fun part begin.</p>
+
+<h3 id="putting-it-together-direct-method">Putting It Together: Direct Method</h3>
+
+<p>Now it’s time to put together all this stuff about boundary conditions and finite differences into a method for solving BVPs. Finite differences form a linear relationship between nodes in the domain, which suggests that we might be able to form a linear system system of equations for the function values at the nodes.</p>
+
+<p>This is exactly what we do with direct method: we plug the finite difference approximations to the derivatives into the ODE, rearrange these into a linear system, then solve the linear system to solve for the function values at all of the nodes. This method is called <em>direct</em> method because we are finding the node function values all at once, as opposed to finding them sequentially like with did with forward Euler or RK4.</p>
+
+<p>To see how this is done, we’ll work through the example from above. Let’s start with the simple case, where we have two type I boundary conditions:</p>
+
+\[\begin{gather} 
+y'' + 4y = \cos(x),\qquad y(0) = 5,\; y(\pi) = 0
+\end{gather}\]
+
+<p>We first need to insert the finite difference approximations into the equations. (Unless otherwise stated, it is safe to assume you should be using central difference schemes, since they are more accurate than the one-sided schemes we’ve studied here.) To do this, just simply substitute the finite differences for the derivatives:</p>
+
+\[\begin{gather} 
+\frac{y_{i+1} - 2y_i + y_{i-1}}{h^2} + 4y_i = \cos(x_i)
+\end{gather}\]
+
+<p>Note that we are only writing the equation out for a single arbitrary node \(i\). This is becaue the above equation applies to <em>all</em> nodes in the domain. (We just need to treat the boundary nodes slightly differently, as you’ll see below.) Next, we need to rearrange the equation so that the coefficients for the \(y_i\)’s are all grouped together:</p>
+
+\[\begin{gather} 
+y_{i-1} + (4h^2-2)y_i + y_{i+1} = h^2 \cos(x_i)
+\end{gather}\]
+
+<p>This equation is known as the <strong>recursive equation</strong> for direct method, because it recursively relates all non-boundary nodes in our domain. Be sure to know this term, it will come up a lot when you do direct method.</p>
+
+<p>Now, we need to treat the boundary conditions. When we have type I boundary conditions, the function value is fixed and we do not solve for it. We can also plug this value into the recursive equation for the node adjacent to the boundary node with a known value.</p>
+
+<p>Suppose we’re solving for \(N = 5\) nodes (two boundary nodes and three interior) in thsi example. Then, we would plug the boundary value for \(y_i = 1\) into the equation for \(i = 2\), and the value at \(y_i = 5\) into the equation for \(i = 4\). Doing this:</p>
+
+\[\begin{gather} 
+y_1 + (4h^2-2)y_2 + y_3 = h^2 \cos(x_2) \\
+5 + (4h^2-2)y_2 + y_3 = h^2 \cos(x_2) \\
+(4h^2-2)y_2 + y_3 = h^2 \cos(x_2)  - 5\\
+y_3 + (4h^2-2)y_4 + y_5 = h^2 \cos(x_4) \\
+y_3 + (4h^2-2)y_4 = h^2 \cos(x_4)
+\end{gather}\]
+
+<p>If we also write down the equation at \(i = 3\):</p>
+
+\[\begin{gather} 
+y_2 + (4h^2-2)y_3 + y_4 = h^2 \cos(x_3)
+\end{gather}\]
+
+<p>Two above equations together with the recursive equation applied at node \(i=3\), we have a full linear system for \(y_2\), \(y_3\), \(y_4\):</p>
+
+\[\begin{bmatrix} (4h^2-2) &amp; 1 &amp; 0 \\ 1 &amp; (4h^2-2) &amp; 1 \\ 0 &amp; 1 &amp; (4h^2-2) \end{bmatrix} \begin{bmatrix} y_2 \\ y_3 \\ y_4 \end{bmatrix} = \begin{bmatrix} h^2 \cos(x_2)  - 5 \\ h^2 \cos(x_3) \\ h^2 \cos(x_4) \end{bmatrix}\]
+
+<p>We can easily solve this linear system to find the numerical solution.</p>
+
+<h3 id="a-harder-case-neumann-and-robin-boundaries">A Harder Case: Neumann and Robin Boundaries</h3>
+
+<p>Discouragingly, this last example was the easy case since this problem had two type I BCs. What if we had a type II or type III boundary condition? Problems with Neumann and Robin boundary conditions prove to be trickier, but if we are careful about things I think you’ll find it’s actually reasonably straightforward.</p>
+
+<p>Let’s consider a modified version of the previous example, where we change the ODE to have a robin boundary condition:</p>
+
+\[y'' + 4y = \cos(x),\qquad y(0) = 5,\; 2y(\pi) + y'(\pi) = 5\]
+
+<p>First of all, <strong>different boundary conditions for the same ODE does not change the recursive equation</strong>. This is the same ODE as in the last part, so it has the same recursive equation:</p>
+
+\[\begin{gather} 
+y_{i-1} + (4h^2-2)y_i + y_{i+1} = h^2 \cos(x_i)
+\end{gather}\]
+
+<p>Let’s suppose we are still using \(N = 5\) nodes to solve for the numerical solution. We next need to derive the equation at the boundaries. Note that the left boundary is unchanged, so this equation is also the same:</p>
+
+\[\begin{gather}
+(4h^2-2)y_2 + y_3 = h^2 \cos(x_2)  - 5
+\end{gather}\]
+
+<p>Now comes the hard part: we need to find the equation at the right boundary. The right boundary is a type III BC, so the function value is not explicitly prescribed and we therefore need to solve for it. Let’s start by writing out the equation at the right boundary node:</p>
+
+\[\begin{gather} 
+y_4 + (4h^2-2)y_5 + y_6 = h^2 \cos(x_5)
+\end{gather}\]
+
+<p>Uh-oh, what’s wrong with this equation? We have \(y_6\), but our domain is only defined up to \(y_5\). We need to come up with a way to eliminate this point outside the domain.</p>
+
+<p>To do this, we use the boundary condition \(2y(\pi) + y'(\pi) = 5\). To treat a type III (or II) BC, we start by inserting our finite difference schemes into the formula just like we did to derive the recursive equation:</p>
+
+\[\begin{gather}
+2y_5 + \frac{y_6 - y_4}{2h} = 5
+\end{gather}\]
+
+<p>Aha! The same point outside our domain appears in this equation too. This means we can solve for this point as a function of points within the domain using the boundary condition equation, then plug this expression back into the recursive equation at \(i = 5\):</p>
+
+\[\begin{gather}
+y_6 = y_4 - 4hy_5 + 10h
+\end{gather}\]
+
+<p>Plugging into the recursive equation above and rearranging:</p>
+
+\[\begin{gather} 
+y_4 + (4h^2-2)y_5 + (y_4 - 4hy_5 + 10h) = h^2 \cos(x_5) \\
+2y_4 + (4h^2 - 4h - 2)y_5 = h^2 \cos(x_5) - 10h
+\end{gather}\]
+
+<p>Now we have a nice equation that is defined only in terms of nodes that lie within the domain. Basically, we introduced a point outside the domain, which we call a <strong>ghost point</strong>, and used this point to substitute the boundary condition into the recursive equation, thereby enforcing the BC.</p>
+
+<p>Now that we have the boundaries taken care of, we can assemble the final linear system:</p>
+
+\[\begin{gather}
+\begin{bmatrix} (4h^2-2) &amp; 1 &amp; 0 &amp; 0 \\ 1 &amp; (4h^2-2) &amp; 1 &amp; 0 \\ 0 &amp; 1 &amp; (4h^2-2) &amp; 1 \\ 0 &amp; 0 &amp; 2 &amp; (4h^2 - 4h - 2)\end{bmatrix} \begin{bmatrix} y_2 \\ y_3 \\ y_4 \\ y_5 \end{bmatrix} = \begin{bmatrix} h^2 \cos(x_2)  - 5 \\ h^2 \cos(x_3) \\ h^2 \cos(x_4) \\ h^2 \cos(x_5) - 10h \end{bmatrix}
+\end{gather}\]
+
+<p>which we can solve pretty easily in MATLAB (or by hand if you’re really enterprising).</p>
+
+<p>This has been a lot, so to close let’s summarize the steps to solving a direct method problem:</p>
+
+<ol>
+  <li>Insert finite difference formulas directly into the ODE.</li>
+  <li>Find the recursive equation by rearranging things so that all the coefficients so each \(y_i\) value are together. This is the equation you will use for the interior nodes.</li>
+  <li>Find the equation at the boundaries. If it a type I BC, we just plug the value directly into the equation. If it is a Type II or III BC, we need to insert finite difference formulas into the expression for the BC, solve out for the ghost points, and insert this into the equation for the boundary node.</li>
+  <li>Using the equations derived in steps 2 and 3 to assemble a linear system that can be solved for the function values at the nodes.</li>
+</ol>
+
+<p>Direct method is one of the trickiest topics in introductory numerical analysis because it is so different from things you’ve seen before. However, this is an incredibly powerful and efficient method for solving spatial problems with constraints defined at the boundaries, and is something you will see everywhere as you progress with your engineering careers. For this reason, be sure to take direct method to heart and really understand it on a conceptual and mathematical level.</p>
+
+<h3 id="multistep-methods">Multistep Methods</h3>
+
+<p>The remainder of these notes are devoted to two ancillary topics in numerical solutions: multistep methods, and the shooting method. Don’t worry though, we do not cover these in deep detail: these topics are relatively advanced, and are really only mentioned here for completeness.</p>
+
+<p>Multistep methods are similar to the Euler methods or RK4 in that they are moving forward in time. The difference is that in the previous forward-propagating algorithms, we were only using \(y_i\) to solve for \(y_{i=1}\), but in multistep methods we’re using two or more previous \(y_i\)’s to find the numerical solution.</p>
+
+<p>The first multistep method is the <strong>Adams-Bashforth method</strong>. There are two main versions of the Adams-Bashforth algorithm we study here: the second order formula given by:</p>
+
+\[y_{i+1} = y_i + \frac{h}{2} \left[3f(x_n, y_n) - f(x_{n-1}, y_{n-1})\right]\]
+
+<p>and the fourth order version:</p>
+
+\[y_{i+1} = y_i + \frac{h}{24} \left[55f(x_n, y_n) - 59f(x_{n-1}, y_{n-1}) + 37f(x_{n-2}, y_{n-2}) - 9f(x_{n-3}, y_{n-3})\right]\]
+
+<p>In both variants, notice that we use only previous function values (or evaluations of the derivative) to calculate the next function value. We are using two or more previous values, so it is a multistep method.</p>
+
+<p>Why use this method over, say, RK4? The main advantage to these methods is that we are able to achieve second order (or higher) accuracy but only need to compute a single function evaluation at each step. Remember that RK4 is extremely costly because it requires four separate evaluations of \(f(x,y)\) at every iteration. Here, we can simply store previous evaluations of \(f(x,y)\) then call them up from memory instead of recomputing. (For most problems, calling from memory is far cheaper than recomputing, so this is a viable strategy.)</p>
+
+<p>The significant downside to Adams-Bashforth and other multistep methods are that they are <strong>not self-starting</strong>. This means that when we start calculating the numerical solution at the first time step, we need previous time steps that simply do not exist. In practice, we would calculate the first few steps using a self-starting methods like one of the single step methods we studied previously, but these can be inaccurate or very costly depending on the problem at hand.</p>
+
+<p>The other multistep method is the <strong>Adams-Moulton method</strong>, which is a combination of the trapezoidal method and Adams-Bashforth. Adams-Moulton is a predictor-corrector method, in that we make a <em>prediction</em> of \(y_{n+1}\) using Adams-Bashforth, then <em>correct</em> it but plugging this into an update like trapezoidal method. This follows the same train of thought as improved Euler, where we predicted \(y_{n+1}\) using forward Euler, then used this prediction to make a more accurate final estimate.</p>
+
+<p>The formulas for second order Adams-Moulton are:</p>
+
+\[\begin{gather}
+y_{n+1}^* = y_n + \frac{h}{2} [3f(x_n,y_n) - f(x_{n-1}, y_{n-1})] \\
+y_{n+1} = y_n + \frac{h}{2} [f(x_{n+1}, y_{n+1}^*) + f(x_n, y_n)] 
+\end{gather}\]
+
+<p>See? It looks exactly like trapezoidal method, but we’re using Adams-Bashforth instead of forward Euler. There’s also a fourth order version of Adams-Moulton:</p>
+
+\[\begin{gather}
+y_{n+1}^* = y_n + \frac{h}{24} [55f(x_n, y_n) - 59f(x_{n-1}, y_{n-1}) + 37f(x_{n-2}, y_{n-2}) - 9f(x_{n-3}, y_{n-3})] \\
+y_{n+1} = y_n + \frac{h}{24} [9f(x_{n+1}, y_{n+1}^*) + 19f(x_{n}, y_{n}) - 5f(x_{n-1}, y_{n-1}) + f(x_{n-2}, y_{n-2})]
+\end{gather}\]
+
+<p>where we use fourth order Adams-Bashforth as the predictor, and a different formula for the corrector. Notice that for both the second and forth order variants, we need to compute \(f(x,y)\) twice (compared to just once for Adams-Bashforth), but the advantage of Adams-Moulton is we get slightly better accuracy and much improved stability.</p>
+
+<p>In practice, we mainly use multistep methods because they are better at handling equations that have oscillations in the solution. (These methods are very commonly used in weather prediction, for example.) Intuitively this makes sense: we’re taking more of the previous points in time into account, so we should be able to more accurately determine oscillations. The mathematical details of this are actually pretty involved though, so we leave them out here.</p>
+
+<h3 id="shooting-method">Shooting Method</h3>
+
+<p>The last numerical method we will talk about in these notes is the <strong>shooting method</strong>. The shooting method is actually a surprisingly simple method when approached from the right perspective. We won’t go too deeply into the mathematical details or implementation, but hopefully this will shed some light on it.</p>
+
+<p>The idea of the shooting method is to use solvers for IVPs to solve BVPs. To do this, we guess initial conditions, then iteratively solve the IVP starting at the left boundary using the guessed initial conditions and adjust the initial conditions based on the error at the right boundary. The motivation behind doing this is that we have lots of very fast and very accurate solvers for IVPs, so it seems natural to try to apply these to solving BVPs, since doing so would avoid us having to solve potentially very large systems of linear equations.</p>
+
+<p>The shooting method has its share of limitations (particularly how it only effectively applies to linear ODEs). Furthermore, IVPs and BVPs are different in some very fundamental ways. Particularly, IVPs evolve as we move forward in the domain, and all of the information that determines the solution is available at the beginning of the solution, whereas in BVPs, the system is constrained from both ends of the domain and information is shaping the solution from both ends simultaneously. Nevertheless, shooting method is a very interesting idea, and does find some applications in practice.</p>
+
+
+  </div>
+</article>
+
+    </div>
+
+    <div class="wrapper-footer">
+      <div class="container">
+        <footer class="footer">
+          
+<a href="mailto:timothy.isaac.anderson@gmail.com"><i class="svg-icon email"></i></a>
+
+
+<a href="https://github.com/timanderson1994"><i class="svg-icon github"></i></a>
+<a href="https://instagram.com/timmydingdong"><i class="svg-icon instagram"></i></a>
+<a href="https://www.linkedin.com/in/timanderson1994"><i class="svg-icon linkedin"></i></a>
+
+
+
+
+
+
+        </footer>
+      </div>
+    </div>
+
+    
+
+  </body>
+</html>

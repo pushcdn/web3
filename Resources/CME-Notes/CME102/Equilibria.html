@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Equilibria and Stability – Tim Anderson</title>
+
+        <meta charset="utf-8" />
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0'>
+
+    
+    <meta name="description" content="Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. ">
+    <meta property="og:description" content="Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. " />
+    
+    <meta name="author" content="Tim Anderson" />
+
+    
+    <meta property="og:title" content="Equilibria and Stability" />
+    <meta property="twitter:title" content="Equilibria and Stability" />
+    
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" type="text/css" href="../../../style.css" />
+    <link rel="alternate" type="application/rss+xml" title="Tim Anderson - Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. " href="../../../feed.xml" />
+
+<!-- 
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+ -->
+
+  <!-- Created with Jekyll Now - http://github.com/barryclark/jekyll-now -->
+  </head>
+
+  <body>
+    <div class="wrapper-masthead">
+      <div class="container">
+        <header class="masthead clearfix">
+          <a href="../../../index.html" class="site-avatar"><img src="../../../assets/images-general/duck.jpg" /></a>
+
+          <div class="site-info">
+            <h1 class="site-name"><a href="../../../index.html">Tim Anderson</a></h1>
+            <!-- <p class="site-description">Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. </p> -->
+          </div>
+
+          <nav>
+            <a href="../../../Research/index.html">Research</a>
+            <a href="../../../Publications/index.html">Publications</a>
+            <a href="../../index.html">Resources</a>
+            <a href="../../../Misc/index.html">Misc</a>
+            <!-- <a href="/Blog/">Blog</a> -->
+            <a href="../../../About/index.html">About</a>
+          </nav>
+        </header>
+      </div>
+    </div>
+
+    <div id="main" role="main" class="container">
+          <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<!-- 
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    });
+
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+    </script>
+<style>
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+</style>
+ -->
+<article class="page">
+
+  <h1>Equilibria and Stability</h1>
+
+  <div class="entry">
+    <h3 id="takeaways">Takeaways</h3>
+
+<ul>
+  <li>Direction fields show us in what direction the function is changing at a given point</li>
+  <li>By following the field lines, we can trace solutions to the ODE</li>
+  <li>We can find equilibrium solutions and analyze their stability by looking at whether field lines are going into or away from an equilibrium
+    <ul>
+      <li>Stable solution: field lines converge to the equilibrium from all directions</li>
+      <li>Unstable solution: field lines go away from the equilibrium from all directions</li>
+      <li>Semi-stable solution: field lines go into the equilibrium from some directions and away from it in others</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="direction-fields-and-quiver-plots">Direction Fields and Quiver Plots</h3>
+
+<p>The primary tool we use for analyzing ODEs graphically is a <em>direction field</em>. Recall the most general form of a first order ODE:</p>
+
+<p>\[ f(x,y,y’) = 0 \]</p>
+
+<p>This means that for every \((x,y)\) pair in a possible solution to the ODE, there is a \(y'\) satisfying the above equation. A direction field plots out the \(y'\) vectors as a function of \(x\) and \(y\). This allows us to analyze the qualitative features of solutions, which we discuss below.</p>
+
+<p>(As an aside, we call this view of ODEs a <em>geometric view</em> of ODEs since we are really looking at the shape and direction of the changes in the function and not so much the function value itself. Indeed, if you pursue studying ODEs on a theoretical level, you will encounter a large body of research applying geometry—the theoretical math field—to the study of differential equations.)</p>
+
+<p>We create direction fields for ODEs by using the <code class="language-plaintext highlighter-rouge">quiver()</code> function in MATLAB. (<code class="language-plaintext highlighter-rouge">quiver()</code> gets it’s name from the fact it <em>draws arrows</em> for the function’s field lines. Haha, get it? They’re so clever.)</p>
+
+<p>Consider the system of ODEs:</p>
+
+\[\begin{align*}
+\frac{dx}{dt} = y\cos(x) \\
+\frac{dy}{dt} = y\sin(x) \\
+\end{align*}\]
+
+<p>The syntax to plot the direction field with the <code class="language-plaintext highlighter-rouge">quiver()</code> function (from the Mathworks website) is:</p>
+
+<figure class="highlight"><pre><code class="language-matlab" data-lang="matlab"><span class="c1">% Create grid of points where you want arrows</span>
+<span class="p">[</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">]</span> <span class="o">=</span> <span class="nb">meshgrid</span><span class="p">(</span><span class="mi">0</span><span class="p">:</span><span class="mf">0.2</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mf">0.2</span><span class="p">:</span><span class="mi">2</span><span class="p">);</span>
+<span class="n">u</span> <span class="o">=</span> <span class="nb">cos</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.*</span><span class="n">y</span><span class="p">;</span> <span class="c1">% Create dx component</span>
+<span class="n">v</span> <span class="o">=</span> <span class="nb">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.*</span><span class="n">y</span><span class="p">;</span> <span class="c1">% Create dy component</span>
+
+<span class="nb">figure</span> <span class="c1">% Plot using quiver()</span>
+<span class="nb">quiver</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">u</span><span class="p">,</span><span class="n">v</span><span class="p">)</span></code></pre></figure>
+
+<p>Let’s apply this to a simpler example. Consider the ODE:</p>
+
+\[y' = (y - 2)(y+1)^2(y+3)\]
+
+<p>To create the quiver plot, we would write:</p>
+
+<figure class="highlight"><pre><code class="language-matlab" data-lang="matlab"><span class="nb">clear</span> <span class="nb">all</span><span class="p">,</span> <span class="nb">close</span> <span class="nb">all</span> <span class="c1">% Clear workspace and close all graphs</span>
+
+<span class="c1">% Create grid of points where you want arrows</span>
+<span class="p">[</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">]</span> <span class="o">=</span> <span class="nb">meshgrid</span><span class="p">(</span><span class="mi">0</span><span class="p">:</span><span class="mf">0.2</span><span class="p">:</span><span class="mi">4</span><span class="p">,</span><span class="o">-</span><span class="mi">4</span><span class="p">:</span><span class="mf">0.5</span><span class="p">:</span><span class="mi">3</span><span class="p">);</span> 
+
+<span class="c1">% dx is not specified in the ODE, so set equal to 1</span>
+<span class="n">u</span> <span class="o">=</span> <span class="nb">ones</span><span class="p">(</span><span class="nb">size</span><span class="p">(</span><span class="n">x</span><span class="p">));</span> 
+
+<span class="c1">% Create dy component</span>
+<span class="n">v</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span><span class="o">.*</span><span class="p">(</span><span class="n">y</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">.^</span><span class="mf">2.</span><span class="o">*</span><span class="p">(</span><span class="n">y</span><span class="o">+</span><span class="mi">3</span><span class="p">);</span> 
+
+<span class="nb">figure</span> <span class="c1">% Plot using quiver()</span>
+<span class="nb">quiver</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">u</span><span class="p">,</span><span class="n">v</span><span class="p">)</span>
+<span class="nb">title</span><span class="p">(</span><span class="s1">'Direction field'</span><span class="p">)</span></code></pre></figure>
+
+<p>This produces the plot below:</p>
+
+<p><img src="../../../assets/notes-figures/dir_field1.png" alt="Direction field image" /></p>
+
+<p>Now hold on a second—why did we just write <code class="language-plaintext highlighter-rouge">u = 1</code> in the code above? Why are we treating \(y'\) as a vector, except in the ODE it’s a scalar? Well, when we think about \(y'\), we’re talking about</p>
+
+\[y' = \frac{dy}{dx}\]
+
+<p>That is, \(y'\) represents the ratio between the change in \(x\) and the change in \(y\). When we’re plotting with <code class="language-plaintext highlighter-rouge">quiver()</code>, we really want to see \(y'\) for the field lines. To do this, we can simply set \(dx = 1\) at all points for the field lines.</p>
+
+<p>If this feels a bit hacky or contrive, don’t worry—it is. There’s a more mathematically rigorous explanation for how this works, but I believe the rigorous explanation is needlessly complex for where we’re at right now and would just obscure what we’re trying to get from direction fields. In the end, the explanation I’ve given is equivalent to the rigorous one, and you can use it for now.</p>
+
+<p>Notice how the field lines in the plot above become incredibly small in some regions, to the point they are difficult or impossible to make out. Field lines are kinda useless if we can’t actually see what direction they’re pointed, so sometimes it is more useful to normalize the field lines to be unit vectors. We can do this with code such as:</p>
+
+<figure class="highlight"><pre><code class="language-matlab" data-lang="matlab"> <span class="c1">% Clear workspace and close all graphs</span>
+<span class="nb">clear</span> <span class="nb">all</span><span class="p">,</span> <span class="nb">close</span> <span class="nb">all</span>
+
+<span class="c1">% Create grid of points where you want arrows</span>
+<span class="p">[</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">]</span> <span class="o">=</span> <span class="nb">meshgrid</span><span class="p">(</span><span class="mi">0</span><span class="p">:</span><span class="mf">0.2</span><span class="p">:</span><span class="mi">4</span><span class="p">,</span><span class="o">-</span><span class="mi">4</span><span class="p">:</span><span class="mf">0.5</span><span class="p">:</span><span class="mi">3</span><span class="p">);</span> 
+
+<span class="n">u</span> <span class="o">=</span> <span class="nb">ones</span><span class="p">(</span><span class="nb">size</span><span class="p">(</span><span class="n">x</span><span class="p">));</span> 
+<span class="n">v</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span><span class="o">.*</span><span class="p">(</span><span class="n">y</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">.^</span><span class="mf">2.</span><span class="o">*</span><span class="p">(</span><span class="n">y</span><span class="o">+</span><span class="mi">3</span><span class="p">);</span> 
+
+<span class="n">mags</span> <span class="o">=</span> <span class="nb">sqrt</span><span class="p">(</span><span class="n">u</span><span class="o">.^</span><span class="mi">2</span> <span class="o">+</span> <span class="n">v</span><span class="o">.^</span><span class="mi">2</span><span class="p">);</span> <span class="c1">% Compute magnitudes</span>
+<span class="n">uhat</span> <span class="o">=</span> <span class="n">u</span> <span class="o">.</span><span class="p">/</span> <span class="n">mags</span><span class="p">;</span> <span class="c1">% Divide x component by magnitude</span>
+<span class="n">vhat</span> <span class="o">=</span> <span class="n">v</span> <span class="o">.</span><span class="p">/</span> <span class="n">mags</span><span class="p">;</span> <span class="c1">% Divide y component by magnitude</span>
+
+<span class="c1">% Plot using quiver()</span>
+<span class="nb">figure</span> 
+<span class="nb">quiver</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">uhat</span><span class="p">,</span><span class="n">vhat</span><span class="p">)</span>
+<span class="nb">title</span><span class="p">(</span><span class="s1">'Direction field - unit vectors'</span><span class="p">)</span></code></pre></figure>
+
+<p>which produces the plot:</p>
+
+<p><img src="../../../assets/notes-figures/dir_field3.png" alt="Direction field image" /></p>
+
+<p>Much better.</p>
+
+<h3 id="field-lines-and-odes">Field Lines and ODEs</h3>
+
+<p>So, why does all of this stuff about field lines matter for ODEs? Direction fields are useful when studying ODEs because if we trace along the field lines, we can find a solution to the ODE, which then lets us characterize certain properties about those solutions. Specifically, we want to be able to find <em>equilibrium solutions</em> and analyze their <em>stability</em>.</p>
+
+<p>Let’s start with that first part: if we trace along the field lines, we can visualize solutions to the ODEs. An example of this is shown in the figure below. Notice how different initial conditions causes the solution to converge to different steady state solutions.</p>
+
+<p><img src="../../../assets/notes-figures/dir_field4.png" alt="Direction field image" /></p>
+
+<p>These steady state solutions are known as <em>equilibrium solutions</em> (or <em>stationary points</em>, in some texts). <strong>A equilibrium is a function value such that when \(y\) is at that value, the derivative is \(0\).</strong> It is an equilibrium because the system is at a <em>steady state</em> at that solution i.e. the system is balanced such that it does not change.</p>
+
+<p><strong>Equilibria:</strong> We can easily find equilibrium points visually by looking at where the field lines are flat. (This is why the vector field with the field lines normalized to unit vectors can be useful.) In this example, the field lines are flat for \(y = -3, -1, 2\), so these must be the equilibrium solutions. Indeed, for \(y = 2\), we see that when \(y(0) = 2\), the function stays at that value and doesn’t move (hence the solution being a <em>stationary point</em>).</p>
+
+<p><strong>Stability:</strong> Observe that the solutions converge to some of the equilibria, but go away from other equilibria. Whether or not field lines will go towards or away from a solution is known as the <strong>stability</strong> of a solution. We say an equilibrium is <em>stable</em> if the field lines converge towards the equilibrium, <em>unstable</em> if they point away from the equilibrium, and <em>semi-stable</em> if they converge from one direction and point away from the other. In this example, \(y = -3\) is stable, \(y = -1\) is semi-stable, and \(y = 2\) is unstable.</p>
+
+<p>Mathematically, the idea behind stability is if we perturb the solution away from the equilibrium, does it return to the same equilibrium? The answer lies with the sign of \(y'\) near the equilibrium point.</p>
+
+<p>If we perturb \(y\) to be a bit smaller but the derivative is positive, then the solution returns to the same equilibrium point. (Try this with the field lines in the figure above.) Similarly, if we make \(y\) a bit larger but the derivative for \(y &gt; y^*\) is negative, then the solution returns back to the equilibrium solution \(y^*\). This is what characterizes a stable solution: the derivative is positive for \(y &lt; y^*\) and negative for \(y &gt; y^*\) so that the solution returns to \(y^*\) when it is perturbed. Essentially, for a stable solution the sign of the derivative is opposite the sign of the perturbation in \(y\).</p>
+
+<p>If we make \(y\) a bit smaller and the derivative is negative, the solution will move away, and similarly if we make \(y\) a bit larger and \(y' &gt; 0\), then the solution moves away. This characterizes an unstable solution: if we perturb the solution a bit away from \(y^*\), the solution flies away from \(y^*\).</p>
+
+<p>Finally, we have the most confusing one: semi-stable solutions. However, these aren’t confusing at all in reality. Semi-stable solutions are just solutions where they are stable on one side and unstable on the other. That is, if we perturb the solution in one direction it returns to \(y^*\), but if we perturb in the other it flies away. Mathematically, this translates to the sign of the derivative being the same on both sides of the equilibrium. (We observe this with \(y^* = -1\) above.)</p>
+
+<p>To sum up, we can classify the stability of an equilibrium point \(y^*\) as:</p>
+<ul>
+  <li>Stable: \(y'\) is positive for \(y &lt; y^*\) and negative for \(y &gt; y^*\)</li>
+  <li>Unstable: \(y'\) is positive for \(y &gt; y^*\) and negative for \(y &lt; y^*\)</li>
+  <li>Semi-stable: \(y'\) has the same sign on both side of \(y^*\)</li>
+</ul>
+
+<h3 id="autonomous-systems">Autonomous Systems</h3>
+
+<p>A autonomous system (when we’re talking about ODEs, not robotics) is a system where the change in system state is only determined by its current state. Suppose we can explicitly write down \(y'\):</p>
+
+\[y' = f(x,y)\]
+
+<p>If \(y'\) does not depend on \(x\) i.e.:</p>
+
+\[y' = f(y)\]
+
+<p>then the system is <strong>autonomous</strong>. This definition seems trivial, but this is extremely important for the next section finding equilibrium solutions.</p>
+
+<h3 id="analytically-solving-for-equilibria-and-determining-stability">Analytically Solving for Equilibria and Determining Stability</h3>
+
+<p>While it’s well and good to talk about visual properties of direction fields or their qualitative features, the fact is you are also taking a class in ODEs and need to be able to solve quantitative problems on exams and homeworks. This brings us to this last section: solving for equilibrium solutions and determining their stability.</p>
+
+<p>If you have understood the previous sections, this last part is really just putting them together into an algorithm for solving problems related to stability of solutions. Remember that an equilibrium solution is just a value of \(y\) such that \(y'(y) = 0\). (Here, we are only considering autonomous systems since you usually won’t be expected to find equilibria for non-autonomous systems.)</p>
+
+<p>To find equilibrium solutions, we just need to find the zeros of \(y'\). This is easy, since in this class \(y'\) will almost always be a polynomial in \(y\) or something similarly easy to find zeros of. After finding the zeros, we need to determine the sign of the derivative between the equilibria. However, we can do this simply by picking points in between the equilibria and finding the rate of change at these points. Once we determine the sign of the derivative between the equilibrium points and outside of the end points, we can determine the types of equilibrium points using the principles described in the previous part.</p>
+
+<p>So, the final algorithm for solving problems with equilibrium solutions and stability is:</p>
+
+<ol>
+  <li>Find zeros of the derivative (i.e. find \(y\) such that \(y' = 0\))</li>
+  <li>Pick values in between and outside the equilibria and find the sign of the derivative at these values</li>
+  <li>Classify the equilibria according to the rules listed above</li>
+</ol>
+
+<p>This is a bit involved, so to solidify everything let’s go through an example problem together. Consider the example from the previous section:</p>
+
+\[y' = (y - 2)(y+1)^2(y+3)\]
+
+<p>First, we find the zeros. This polynomial is already factored for you, so it’s pretty easy: we have \(y^* = -3, -1, 2\).</p>
+
+<p>Next, we need to pick values between and outside the equilibria to determine which way the derivative is pointing. To do this, we’ll pick \(y = -4, -2, 0, 3\). (To keep your life easy, always try to pick integers since this will make the arithmetic a lot simpler.) After picking the values, we need to find the sign of the derivative at these points:</p>
+
+\[\begin{align}
+y'(-4) &amp;= (-4 - 2)(-4+1)^2(-4+3) &gt; 0 \\
+y'(-2) &amp;= (-2 -2)(-2 + 1)^2(-2+3) &lt; 0 \\
+y'(0) &amp;= (0-2)(0+1)^2(0 + 3) &lt; 0 \\
+y'(3) &amp;= (3 - 2)(3 + 1)^2(3 + 3) &gt; 0 
+\end{align}\]
+
+<p>Note here that we don’t actually need to find the exactly value of the derivative, just the sign. This small change will save you a significant amount of computation time during an exam.</p>
+
+<p>Now that we have the sign of the derivative in between the equilibria, we classify the points according to their signs:</p>
+<ul>
+  <li>\(y = -3\) has plus on the left and minus on the right, so it is a <em>stable equilibrium</em></li>
+  <li>\(y = -1\) has the same sign on both sides, so it is a <em>semi-stable equilibrium</em></li>
+  <li>\(y = 2\) has minus on the left and plus on the right, so it is an <em>unstbale equilibrium</em></li>
+</ul>
+
+<p>These results match up with what we found above, but with no field lines or other plotting necessary. Pretty simple, yea? Maybe not, but on an exam you don’t have access to <code class="language-plaintext highlighter-rouge">quiver()</code> or Wolfram, so this approach will take you far.</p>
+
+<!-- ### An Alternative Approach: Phase Space
+
+We can also look at equilibria through a slightly different lens: "phase space". While this approach is not typically taught in CME 102, I believe it is exceedingly useful and can actually help bring some clarity to the concept of equilibrium solutions. Also, it provides a very easy to way to find and classify equilibrium solutions.
+
+Let's go backt to the geometric interpretation of an ODE, namely that it is a function of the form:
+
+$$\[ y' = f(x,y) \]$$
+
+In many cases (i.e. many that you'll see in CME 102), the ODE will only be a function of $$y$$, so we can rewrite this as:
+
+$$\[ y' = f(y) \]$$
+
+The equilibrium solutions are just the solutions $$y(x)$$ of the ODE such that we have $$y' = 0$$. Therefore, if the derivative is only a function of $$y$$, the equilibria are just the zeros of the above equation. So, if we find the zeros, we also find the equilibria.  -->
+
+  </div>
+</article>
+
+    </div>
+
+    <div class="wrapper-footer">
+      <div class="container">
+        <footer class="footer">
+          
+<a href="mailto:timothy.isaac.anderson@gmail.com"><i class="svg-icon email"></i></a>
+
+
+<a href="https://github.com/timanderson1994"><i class="svg-icon github"></i></a>
+<a href="https://instagram.com/timmydingdong"><i class="svg-icon instagram"></i></a>
+<a href="https://www.linkedin.com/in/timanderson1994"><i class="svg-icon linkedin"></i></a>
+
+
+
+
+
+
+        </footer>
+      </div>
+    </div>
+
+    
+
+  </body>
+</html>

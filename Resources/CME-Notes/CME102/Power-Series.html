@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Power Series – Tim Anderson</title>
+
+        <meta charset="utf-8" />
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0'>
+
+    
+    <meta name="description" content="Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. ">
+    <meta property="og:description" content="Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. " />
+    
+    <meta name="author" content="Tim Anderson" />
+
+    
+    <meta property="og:title" content="Power Series" />
+    <meta property="twitter:title" content="Power Series" />
+    
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" type="text/css" href="../../../style.css" />
+    <link rel="alternate" type="application/rss+xml" title="Tim Anderson - Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. " href="../../../feed.xml" />
+
+<!-- 
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+ -->
+
+  <!-- Created with Jekyll Now - http://github.com/barryclark/jekyll-now -->
+  </head>
+
+  <body>
+    <div class="wrapper-masthead">
+      <div class="container">
+        <header class="masthead clearfix">
+          <a href="../../../index.html" class="site-avatar"><img src="../../../assets/images-general/duck.jpg" /></a>
+
+          <div class="site-info">
+            <h1 class="site-name"><a href="../../../index.html">Tim Anderson</a></h1>
+            <!-- <p class="site-description">Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. </p> -->
+          </div>
+
+          <nav>
+            <a href="../../../Research/index.html">Research</a>
+            <a href="../../../Publications/index.html">Publications</a>
+            <a href="../../index.html">Resources</a>
+            <a href="../../../Misc/index.html">Misc</a>
+            <!-- <a href="/Blog/">Blog</a> -->
+            <a href="../../../About/index.html">About</a>
+          </nav>
+        </header>
+      </div>
+    </div>
+
+    <div id="main" role="main" class="container">
+          <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<!-- 
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    });
+
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+    </script>
+<style>
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+</style>
+ -->
+<article class="page">
+
+  <h1>Power Series</h1>
+
+  <div class="entry">
+    <h3 id="takeaways">Takeaways</h3>
+
+<ul>
+  <li>
+    <p>The ratio test tells us that for an infinite series \(\sum_{n=0}^\infty a_n\), the series converges if:
+\[ \lim_{n\to \infty} \frac{a_{n+1} }{a_n } \]
+is less than 1, diverges if it is greater than 1, and is indeterminate if it is equal to 1.</p>
+  </li>
+  <li>
+    <p>Taylor’s theorem says that for any function that is infinitely differentiable at \(x_0\), then we can the function as:
+\[f(x) = f(x_0) + f’(x_0)(x - x_0) + \frac{f’‘(x_0)}{2}(x - x_0)^2 + \cdots = \sum_{n=0}^\infty \frac{f^{(n)}(x_0)}{n!} (x -x_0)^n \]</p>
+  </li>
+  <li>
+    <p>To solve an ODE using power series, we plug the series \(y(x) = \sum_{n=0}^\infty a_n x^n\) into the ODE, take derivatives, then solve for a recurrence relation for the coefficients \(a_n\) (using that \(a_0 = f(0)\) and \(a_1 = f'(0)\)).</p>
+  </li>
+</ul>
+
+<h3 id="overview">Overview</h3>
+
+<p>The last method we’ll be discussing is both the most broadly-applicable but also the least useful in some senses. The only requirement for power series to work is that a solution must exist on the domain of interest. The basic idea is that we assume the solution takes the form:</p>
+
+\[y(x) = \sum_{n=0}^\infty a_n x^n\]
+
+<p>From here, we can take derivatives of this assumed form of the solution, plug into the equation, and derive an expression for the coefficients. In this sense, you can think of power series as a super-sized version of undetermined coefficients, where in power series we have an infinite number of coefficients to solve for. To allow us to find an infinite number of coefficients, we use what’s called a recurrence relation (discussed below), which is just a relationship between the \(a_n\)’s we can use to derive any coefficient.</p>
+
+<p>The solutions delivered by power series may be useful in that you can plug the power series solution directly into a computer to visualize the solution, but beyond that they do not offer much in way of interpretation. This illustrates a broader and very important point in the study of differential equations: just because it’s possible to solve a differential equation doesn’t mean that solution is necessarily useful or gives much insight into the problem. For this reason, power series is very much a last resort—if all other methods fail we can use this one, but it’s rarely the best method to use.</p>
+
+<h3 id="ratio-test">Ratio Test</h3>
+
+<p>The first part of power series is the idea of a <em>convergent series</em>. An infinite series of of the form:</p>
+
+\[\sum_{n=0}^\infty a_n\]
+
+<p>and when we work with these, we are often interested if the series converges to something finite. There are a whole litany of ways to do this; if you take MATH 115 at Stanford or an equivalent intro analysis course, you’ll spend a large part of the quarter proving convergence or divergence of infinite series through various tests. In CME 102, we focus on just one of these: the ratio test.</p>
+
+<p>The <strong>ratio test</strong> in its simplest form states that a series converges if for the terms \(a_n\) we have:</p>
+
+\[\lim_{n \to \infty} \frac{a_{n+1}}{a_n} &lt; 1\]
+
+<p>To lend some intuition to this test, let’s think about the idea of <em>partial sums</em> of the infinite series. A partial sum is exactly what it sounds like: we sum up the series only part of the way. A partial sum \(s(N)\) is of the form:</p>
+
+\[s(N) = \sum_{n=0}^N a_n\]
+
+<p>If a series converges, we know that</p>
+<ol>
+  <li><span> \(\lim_{N \to \infty} |s(N+1) - s(N)| = 0\) </span></li>
+  <li><span> \(\lim_{n \to \infty} |a_n| = 0\)</span></li>
+  <li>The coefficients \(\lvert a_n \rvert\) go to zero sufficiently quickly that \(\sum_{n=1}^\infty a_n &lt; \infty\)</li>
+</ol>
+
+<p>For (1), the idea is that if our partial sums converge to something, then they need to converge to the same thing as we take larger partial sums. (2) is that if we’re converging to something finite, then we need the terms in the series to go to zero, since we cannot add up an infinite number of things that do not approach zero in size and even remotely expect to get the sum to converge to zero.</p>
+
+<p>We know from calculus II (AP Calc BC) that:</p>
+
+\[\sum_{n=1}^\infty \frac{1}{n} = \infty\]
+
+<p>so clearly only satisfying (1) and (2) doesn’t guarantee convergence of a series. The ratio test addresses (3) from the above conditions, which in turn allows us to guarantee that a series converges. You can think of the ratio:</p>
+
+\[\frac{a_{n+1} }{a_n } &lt; 1\]
+
+<p>as telling us if the terms in the series go to zero sufficiently quickly that our series converges to something finite.</p>
+
+<p>Now that we’ve established what the ratio test does, what about the “radius of convergence”? Essentially, if we have a <strong>power series</strong> of the form:</p>
+
+\[\sum_{n=0}^\infty a_n (x - x_0)^n\]
+
+<p>then the radius of convergence \(R\) is a number such that for all \(x\) in the interval \(x_0 - R &lt; x &lt; x_0 + R\), the series will converge. Note that a power series is just a series—infinite or finite—where each term in the series contains a power of \(x\).</p>
+
+<p>The ratio test is used to find the radius of convergence (if it exists) by plugging the terms of the power series into the ratio test and finding \(R\) such that the series always converges. That is, find \(R\) in \(x_0 - R &lt; x &lt; x_0 + R\) such that:</p>
+
+\[\lim_{n \to \infty} \frac{a_{n+1} |x - x_0|^{n+1} }{a_n |x - x_0|^n } = |x - x_0|lim_{n \to \infty} \frac{a_{n+1} }{a_n } &lt; 1\]
+
+<p>As a quick example, consider the power series:</p>
+
+\[\sum_{n=1}^\infty \frac{(-1)^n n}{4^n} (x + 3)^n\]
+
+<p>Plugging this into the ratio test, we have:</p>
+
+\[\lim_{n\to \infty} \frac{\frac{(-1)^{n+1} (n+1)}{4^{n+1}} |x - x_0|^{n+1} }{\frac{(-1)^n n}{4^n} |x - x_0|^n } = |x - x_0|lim_{n\to \infty} \frac{n+1}{4n} = \frac{1}{4} |x - x_0| &lt; 1 \implies R = 4\]
+
+<p>The radius of convergence is important since when we are treating the power series as the solution of an ODE, the radius of convergence essentially tells us where the solutions exists and is unique.</p>
+
+<p>As a final note, this of course isn’t a rigorous treatment of the ratio test—my math major friends would likely disown me if they read this—but hopefully this at least gives some insight into the ratio test and why it matters for power series solutions of ODEs.</p>
+
+<h3 id="taylors-theorem">Taylor’s Theorem</h3>
+
+<p>The next part of power series solutions of ODEs is Taylor’s theorem. (Yep, that same Taylor’s theorem you all know and love from Calc II/AP Calc BC/Math 20 or 42.) Taylor’s theorem states that if a function is infinitely differentiable at \(x = x_0\), then we can write the function as a power series:</p>
+
+\[f(x) = \sum_{n=0}^\infty \frac{f^{(n)}(x_0)}{n!} (x - x_0)^n\]
+
+<p>When we say “infinitely differentiable” at \(x_0\), we mean that all derivatives are continuous and finite at point \(x_0\). As a counter example, the ramp function we studied in the Laplace transform section would <em>not</em> be infinitely differentiable at \(x = 0\) since the first derivative is not continuous at this point. Therefore, we cannot decompose a ramp function into a power series centered at \(x_0 = 0\).</p>
+
+<p>Taylor’s theorem is the basis of the power series method since it implies that there exists a power series centered at \(x_0\) that solves the ODE. Essentially, it is a statement of the existence of a solution at \(x_0\). The radius of convergence is importance because the radius of convergence tells us how far away from \(x_0\) this power series will be convergent i.e. how far away we can get without the series diverging.</p>
+
+<h3 id="solving-odes-with-power-series">Solving ODEs with Power Series</h3>
+
+<p>Finally, we can put all of these together to solve ODEs. The power series method is able to solve any <em>linear</em> ODE, but does not work for nonlinear ODEs (at least with the method we’re learning here). It is able to handle inhomogeneous ODE, non-constant coefficients, and any order. That’s why this is the “jack of all trades” solution method: we can solve any linear ODE (assuming the solution exists), but the solution might be very hard to interpret.</p>
+
+<p>To begin, let’s first take the derivatives of \(y(x)\) expressed as a power series (we’ll stick with two derivatives since we mainly are working with second order ODEs in these notes). We express \(y(x)\) as a power series (centered at \(x_0 = 0\)):</p>
+
+\[y(x) = \sum_{n=0}^\infty a_n x^n\]
+
+<p>which we can easily differentiate:</p>
+
+\[\begin{align}
+y' &amp;= \sum_{n=1}^\infty na_n x^{n-1}  \\
+y'' &amp;= \sum_{n=2}^\infty n(n-1)a_n x^{n-2} 
+\end{align}\]
+
+<p>Now is a good time to address the first issue with power series: reindexing. Whenever we’re plugging the series expansion into an ODE, we want to make sure that the \(n^{th}\) term contains \(x^n\), not \(x^{n-1}\) or \(x^{n+2}\), for example. To do this, we choose a new index (here we’ll call it \(n'\)) that we substitute in to <em>reindex</em> the sum to give us \(x^n\) in the \(n^{th}\) term. (You will see very shortly why taking this step is important.)</p>
+
+<p>Consider the first derivative:</p>
+
+\[y' = \sum_{n=1}^\infty na_n x^{n-1}\]
+
+<p>To choose our new index, look at what power \(x\) is raised to in each term. We want \(x\) raised to the same power as the index we’re on, so we’ll choose \(n' = n-1\). Making the appropriate substitutions, we rewrite the sum as:</p>
+
+\[y' = \sum_{n' = 0}^\infty (n' + 1)a_{n'+1} x^{n'}\]
+
+<p>Similarly for \(y''\), we choose \(n' = n-2\):</p>
+
+\[y'' = \sum_{n' = 0}^\infty (n' + 2) (n' + 1)a_{n'+2} x^{n'}\]
+
+<p>Now we can apply this to solving an ODE. Let’s start off with something pretty simple:</p>
+
+\[y' + y = 0\]
+
+<p>To solve this using power series, plug in the series expansions for \(y'\) and \(y\):</p>
+
+\[\sum_{n' = 0}^\infty (n' + 1)a_{n'+1} x^{n'} + \sum_{n=0}^\infty a_n x^n = 0\]
+
+<p>Now that we’ve plugged in the power series, we need to solve for the coefficients. Before we proceed further, I want to make one point very clear: <strong>the power series solution is defined exclusively by the coefficients in the power series</strong>. That is, it is the \(a_n\) values that we want to solve for, because these are the values that point to and pin down a specific solution.</p>
+
+<p>To solve for the \(a_n\) values, we first need to merge all the sums together:</p>
+
+\[\sum_{n = 0}^\infty \left[ (n + 1)a_{n+1} + a_n \right] x^n = 0\]
+
+<p>Note that we can only merge summations together if the indices of the summations match up (here they both go from zero to infinity). We also can only factor out \(x^n\) if the powers match up at each term. This is the reason why reindexing the powers of \(x\) is so important.</p>
+
+<p>From here, we follow a very similar procedure to undetermined coefficients (since this method is basically just large-scale undetermined coefficients). Notice that for every power of \(x\), the coefficient on the left hand side of the equation must match the coefficient on the right hand side. This means that we can just equate coefficients to solve for each \(a_n\). Notice that in the equation above, the coefficient for every \(x^n\) must be \(0\) for the equation to be satisfied. From this, we have:</p>
+
+\[\begin{align}
+(n + 1)a_{n+1} + a_n &amp;= 0\\
+a_{n+1} &amp;= -\frac{a_n}{n+1} \\
+&amp;= \frac{(-1)^{n+1} a_0}{(n+1)!}
+\end{align}\]
+
+<p>From the definition of the series solution, we also know that \(a_0 = y(0)\) and \(a_1 = y'(0)\) (you can use these as givens, but be sure to work through the series to convince yourself why this is the case). Plugging these into the series, we have the solution:</p>
+
+\[y(x) = \sum_{n=0}^\infty \frac{(-1)^n a_0}{n!} x^n = y(0) \sum_{n=0}^\infty \frac{(-1)^n}{n!} x^n = y(0)e^{-x}\]
+
+<p>which is the solution we expected.</p>
+
+<p>This is one of the rare instances where you will be able to find an expression for the coefficients in terms of just \(n\), and an even rarer instance where you can identify the series and write out a solution not in terms of a series. In particular, you will rarely be able to find the coefficients as a function of only \(n\). Usually the best you will be able to do is find a relationship between the coefficients, which we call a <em>recurrence relation</em> and is the topic of the next section.</p>
+
+<h3 id="recurrence-relations-and-non-constant-coefficients">Recurrence Relations and Non-Constant Coefficients</h3>
+
+<p>When we’re solving for the coefficients, we’ll very often only be able to find the \(a_n\)’s in terms of previous coefficients in the series. This is known as a recurrence relation because the expression for the coefficients is recursive. To see how this works, we should work through an example.</p>
+
+<p>Consider the ODE:</p>
+
+\[y'' - xy = 0\]
+
+<p>We begin by plugging in the above expressions for the function and derivatives:</p>
+
+\[\sum_{n = 0}^\infty (n + 2) (n + 1)a_{n+2} x^{n} - x \sum_{n=0}^\infty a_n x^n = \sum_{n = 0}^\infty (n + 2) (n + 1)a_{n+2} x^{n} - \sum_{n=0}^\infty a_n x^{n+1} = 0\]
+
+<p>Notice that because we have a non-constant coefficient, we have \(x^{n+1}\) in the second term. We need \(x^n\) in every term before we can rearrange and solve for the coefficients, so we need to reindex before proceeding. To reindex, choose $n’ =  n+1$ in the second term. Then:</p>
+
+\[\sum_{n = 0}^\infty (n + 2) (n + 1)a_{n+2} x^{n} - \sum_{n=1}^\infty a_{n-1} x^{n} = 0\]
+
+<p>Now we have the powers of \(x\) the same in every term, but now we have a new problem were the limits of the sums aren’t the same: the first starts at \(n=0\) and the second starts at \(n=1\). To remedy this, we find the terms with the lowest starting indices and “pull out” terms from the sum until all the terms have the same starting index. Here, the first sum has the lower starting index, so we pull out the first term (\(n=0\)) to make the starting index \(1\):</p>
+
+\[\sum_{n = 0}^\infty (n + 2) (n + 1)a_{n+2} x^{n} - \sum_{n=1}^\infty a_{n-1} x^{n} =  2a_2 + \sum_{n = 1}^\infty (n + 2) (n + 1)a_{n+2} x^{n} - \sum_{n=1}^\infty a_{n-1} x^{n} = 0\]
+
+<p>From this, it is immediately clear that if we match coefficients for the \(x^0\) term, we have \(a_2 = 0\). Furthermore, since the indices and powers match in both sums we can combine the sums:</p>
+
+\[\sum_{n = 1}^\infty \left[ (n + 2) (n + 1)a_{n+2}  -  a_{n-1} \right] x^{n} = 0\]
+
+<p>Then, equating coefficients for all higher powers of \(x\) (or in this case setting the coefficient in the power series equal to zero) we find:</p>
+
+\[(n + 2) (n + 1)a_{n+2}  -  a_{n-1} = 0 \implies  a_{n+2} = \frac{ a_{n-1}}{(n+2)(n+1)}\]
+
+<p>This relationship is known as a <em>recurrence relation</em> between the coefficients since we are relating higher-indexed with lower-indexed coefficients, which allows us to solve for higher numbered coefficients using coefficients we already know.</p>
+
+<p>For this specific problem, we are given \(a_0 = f(0)\), \(a_1 = f'(0)\), and we solved to find \(a_2 = 0\). These first three coefficients plus the above recurrence relation allow us to solve for all the coefficients, and therefore we have the solution.</p>
+
+<h3 id="inhomogeneous-odes">Inhomogeneous ODEs</h3>
+
+<p>Finally, we have inhomogeneous ODEs, which are in many ways easier to deal with than the other special cases discussed in the previous section. To work through an example of this, let’s consider a modified version of the first example above. Consider the ODE:</p>
+
+\[y' + y = e^{2x}\]
+
+<p>In addition to plugging in the series expansions for \(y'\) and its derivatives, we also plug in the series expansion for \(e^{2x}\).</p>
+
+\[\sum_{n = 0}^\infty \left[ (n + 1)a_{n+1} + a_n \right] x^n = \sum_{n=0}^\infty \frac{2^n}{n!} x^n\]
+
+<p>From here we can match coefficients to find the solution:</p>
+
+\[\begin{align}
+(n + 1)a_{n+1} + a_n &amp;= \frac{2^n}{n!} \\
+a_{n+1} &amp;= -\frac{1}{n+1} a_n + \frac{2^n}{(n+1)!} = - \frac{1}{(n+1)!} a_0 + \frac{2^n}{(n+1)!}
+\end{align}\]
+
+<p>which is the solution for the coefficients, and therefore the solution to the ODE.</p>
+
+<p>See? Pretty painless.</p>
+
+<h3 id="final-remarks">Final Remarks</h3>
+
+<p>To sum up everything, the basic algorithm for solving an ODE with the power series method is:</p>
+
+<ol>
+  <li>Plug in the expressions for the function and its derivative</li>
+  <li>Reindex so all the powers of \(x\) match</li>
+  <li>Pull out terms from the sums such that the starting indices are all the same</li>
+  <li>Match coefficients to solve for the terms and derive the recurrence relation</li>
+</ol>
+
+<p>Computationally, power series method is probably the easiest method we do, since it just involves a little algebra to solve for the coefficients. However, there is an immense amount of bookkeeping with this method, and therefore there are a lot of small things that can go wrong along the way. Be sure to practice this method thoroughly, and pay very close attention to your work as you are solving the problem to make sure you do not make any small mistakes.</p>
+
+
+  </div>
+</article>
+
+    </div>
+
+    <div class="wrapper-footer">
+      <div class="container">
+        <footer class="footer">
+          
+<a href="mailto:timothy.isaac.anderson@gmail.com"><i class="svg-icon email"></i></a>
+
+
+<a href="https://github.com/timanderson1994"><i class="svg-icon github"></i></a>
+<a href="https://instagram.com/timmydingdong"><i class="svg-icon instagram"></i></a>
+<a href="https://www.linkedin.com/in/timanderson1994"><i class="svg-icon linkedin"></i></a>
+
+
+
+
+
+
+        </footer>
+      </div>
+    </div>
+
+    
+
+  </body>
+</html>

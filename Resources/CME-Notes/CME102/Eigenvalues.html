@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>The Eigenvalue Problem and First Order ODEs – Tim Anderson</title>
+
+        <meta charset="utf-8" />
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0'>
+
+    
+    <meta name="description" content="Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. ">
+    <meta property="og:description" content="Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. " />
+    
+    <meta name="author" content="Tim Anderson" />
+
+    
+    <meta property="og:title" content="The Eigenvalue Problem and First Order ODEs" />
+    <meta property="twitter:title" content="The Eigenvalue Problem and First Order ODEs" />
+    
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" type="text/css" href="../../../style.css" />
+    <link rel="alternate" type="application/rss+xml" title="Tim Anderson - Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. " href="../../../feed.xml" />
+
+<!-- 
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+ -->
+
+  <!-- Created with Jekyll Now - http://github.com/barryclark/jekyll-now -->
+  </head>
+
+  <body>
+    <div class="wrapper-masthead">
+      <div class="container">
+        <header class="masthead clearfix">
+          <a href="../../../index.html" class="site-avatar"><img src="../../../assets/images-general/duck.jpg" /></a>
+
+          <div class="site-info">
+            <h1 class="site-name"><a href="../../../index.html">Tim Anderson</a></h1>
+            <!-- <p class="site-description">Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. </p> -->
+          </div>
+
+          <nav>
+            <a href="../../../Research/index.html">Research</a>
+            <a href="../../../Publications/index.html">Publications</a>
+            <a href="../../index.html">Resources</a>
+            <a href="../../../Misc/index.html">Misc</a>
+            <!-- <a href="/Blog/">Blog</a> -->
+            <a href="../../../About/index.html">About</a>
+          </nav>
+        </header>
+      </div>
+    </div>
+
+    <div id="main" role="main" class="container">
+          <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<!-- 
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    });
+
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+    </script>
+<style>
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+</style>
+ -->
+<article class="page">
+
+  <h1>The Eigenvalue Problem and First Order ODEs</h1>
+
+  <div class="entry">
+    <h3 id="takeaways">Takeaways</h3>
+
+<ul>
+  <li>The eigenvalue problem is to solve for pairs vectors \(\vec{v}\) and scalars \(\lambda\) such that for a given square matrix \(\mathbf{A}\), we have \(\mathbf{A}\vec{v} = \lambda \vec{v}\)</li>
+  <li>For a linear system of ODEs \(\vec{x}' = \mathbf{A}\vec{x}\), the solutions are given by \(\vec{x}(t) = C\vec{v} e^{\lambda t}\) where \(\lambda\) is an eigenvalue of \(\mathbf{A}\) and \(\vec{v}\) is the corresponding eigenvector
+    <ul>
+      <li>If \(\lambda\) is repeated, the solution is given by
+  \[\vec{x}(t) = C_1\vec{v}e^{t\lambda} + C_2(t\vec{v}e^{t\lambda} + \vec{\rho} e^{t\lambda}) \]
+  where \(\rho\) is found by solving \((\mathbf{A} - \lambda \mathbf{I})\vec{\rho} = \vec{v}\).</li>
+      <li>If \(\lambda\) is complex, then the solution is:</li>
+    </ul>
+
+\[\vec{x} = C_1 e^{at}\left[ \vec{v}_R \cos(bt) - \vec{v}_I \sin(bt) \right] + C_2 e^{at}\left[ \vec{v}_R \cos(bt) + \vec{v}_I \sin(bt) \right]\]
+  </li>
+</ul>
+
+<h3 id="overview">Overview</h3>
+
+<p>The eigenvalue problem is one of the most important problems in all of engineering, applied mathematics, and physics, spanning everything from evolutionary systems to machine learning to quantum mechanics. The eigenvalue problem in its most basic form is stated as:</p>
+
+\[\mathbf{A}\vec{v} = \lambda \vec{v}\]
+
+<p>where \(\mathbf{A}\) is a square matrix. I say this is the simplest statement because in many of the other rich applications of the eigenvalue problems, \(\mathbf{A}\) represents some sort of generalized linear operator (in signal processing, it would be a convolution, in quantum mechanics it is the Hamiltonian of the system, etc.) and \(\vec{v}\) could be a function instead of a vector (known, appropriately, as an <em>eigenfunction</em>). For example, in quantum mechanics,  \(\lambda\) represent an energy level, and \(\vec{v}\) represent orbitals of the quantum system. Here we stick with <em>eigenvalues</em> and <em>eigenvectors</em>, since they are easy to solve for and most relevant to the study of ODEs.</p>
+
+<h3 id="geometric-interpretation">Geometric Interpretation</h3>
+
+<p>So, what are eigenvalues and eigenvectors? We should probably start with the name. In German, “eigen” means “own, distinctive, or natural”. The idea is that a matrix has it’s own set of eigenvalues and eigenvectors, and these naturally arise from the matrix itself.</p>
+
+<p>The big idea is that when we multiply an eigenvector by a matrix, it is equivalent to stretching or shrinking the eigenvector by a scalar amount. (This scalar is what we call the eigenvalue.) Matrices are really operators in that they both rotate and stretch a vector when we apply the matrix to a vector. The eigenvectors of a matrix only experience stretching. This interpretation comes directly from the equation:</p>
+
+\[\mathbf{A}\vec{v} = \lambda \vec{v}\]
+
+<p>When we apply \(\mathbf{A}\) to \(\vec{v}\) it only scales \(\vec{v}\). While this interpretation is a bit hard to carry over to ODEs, it is quite useful to think of eigenvalues and eigenvectors in this way to develop a more geometric understanding of what they’re doing.</p>
+
+<h3 id="solving-for-eigenvalues-and-eigenvectors">Solving for Eigenvalues and Eigenvectors</h3>
+
+<p>Now that you somewhat understand eigenvalues on a conceptual level, we need to figure out how to actually solve for them. To develop this procedure, we start with the equation:</p>
+
+\[\mathbf{A}\vec{v} = \lambda \vec{v}\]
+
+<p>We then rearrange this a bit:</p>
+
+\[(\mathbf{A} - \lambda \mathbf{I})\vec{v} = 0\]
+
+<p>Now, we are assuming that \(\vec{v} \neq 0\), so that means the matrix \(\mathbf{A} - \lambda \mathbf{I}\) must be what’s called rank-deficient. (If you haven’t come across this term before, it basically just means that the rank of the matrix is less than the number of rows in the matrix.) Rank deficient matrices have the property that their determinant is zero. So, we require that this matrix has:</p>
+
+\[\det(\mathbf{A} - \lambda \mathbf{I}) = 0\]
+
+<p>This results in a polynomial in \(\lambda\), which we use to solve for \(\lambda\). Taking this determinant results in a polynomial in \(\lambda\), which we can easily solve for \(\lambda\). After finding the eigenvalue(s), you plug the value(s) back into the equation and find the \(\vec{v}\) satisfying the equation.</p>
+
+<p>Let’s work through finding the eigenvalues and eigenvectors for a matrix to see how this works, since the details of finding an eigenvalue/eigenvector pair can be a bit involved. Consider the matrix:</p>
+
+\[\begin{gather}
+\mathbf{A} = \begin{bmatrix} 2 &amp; 7 \\ -1 &amp; -6 \end{bmatrix}
+\end{gather}\]
+
+<p>We first carry out the procedure described above: compute \( \det(\mathbf{A} - \lambda \mathbf{I})\) to get a polynomial in \(\lambda\):
+\(\begin{gather}
+\mathbf{A} - \lambda \mathbf{I} = \begin{bmatrix} 2 &amp; 7 \\ -1 &amp; -6 \end{bmatrix} - \begin{bmatrix} \lambda &amp; 0 \\ 0 &amp; \lambda \end{bmatrix} = \begin{bmatrix} 2 - \lambda &amp; 7 \\ -1 &amp; -6 - \lambda \end{bmatrix} \\
+\det \begin{bmatrix} 2 - \lambda &amp; 7 \\ -1 &amp; -6 - \lambda \end{bmatrix} = (2-\lambda)(-6 - \lambda) - (-7) = \lambda^2 + 4 \lambda - 5
+\end{gather}\)</p>
+
+<p>Now we have a very nice quadratic we can easily solve for \(\lambda\):</p>
+
+\[\lambda^2 + 4 \lambda - 5 = (\lambda + 5)(\lambda - 1) \implies \lambda = -5, 1\]
+
+<p>So, the matrix has two eigenvalues. Now, we need to find the associated eigenvectors. Let’s do this for \(\lambda_1 = -5\). We begin by plugging the eigenvalue into the equation:</p>
+
+\[\begin{bmatrix} 2 &amp; 7 \\ -1 &amp; -6 \end{bmatrix}\vec{v} = -5 \vec{v}\]
+
+<p>To be clear, there are lots of ways to find an eigenvector, especially for a 2-by-2 matrix, but I’m going to show you the way I think is the easiest. First, set the first element of \(\vec{v}\) equal to 1, so our eigenvector looks like:</p>
+
+\[\vec{v} = \begin{bmatrix} 1 \\ x \end{bmatrix}\]
+
+<p>Now, we just need to solve for \(x\) (which is pretty easy)! Plug this into the above equation and find \(x\):</p>
+
+\[\begin{gather}
+\begin{bmatrix} 2 &amp; 7 \\ -1 &amp; -6 \end{bmatrix}\begin{bmatrix} 1 \\ x \end{bmatrix} = -5 \begin{bmatrix} 1 \\ x \end{bmatrix} \\
+2 + 7x = -5 \\
+-1 - 6x = -5x \\
+\end{gather}\]
+
+<p>We have two equations for one unknown. We’ll just solve for \(x\) using the second equation to make our lives easier, but as a sanity check it’s good to make sure both equations have the same solution. Using this equation, we find \(x = -1\), so our eigenvector/eigenvalue pair is:</p>
+
+\[\begin{gather}
+\lambda_1 = -5, \quad \vec{v}_1 = \begin{bmatrix} 1 \\ -1 \end{bmatrix}
+\end{gather}\]
+
+<p>At this point you might be wondering <em>why</em> we can just arbitrarily set the first element equal to 1 and solve for the other element. Geometrically, the answer comes from two interconnected properties of the eigenvector: the sign doesn’t matter, and it is only the <em>proportion</em> between the elements that actually determines the direction. More mathematically though, we’re trying to solve a linear system that has infinitely many solutions, so we need to set one of the elements of the solution vector then use it to solve for the other elements.</p>
+
+<p>For completeness, let’s quickly solve for the other eigenvalue/eigenvector pair:</p>
+
+\[\begin{gather}
+\begin{bmatrix} 2 &amp; 7 \\ -1 &amp; -6 \end{bmatrix} \vec{v} = (1) \vec{v} \\
+\begin{bmatrix} 2 &amp; 7 \\ -1 &amp; -6 \end{bmatrix}\begin{bmatrix} 1 \\ x \end{bmatrix} = \begin{bmatrix} 1 \\ x \end{bmatrix} \\
+2 + 7x = 1 \\
+-1 - 6x = x \\
+\end{gather}\]
+
+<p>Using the secodn equation, \(x = - 1/7\), so we have</p>
+
+\[\begin{gather}
+\lambda_2 = 1, \quad \vec{v}_2 = \begin{bmatrix} 1 \\ -\frac{1}{7} \end{bmatrix}
+\end{gather}\]
+
+<p>To quickly summarize, the steps for finding an eigenvalue eigenvector pair are:</p>
+
+<ol>
+  <li>Compute \(\det(\mathbf{A} - \lambda\mathbf{I})\)</li>
+  <li>Solve for \(\lambda\) using the polynomial from the previous step</li>
+  <li>Plug each \(\lambda\) into the equation, set the first element of the eigenvector equal to 1, and solve for the other element
+    <ul>
+      <li>If setting the first element to 1 does not result in a solution, it means that the first element is 0 and the other element is 1</li>
+    </ul>
+  </li>
+</ol>
+
+<p>Computing eigenvalue/eigenvector pairs can be tricky, so be sure to spend a lot of time making sure you understand the process and the motivation behind each step. As I’ve said ad naseum in this page of notes, the eigenvalue problem is one of the most important mathematical concepts you’ll ever learn, so be sure to internalize everything here.</p>
+
+<h3 id="applications-to-systems-of-odes">Applications to Systems of ODEs</h3>
+
+<p>Now we turn to solving systems of ODEs using the eigenvalue problem. One of the most common types of ODEs you’ll encounter are linear first order ODEs:</p>
+
+\[\vec{x}' = \mathbf{A} \vec{x}\]
+
+<p><em>A side note:</em> This is the simplest version of a wide and extremely useful class of ODEs called “linear dynamical systems”. There is an entire class at Stanford, EE 263, on this topic because ODEs of this type appear in so many areas e.g. control systems, finance, biology, etc.</p>
+
+<p>As you are learning I’m sure, we often solve ODEs by assuming a form for the solution, then plugging it in and solving for constants in the assumed solution. For the above linear first order system of ODEs, assume the solution takes the form \(\vec{x} = C \vec{v} e^{\lambda t}\). Plugging this in:</p>
+
+\[\begin{gather}
+\vec{x}' = \mathbf{A} \vec{x} \\
+C \lambda \vec{v} e^{\lambda t} = \mathbf{A} (C\vec{v} e^{\lambda t}) \\
+\end{gather}\]
+
+<p>\(C\) and \(e^{\lambda t}\) are just scalars, so we can divide them out from both sides of the equation. This leaves us with:</p>
+
+\[\begin{gather}
+\lambda \vec{v} = \mathbf{A} \vec{v}
+\end{gather}\]
+
+<p>Aha! It is the eigenvalue problem! This means we can use the tools we learned above to find the \(\vec{v}\) and \(\lambda\) in the assumed solution. (As for how we actually found this assumed solution, this is something that a lot of very smart mathematicians figured out over time, and something we really just need to accept on faith for now.)</p>
+
+<p>There are now three main cases for the eigenvalues we need to treat: unique real eigenvalues, repeated real eigenvalues, and complex eigenvalues. Also, you can assume you’ll only need to work with 2-by-2 matrices in an introductory class like this—it is very difficult to solve for the eigenvalues of larger matrices, so we don’t dive into that here.</p>
+
+<p>We begin with the most straightforward case: <strong>two distinct real eigenvalues</strong>. By this we mean that for the matrix, \(\lambda_1 \neq \lambda_2\). For this case, the solution takes the form:</p>
+
+\[\begin{gather}
+\vec{x} = C_1 \vec{v}_1 e^{\lambda_1 t} + C_2 \vec{v}_2 e^{\lambda_2 t}
+\end{gather}\]
+
+<p>Basically, the solution is just a linear combination of the assumed solutions associated with each eigenvalue/eigenvector pair.</p>
+
+<p>The next case is when we have a <strong>real repeated eigenvalue</strong>. That is, \(\mathbf{A}\) only has one \(\lambda\) associated with it. (You can assume for now that every eigenvalue has one eigenvector associated with it.) When we have a repeated eigenvalue, the first solution has the form:</p>
+
+\[\begin{gather}
+\vec{x}_1 = C_1  \vec{v} e^{\lambda t}
+\end{gather}\]
+
+<p>We know that there must be two linearly independent solutions. A simple (but also incorrect, as we’ll see) way to enforce this is to pick:</p>
+
+\[\vec{x}_2 = t \vec{v} e^{\lambda t}\]
+
+<p>which when we plug into the ODE:</p>
+
+\[\begin{gather}
+\lambda t \vec{v} e^{\lambda t} + \vec{v} e^{\lambda t} = t\mathbf{A} \vec{v}e^{\lambda t} \\
+\lambda t \vec{v} +  \vec{v} = t\mathbf{A} \vec{v}
+\end{gather}\]
+
+<p>If we match coefficients, we see that this equation implies:</p>
+
+\[\vec{v} = 0\]
+
+<p>But this contradicts that \(\vec{v}\) is non-zero from above, so we know that the solution we picked is invalid. Instead, let’s pick:</p>
+
+\[\vec{x}_2 = t \vec{v} e^{\lambda t} + \vec{\rho} e^{\lambda t}\]
+
+<p>When we plug this in, we have:</p>
+
+\[\begin{gather}
+\vec{v} e^{\lambda t} + \lambda t \vec{v} e^{\lambda t} + \lambda \vec{\rho} e^{\lambda t} = \mathbf{A} \vec{v} t e^{\lambda t} + \mathbf{A} \vec{\rho} e^{\lambda t} \\
+\vec{v} + \lambda t \vec{v} + \lambda \vec{\rho} = \mathbf{A} \vec{v} t + \mathbf{A} \vec{\rho} \\
+\vec{v}  = (\mathbf{A} - \lambda \mathbf{I}) t \vec{v} + (\mathbf{A} - \lambda \mathbf{I}) \vec{\rho}
+\end{gather}\]
+
+<p>Then matching coefficients between powers of \(t\) on both sides:</p>
+
+\[\begin{align*}
+t^1: \qquad 0 &amp;= (\mathbf{A} - \lambda \mathbf{I}) \vec{v} \\
+t^0: \qquad \vec{v} &amp;= (\mathbf{A} - \lambda \mathbf{I}) \vec{\rho}
+\end{align*}\]
+
+<p>The first equation is just the eigenvalue equation (which we already know \(\vec{v}\) satisfies), but the second one is a system of equations we can solve to find \(\vec{\rho}\). After solving this, we can write the solution as:</p>
+
+\[\vec{x}(t) = C_1 \vec{v} e^{\lambda t} + C_2 \vec{v} t e^{\lambda t} + C_2 \vec{w} e^{\lambda t}\]
+
+<!-- As you will see in a few sections of notes, this solution form is actually very closely related (basically equivalent to) the *characteristic equation* solution for second order linear ODEs.  -->
+
+<p>Finally, we have <strong>complex eigenvalues</strong>. Our eigenvalues are not always going to be real-valued (very often they’re not), and it’s time we reckon with this case.</p>
+
+<p>The first thing to know about complex eigenvalues for real-valued matrices is that they always come in complex conjugate pairs. That is, if \(\lambda = a + bi\) is an eigenvalue, then \(\lambda = a - bi\) is also an eigenvalue. (This comes from a geometric understanding of the eigenvalues, but we don’t dive into that here.)</p>
+
+<p>Next, note that the eigenvectors for complex conjugate eigenvalues are also complex conjugates. That, if \(\vec{v}_1 = \vec{v}_R + \vec{v}_I\) is associated with \(\lambda_1 = a + bi\), then \(\vec{v}_2 = \vec{v}_R - \vec{v}_I\) is associated with \(\lambda_2 = a - bi\). Basically, the real and imaginary components are the same, the sign is just flipped between the conjugate pairs.</p>
+
+<p>The last thing to remember is the Euler identity:</p>
+
+\[e^{a+ib} = e^{a}(\cos(b) + i\sin(b))\]
+
+<p>We can combine these to derive the solution when we have \(\lambda = a \pm bi\):</p>
+
+\[\begin{gather}
+\vec{x} = C_1 e^{at}\left[ \vec{v}_R \cos(bt) - \vec{v}_I \sin(bt) \right] + C_2 e^{at}\left[ \vec{v}_R \cos(bt) + \vec{v}_I \sin(bt) \right]
+\end{gather}\]
+
+<p>That is, you solve for the complex conjugate eigenvalues, then finding the complex conjugate eigenvectors, then plug the real and imaginary parts into the above equation to find the final solution.</p>
+
+<p>The complex eigenvalue case is pretty confusing, so let’s go through an example of it together. Consider the linear system of ODEs below (this is exactly the example in the course reader):</p>
+
+\[\begin{gather}
+\begin{bmatrix} x' \\ y' \end{bmatrix} = \begin{bmatrix} -1 &amp; 2 \\ -1 &amp; -3 \end{bmatrix} \begin{bmatrix} x \\ y \end{bmatrix}
+\end{gather}\]
+
+<p>We first need to compute the eigenvalues for the matrix:</p>
+
+\[\begin{gather}
+\det \begin{bmatrix} -1 - \lambda &amp; 2 \\ -1 &amp; -3 - \lambda \end{bmatrix} = (-1 - \lambda)(-3 - \lambda) + 2 \\
+(-1 - \lambda)(-3 - \lambda) + 2 = \lambda^2 + 4 \lambda + 5 \\
+\lambda = -2 \pm i
+\end{gather}\]
+
+<p>To solve for the eigenvector, we follow the same procedure as above:</p>
+
+\[\begin{gather}
+\begin{bmatrix} -1 &amp; 2 \\ -1 &amp; -3 \end{bmatrix} \vec{v} = (-2 + i)\vec{v} \\
+\begin{bmatrix} -1 &amp; 2 \\ -1 &amp; -3 \end{bmatrix} \begin{bmatrix} 1 \\ p \end{bmatrix} = (-2 + i)\begin{bmatrix} 1 \\ p \end{bmatrix} \\
+-1 + 2p = -2 + i \\
+-1 - 3p = (-2 + i)p \\
+p = -\frac{1}{2} + \frac{1}{2} i\\
+\vec{v}_R = \begin{bmatrix} 1 \\ -\frac{1}{2} \end{bmatrix} \\
+\vec{v}_I = \begin{bmatrix} 0 \\ \frac{1}{2} \end{bmatrix}
+\end{gather}\]
+
+<p>Then, plugging this into the above form for the equation, we have:</p>
+
+\[\begin{gather}
+\begin{bmatrix} x \\ y \end{bmatrix} = C_1 e^{-2t}\left( \begin{bmatrix} 1 \\ -\frac{1}{2} \end{bmatrix} \cos(t) - \begin{bmatrix} 0 \\ \frac{1}{2} \end{bmatrix} \sin(t) \right) + C_2 e^{-2t}\left( \begin{bmatrix} 1 \\ -\frac{1}{2} \end{bmatrix} \cos(bt) + \begin{bmatrix} 0 \\ \frac{1}{2} \end{bmatrix} \sin(bt) \right)
+\end{gather}\]
+
+<p>This case is hard to treat just because of all the complex arithmetic involved (which we aren’t really used to). However, if you just follow the procedure systematically, it’s not too bad. Just to summarize, solving ODEs with eigenvalues really breaks down into two simple steps:</p>
+<ol>
+  <li>Find the eigenvalues and eigenvectors of the matrix in the linear first order system</li>
+  <li>Form the solution according to the rules above based on the form of the eigenvalues
+    <ul>
+      <li>Two real eigenvalues</li>
+      <li>A real repeated eigenvalue: this case will require you to solve for an additional \(\vec{\rho}\) vector</li>
+      <li>Complex conjugate eigenvalues</li>
+    </ul>
+  </li>
+</ol>
+
+
+  </div>
+</article>
+
+    </div>
+
+    <div class="wrapper-footer">
+      <div class="container">
+        <footer class="footer">
+          
+<a href="mailto:timothy.isaac.anderson@gmail.com"><i class="svg-icon email"></i></a>
+
+
+<a href="https://github.com/timanderson1994"><i class="svg-icon github"></i></a>
+<a href="https://instagram.com/timmydingdong"><i class="svg-icon instagram"></i></a>
+<a href="https://www.linkedin.com/in/timanderson1994"><i class="svg-icon linkedin"></i></a>
+
+
+
+
+
+
+        </footer>
+      </div>
+    </div>
+
+    
+
+  </body>
+</html>

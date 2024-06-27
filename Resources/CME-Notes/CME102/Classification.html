@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Classifying ODEs – Tim Anderson</title>
+
+        <meta charset="utf-8" />
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0'>
+
+    
+    <meta name="description" content="Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. ">
+    <meta property="og:description" content="Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. " />
+    
+    <meta name="author" content="Tim Anderson" />
+
+    
+    <meta property="og:title" content="Classifying ODEs" />
+    <meta property="twitter:title" content="Classifying ODEs" />
+    
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" type="text/css" href="../../../style.css" />
+    <link rel="alternate" type="application/rss+xml" title="Tim Anderson - Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. " href="../../../feed.xml" />
+
+<!-- 
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+ -->
+
+  <!-- Created with Jekyll Now - http://github.com/barryclark/jekyll-now -->
+  </head>
+
+  <body>
+    <div class="wrapper-masthead">
+      <div class="container">
+        <header class="masthead clearfix">
+          <a href="../../../index.html" class="site-avatar"><img src="../../../assets/images-general/duck.jpg" /></a>
+
+          <div class="site-info">
+            <h1 class="site-name"><a href="../../../index.html">Tim Anderson</a></h1>
+            <!-- <p class="site-description">Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. </p> -->
+          </div>
+
+          <nav>
+            <a href="../../../Research/index.html">Research</a>
+            <a href="../../../Publications/index.html">Publications</a>
+            <a href="../../index.html">Resources</a>
+            <a href="../../../Misc/index.html">Misc</a>
+            <!-- <a href="/Blog/">Blog</a> -->
+            <a href="../../../About/index.html">About</a>
+          </nav>
+        </header>
+      </div>
+    </div>
+
+    <div id="main" role="main" class="container">
+          <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<!-- 
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    });
+
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+    </script>
+<style>
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+</style>
+ -->
+<article class="page">
+
+  <h1>Classifying ODEs</h1>
+
+  <div class="entry">
+    <h3 id="takeaways">Takeaways</h3>
+
+<ul>
+  <li>Order: the <em>order</em> of the ODE is the number of the highest derivative appear in the equation (e.g. if the equation contains \(y''\) then it is second order).</li>
+  <li>Linearity: for each term where \(y(x)\) appears (terms with \(y\) and any of its derivatives), the term is <em>linear</em> if and only if it satisfies: \[ Term(\alpha y_1 + \beta y_2) = \alpha Term(y_1) +  \beta Term(y_2) \] The ODE is a <em>linear ODE</em> if this condition is satisfied for every term. Otherwise, the ODE is nonlinear.</li>
+  <li>Homogeneity: ODE is <em>homogeneous</em> if when you plug in 0 for \(y(x)\) and all its derivatives, you get \(0 = 0\). Otherwise the ODE is <em>inhomogeneous</em>.</li>
+</ul>
+
+<h3 id="importance-of-classifying-odes">Importance of Classifying ODEs</h3>
+
+<p>Before we get started, I’d like to quickly motivate this section. In CME 102, you’re going to learn a lot of solution methods, and each solution method only works for one or a few specific types of ODEs. To know which solution method to use (or which methods are valid), you have to be able to very quickly and correctly identify the type of ODE you’re working with. For this reason, I’ve tried to explain in (excruciating) detail the three main properties we use to characterize an ODE: order, linearity, and homogeneity.</p>
+
+<h3 id="order">Order</h3>
+
+<p>Recall that the most general form for an ODE is an equation of the form:</p>
+
+<p>\[ f(y^{(n)}, y^{(n-1)},…,y’, y, x) = 0 \]</p>
+
+<p>(basically just some function of \(y\) and its derivatives equal to 0, where the notation \(y^{(n)}\) means the \(n^{th}\) derivative of \(y\)). The order of an ODE is then \(n\) in this equation. That is, <strong>the order of an ODE is the highest order derivative occuring in the differential equation</strong>. For example, consider:</p>
+
+<p>\[ y’’’ + y = x\]</p>
+
+<p>This is a third order ODE, since \(y'''\) is the highest order derivative occurring in the equation. Pretty easy, yea?</p>
+
+<h3 id="linearity">Linearity</h3>
+
+<p>We also have linearity. Linearity is one of the most important topics in mathematics: some people have gone so far as to call the 20th Century the “century of linearity” because of all the scientific discoveries (quantum mechanics, information theory, etc.) that were made possible by the principle of linearity and the theory developed around it. In ODEs, linearity is one of the most important topics (possibly <em>the</em> most important topic in ODEs), and since this is an ODEs class, we should probably study it.</p>
+
+<p>Now before we begin, linearity is a fairly difficult concept to get your head around since there is a bit of circular reasoning involved  in explaining it. However, you are smart, and after a pass or two through the definitions you’ll be a master of telling if an ODE is linear. The best place to start with explaining linearity is with the definiton. A function \(f(x)\) is <em>linear</em> if it satisfies the relationship:</p>
+
+\[f(\alpha x_1 + \beta x_2) = \alpha f(x_1) +  \beta f(x_2)\]
+
+<p>for two constants \(\alpha, \beta \in \mathbb{R}\) (two real-valued constants). The best example of this (actually the only example for one dimensional functions) is \(f(x) = mx\) for a constant \(m \in \mathbb{R}\). (As an aside here, I’m sure you all were told in school that \(y = mx + b\) is a linear function but that’s not true—you were all lied to!—this function is actually an <em>affine</em> function, which is a more restrictive class of functions.)</p>
+
+<p>Inherent in the definition of linearity is the idea of a <em>linear combination</em>. A linear combination is (basically) where you multiply two or more quantities by constants and add them together. If you look at the definition above, you’ll see that \(\alpha x_1 + \beta x_2\) is a linear combination of \(x_1\) and \(x_2\). Understanding linear combinations is very important since this idea appears often in ODEs (and the remainder of these notes). Using this idea of linear combinations, we can also succinctly state the definition of linearity:</p>
+
+<div style="width: 85%; margin: auto; display: block">
+<p style="text-align: center; font-weight: bold; font-style: italic"> A function is linear if a linear combination of any inputs is equal to the same linear combination of those inputs' outputs </p>
+</div>
+
+<p>Parse through this definition on your own—I think doing so is a good exercise towards understanding linearity.</p>
+
+<p>Before we go further, a <em>nonlinear function</em> is just a function that isn’t linear—it’s a defintiion by exclusion. So basically, a function is linear if and only if the above equality holds, and nonlinear otherwise. You will find that the vast majority of functions (and ODEs) are actually nonlinear. However, we study linear things because the theory is nice and they often offer useful insight into nonlinear things.</p>
+
+<p>Back to linearity. So what about multivariate functions (functions of multiple variables)? For a multivariate function (let’s say something like \(f(x,y,z)\)), it is possible for a function to only be linear in some of the variables, and nonlinear in the others. For example, take the function \(f(x,y,z) = xy^2e^z\). This function is linear in \(x\) since</p>
+
+\[\begin{align*}
+f(\alpha x_1 + \beta x_2,y,z) &amp;= (\alpha x_1 + \beta x_2)y^2e^z \\
+&amp;= \alpha x_1 y^2 e^z + \beta x_2 y^2e^z \\
+&amp;= \alpha f(x_1, y,z) + \beta f(x_2,y,z) 
+\end{align*}\]
+
+<p>However, this equality would not hold for \(y\) and \(z\), so the function is not linear in these variables.</p>
+
+<p>So, how does this all connect to ODEs? Well, remember what we said above that the most general form for an ODE is:</p>
+
+\[f(y^{(n)}, y^{(n-1)},...,y', y, x) = 0\]
+
+<p>Think of this ODE:</p>
+
+<p>\[ f(y^{(n)}, y^{(n-1)},…,y’, y, x) = 0 \]</p>
+
+<p>as several separable terms (i.e. we just add them together):</p>
+
+<p>\[ f_1(y^{(n)}, y^{(n-1)},…,y’, y, x) + f_2(y^{(n)}, y^{(n-1)},…,y’, y, x) + \cdots + f_m(y^{(n)}, y^{(n-1)},…,y’, y, x) = 0 \]</p>
+
+<p>The ODE is linear if and only if every term containing \(y\) or one of its derivatives is linear. So for the ODE:
+\(y''' + y = x\)</p>
+
+<p>we have:</p>
+
+\[\begin{align}
+y''' + y &amp;= x \\
+f_1 &amp;= y''' \\
+f_2 &amp;= y \\
+f_3 &amp;= -x \\
+f(y^{(n)}, y^{(n-1)},...,y', y, x) &amp;= f_1 + f_2 + f_3 = 0
+\end{align}\]
+
+<p>Only \(f_1\) and \(f_2\) depend on \(y\) or one of its derivatives, and these terms are linear in \(y'''\) and \(y\), so the ODE is linear.</p>
+
+<p>Linearity of an ODE is the most important thing to identify when choosing a solution method, and this has historically been a sticking point with CME 102 students. Be sure you fully understand this concept before proceeding with this class.</p>
+
+<h3 id="homogeneity">Homogeneity</h3>
+
+<p>Finally, we have <em>homogeneity</em>. An ODE is homogeneous if it is linear and it only contains terms containing \(y\) or one of its derivatives. That is, when we’re constructing \(\tilde{f}(\cdot)\) above, if we do not need to throw any terms out, then the ODE is homogenous. Another, more straightforward way to determine homogeneity is if I set \(y\) and all its derivatives to \(0\) and I find \(0=0\), then the ODE is homogeneous.</p>
+
+<p>Consider the same example from above:</p>
+
+\[y''' + y = x\]
+
+<p>We see that if I set \(y''' = y = 0\), I find \(0 = x\), which is clearly not true for all \(x\) values. Therefore, this ODE is not homogeneous.</p>
+
+<p>Homogeneity and linearity are very closely related, as you will see in the coming weeks of this class. As a quick peek into why this is, suppose we have a homogeneous ODE and two solutions \(y_1\) and \(y_2\) that solve the ODE. That is, if we have</p>
+
+\[f(y_1^{(n)}, y_1^{(n-1)}, \cdots, y_1, x) = 0, \qquad  f(y_2^{(n)}, y_2^{(n-1)}, \cdots, y_2, x) = 0\]
+
+<p>then a linear combination of these solutions will also solve the ODE:</p>
+
+\[f(c_1 y_1^{(n)} + c_2 y_2^{(n)}, c_1y_1^{(n-1)} + c_2 y_2^{(n-1)}, \cdots, c_1y_1 + c_2y_2, x) = 0\]
+
+<p>since:</p>
+
+\[\begin{align*}
+f(c_1 y_1^{(n)} + c_2 y_2^{(n)}, &amp;c_1y_1^{(n-1)} + c_2 y_2^{(n-1)}, \cdots, c_1y_1 + c_2y_2, x) \\
+&amp;= c_1 f(y_1^{(n)}, y_1^{(n-1)}, \cdots, y_1, x) + c_2 f(y_2^{(n)}, y_2^{(n-1)}, \cdots, y_2, x) 
+\end{align*}\]
+
+<p>by the property of linearity. (This is known as a <em>superposition</em> of solutions, and becomes very important when we start studying higher order ODEs. In physics, superposition is at the core of quantum mechanics, and indeed is the basis for the famous Schrodinger’s cat thought experiment.)</p>
+
+<h3 id="examples">Examples</h3>
+
+<p>We will close this seciton with a few examples, since at the end of the day examples are the best way to learn to identify ODEs. As a first example:</p>
+
+\[y'' + \sin(y) = \cos(x)\]
+
+<p>This ODE is nonlinear second order (nonlinear ODEs can’t be homogeneous). The nonlinearity is from the \(\sin(y)\) term, inhomogeneous because if we set \(y'' = y = 0\), we do not have \(0=0\), and it is second order because \(y''\) is the highest order derivative appearing in the equation.</p>
+
+<p>Consider:</p>
+
+\[y^{(4)} = 0\]
+
+<p>This is a fourth order ODE since the fourth derivative appears in the equation, it is linear because \(y^{(4)}\) satisfies the equality for linearity, and it is homgoeenous since if I set \(y^{(4)} = 0\) I have \(0 = 0\).</p>
+
+<p>Lastly, consider:</p>
+
+\[y'' + 4y = \cos(x)\]
+
+<p>This looks very similar to the second equation, except for the \(y\) term. Here, we have \(4y\), which is linear, and therefore this ODE is a linear, second order, inhomogeneous ODE.</p>
+
+<p>This ODE raises an important point that an ODE only needs to be linear in \(y\) and its derivatives to be a linear ODE—the \(x\) terms do not matter for linearity. That is, if we represent this ODE as:</p>
+
+\[f(y'', y, x) = \underbrace{y''}_{f_1} + \underbrace{4y}_{f_2} - \underbrace{\cos(x)}_{f_3} = 0\]
+
+<p>we see that only \(f_1\) and \(f_2\) depend on \(y\) or its derivatives, and both of these are linear functions in \(y\) and all derivatives, so this is a linear ODE.</p>
+
+
+  </div>
+</article>
+
+    </div>
+
+    <div class="wrapper-footer">
+      <div class="container">
+        <footer class="footer">
+          
+<a href="mailto:timothy.isaac.anderson@gmail.com"><i class="svg-icon email"></i></a>
+
+
+<a href="https://github.com/timanderson1994"><i class="svg-icon github"></i></a>
+<a href="https://instagram.com/timmydingdong"><i class="svg-icon instagram"></i></a>
+<a href="https://www.linkedin.com/in/timanderson1994"><i class="svg-icon linkedin"></i></a>
+
+
+
+
+
+
+        </footer>
+      </div>
+    </div>
+
+    
+
+  </body>
+</html>

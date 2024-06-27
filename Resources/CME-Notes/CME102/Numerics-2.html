@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Numerical Methods 2 – Tim Anderson</title>
+
+        <meta charset="utf-8" />
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0'>
+
+    
+    <meta name="description" content="Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. ">
+    <meta property="og:description" content="Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. " />
+    
+    <meta name="author" content="Tim Anderson" />
+
+    
+    <meta property="og:title" content="Numerical Methods 2" />
+    <meta property="twitter:title" content="Numerical Methods 2" />
+    
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" type="text/css" href="../../../style.css" />
+    <link rel="alternate" type="application/rss+xml" title="Tim Anderson - Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. " href="../../../feed.xml" />
+
+<!-- 
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+ -->
+
+  <!-- Created with Jekyll Now - http://github.com/barryclark/jekyll-now -->
+  </head>
+
+  <body>
+    <div class="wrapper-masthead">
+      <div class="container">
+        <header class="masthead clearfix">
+          <a href="../../../index.html" class="site-avatar"><img src="../../../assets/images-general/duck.jpg" /></a>
+
+          <div class="site-info">
+            <h1 class="site-name"><a href="../../../index.html">Tim Anderson</a></h1>
+            <!-- <p class="site-description">Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. </p> -->
+          </div>
+
+          <nav>
+            <a href="../../../Research/index.html">Research</a>
+            <a href="../../../Publications/index.html">Publications</a>
+            <a href="../../index.html">Resources</a>
+            <a href="../../../Misc/index.html">Misc</a>
+            <!-- <a href="/Blog/">Blog</a> -->
+            <a href="../../../About/index.html">About</a>
+          </nav>
+        </header>
+      </div>
+    </div>
+
+    <div id="main" role="main" class="container">
+          <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<!-- 
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    });
+
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+    </script>
+<style>
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+</style>
+ -->
+<article class="page">
+
+  <h1>Numerical Methods 2</h1>
+
+  <div class="entry">
+    <h3 id="takeaways">Takeaways</h3>
+
+<ul>
+  <li>The trapezoidal method is given by:
+\[ y_{i+1} = y_i + \frac{h}{2}\left[ f(x_i,y_i) + f(x_{i+1}, y_{i+1}) \right] \]
+This method is second order accurate and is unconditionally stable.</li>
+  <li>The Improved Euler method has second order local accuracy and is given by:</li>
+</ul>
+
+\[\begin{align}
+\tilde{y}_{i+1} &amp;= y_i + h f(x_i, y_i) \\
+y_{i+1} &amp; = y_i + \frac{h}{2} (f(x_i,y_i) + f(x_{i+1}, \tilde{y}_{i+1}))
+\end{align}\]
+
+<ul>
+  <li>The Runge Kutta 4 (RK4) method has fourth order local accuracy and is given by:</li>
+</ul>
+
+\[\begin{align}
+k_1 &amp;= f(x_i,y_i) \\
+k_2 &amp;= f\left(x_i + \frac{h}{2}, y_i + \frac{h}{2}k_1 \right) \\
+k_3 &amp;= f\left(x_i + \frac{h}{2}, y_i + \frac{h}{2}k_2 \right) \\
+k_4 &amp;= f\left(x_i + h, y_i + hk_3 \right) \\
+y_{i+1} &amp;= y_i + \frac{h}{6} \left( k_1 + 2k_2 + 2k_3 + k_4\right)
+\end{align}\]
+
+<ul>
+  <li>We transform higher-order system of ODEs into a numerically solvable form by introducing dummy variables to represent all derivatives besides the higher derivative of each variable.</li>
+</ul>
+
+<h3 id="trapezoidal-method">Trapezoidal Method</h3>
+
+<p>The next scheme we’ll discuss it the <strong>trapezoidal method</strong>. The trapezoidal method is defined as:</p>
+
+\[\begin{gather}
+y_{i+1} = y_i + \frac{h}{2}\left[ f(x_i,y_i) + f(x_{i+1}, y_{i+1}) \right]
+\end{gather}\]
+
+<p>Notice that this method is implicit since both sides contain \(y_{i+1}\). It is also second order accurate, as we’ll show below.</p>
+
+<p>Trapezoidal method essentially averages the backward and forward Euler formulas to create a more accurate method. Forward Euler tends to “overshoot” the true solution (overshoot in the direction opposite the curvature) and backward Euler tends to “undershoot” (relative to the curvature). As we showed in the previous notes, both of these schemes’ errors depend on the second derivative. So, what if we could kill off this leading error term? This is exactly what trapezoidal method does.</p>
+
+<p>After much algebra, the errors for forward and backward Euler are given by:</p>
+
+\[\begin{align}
+y(x_{i+1}) - y_{i+1, FE} &amp;= \frac{1}{2} h\lambda^2 + \mathcal{O}(h^2) \\
+y(x_{i+1}) - y_{i+1, BE} &amp;= -\frac{1}{2} h\lambda^2 + \mathcal{O}(h^2) 
+\end{align}\]
+
+<p>(The derivations for these are given in the course reader or easily accessible online.) Both schemes are <em>first order</em> accurate since the leading error term is \(\mathcal{O}(h)\). The important thing to note is that the leading error terms are opposite in sign, so this suggests if we average the two methods together, we can get a better approximation:</p>
+
+\[\begin{align}
+\frac{1}{2} \left[y(x_{i+1}) - y_{i+1, FE} + y(x_{i+1}) - y_{i+1, BE} \right] &amp;= \frac{1}{2} h\lambda^2 + \mathcal{O}(h^2) -\frac{1}{2} h\lambda^2 + \mathcal{O}(h^2) \\
+y(x_{i+1}) - \\frac{1}{2}\left[ y_{i+1, FE} + y_{i+1, BE} \right] &amp;= \mathcal{O}(h^2)
+\end{align}\]
+
+<p>So, a numerical scheme given by an average of forward and backward Euler will be second order accurate. This is essentially how we arrive at the above formula for trapezoidal method. Furthermore, trapezoidal method is unconditionally stable (it is a good exercise to work out the amplification factor for yourself).</p>
+
+<p>As an aside before we move on, the trapezoidal method is extremely popular in practice due to its stability properties. In fact, it forms the basis of the <em>Crank-Nicholson</em> scheme, which is the basis of many algorithms for solving problems in computational fluid dynamics and electrodynamics.</p>
+
+<h3 id="improved-euler">Improved Euler</h3>
+
+<p>Trapezoidal method works great for a lot of things in practice, but it’s still an implicit method, and implicit methods can be very difficult and computationally expensive to work with (especially if we’re dealing with nonlinear differential equations). To get around this, we can use the <strong>improved Euler</strong> method (also known as <em>Huen’s method</em>).</p>
+
+<p>The basic idea of improved Euler is that instead of using an implicit method, we first <em>estimate</em> \(y_{i+1}\) using forward Euler (an explicit method), then use trapezoidal method to calculate \(y_{i+1}\), except using the estimate \(y_{i+1}\) on the right hand side instead of the actual value. The formulas are:</p>
+
+\[\begin{align}
+\tilde{y}_{i+1} &amp;= y_i + h f(x_i, y_i) \\
+y_{i+1} &amp; = y_i + \frac{h}{2} (f(x_i,y_i) + f(x_{i+1}, \tilde{y}_{i+1}))
+\end{align}\]
+
+<p>Such a method is actually known as a <em>predictor-corrector</em> method because we <em>predict</em> the next value \(y_{i+1}\), then <em>correct</em> our prediction. By using an estimate instead of the actual value, this scheme stays explicit but is still second order accurate. Improved Euler is an explicit method it is still conditionally stable.</p>
+
+<h3 id="runge-kutta-methods">Runge-Kutta Methods</h3>
+
+<p>Finally, we arrive at the culmination of single-step methods: the Runge-Kutta methods. These are a class of numerical methods that extend the idea of improved Euler—namely, using an estimate of the next step—to eliminate error terms and increase accuracy. In improved Euler (which is also known as Runge-Kutta 2, or RK2, since it is second order accurate and a Runge-Kutta scheme), we made just one estimate of the next step, then used this to improve the accuracy. Runge-Kutta methods take this idea to its extreme, and make several successively better estimates of the next step, then combine them to find a very high accuracy estimate.</p>
+
+<p>The most important of the Runge-Kutta methods besides improved Euler is the fourth order accurate variant, known as RK4. The equations for RK4 are given below:</p>
+
+\[\begin{align}
+k_1 &amp;= f(x_i,y_i) \\
+k_2 &amp;= f\left(x_i + \frac{h}{2}, y_i + \frac{h}{2}k_1 \right) \\
+k_3 &amp;= f\left(x_i + \frac{h}{2}, y_i + \frac{h}{2}k_2 \right) \\
+k_4 &amp;= f\left(x_i + h, y_i + hk_3 \right) \\
+y_{i+1} &amp;= y_i + \frac{h}{6} \left( k_1 + 2k_2 + 2k_3 + k_4\right)
+\end{align}\]
+
+<p>Let’s walk through these one-by-one. The update provided by \(k_1\) is essentially the basic forward Euler update, because we are calculating the derivative based on the current point. \(k_2\) estimates the change at the midpoint between \(x_i\) and \(x_{i+1}\) using the forward Euler estimate of \(y\) at this point. \(k_3\) does the same thing, except we use the estimate for the rate of change provided by \(k_2\). \(k_4\) is an improved Euler update, except we’re doing the update using the estimate provided by \(k_3\). Finally, when you crunch them all together, you come out with the last equation as the combination of these that minimizes the error.</p>
+
+<p>The general idea here is that we’re obtaining successively better estimates of the rate of change, then crunching these together to find a very high accuracy estimate. The exact analysis for why this scheme is fourth order is very involved, so we won’t go into it here. As far as <em>single step</em> scheme go though, RK4 is the “gold standard” since we achieve very high accuracy with minimal information (only the values at a single step.)</p>
+
+<p>This accuracy comes at a cost though: notice that we needed to evaluate the derivative four times. Most of our computational power is expended evaluating derivatives, and for that reason RK4 is not used very often in practice. However, the ideas behind it are exceedingly important, and it still is very useful for solving smaller-scale problems such as those you might encounter in systems biology or neuroscience.</p>
+
+<h3 id="higher-order-ode">Higher Order ODE</h3>
+
+<p>To change direction a bit, we’ll now discuss how to solve higher order ODEs using the numerical schemes we’ve discussed in this class. So far, we’ve only talked about how to solve a first order ODE, specifically:</p>
+
+\[y' = f(x,y)\]
+
+<p>However, the world is not first order (just look at Newton’s second law), so numerical methods would be pretty useless if they could <em>only</em> tackle first order differential equations. We use numerical solutions for everything these days, so how do we make these numerical schemes work for higher order questions?</p>
+
+<p>The answer is: we don’t. Instead, we transform higher-order equations to be all first order, then solve using a numerical method like we’ve discussed already. This might sound a bit confusing at first, but I think you’ll see that it’s actually pretty intuitive.</p>
+
+<p>The basic idea is that if we are given a higher order differential equation, we can introduce dummy variables such that the system becomes first order. That is, if we have some sort of high order ODE:</p>
+
+\[f(y^{(n)}, y^{(n-1)}, \cdots, y, x) = 0\]
+
+<p>we can introduce dummy variables so that we have a coupled first order system (not necessarily linear system) of ODEs:</p>
+
+\[\vec{v}' = f(\vec{v}, x)\]
+
+<p>The difficulty is in figuring out what this vector \(\vec{v}\) is, and rearranging the original equation to be in the form of a couple first order system. The best way to understand how to do this is by through an example, so let’s work through one together. Consider the equation:</p>
+
+\[y''' + 2y' +xy = \sin(x)\]
+
+<p>This equation is a third order linear inhomogeneous equation. None of the methods we’ve learned so far in this class (or are going to learn, for that matter) are able to solve this kind of equation analytically, so we turn to numerical methods.</p>
+
+<p>The first thing we need to do is rearrange the equation so that the highest order derivative is on the left hand side of the equation, and all other terms on the right hand side:</p>
+
+\[y''' = - 2y' - xy + \sin(x)\]
+
+<p>In this example, this step is trivial. However, if we had, say, two couple second order ODEs, this step might take quite a bit of algebra. From here, we need to introduce dummy variables. By dummy variables, I mean we are going to introduce new variables that are equal to \(y\) and its derivatives, the substitute them into the equation to make the equation first order.</p>
+
+<p><strong>The number of dummy variables we introduce for a given function is equal to order of the highest order derivative of each function appearing in the ODE or system.</strong></p>
+
+<p>This means if a system is third order in \(y_1\), then we need three dummy variables (for \(y_1\), \(y_1'\), and \(y_1''\)). If it was also second order in \(y_2\), then we need two dummy variables for \(y_2\) and \(y_2'\).</p>
+
+<p>For the example at hand, the equation only has one function \(y\) we are solving for, so our lives are incrementally easier. The ODE is third order in \(y\), so we need three dummy variables. For the sake of simplicity, we will call them \(v_1\), \(v_2\), and \(v_3\):</p>
+
+\[\begin{align}
+v_1 &amp;= y \\
+v_2 &amp;= y' \\
+v_3 &amp;= y''
+\end{align}\]
+
+<p>When assigning the variables, we start with \(y\), then go up to one derivative less than the highest one appearing in the equation. This will become clear in a second. So, what are the derivatives of our dummy variables? The dummy variables are just derivatives of \(y\), so these are easy to compute:</p>
+
+\[\begin{align}
+v_1' &amp;= y' = v_2 \\
+v_2' &amp;= y'' = v_3 \\
+v_3' &amp;= y'''
+\end{align}\]
+
+<p>From our equation way above, when we rearranged so \(y'''\) was on the left hand side, we know that \(y''' = -2y' - xy - \sin(x)\). Making the appropriate substitutions with dummy variables, we have from this:</p>
+
+\[v_3' = -2 v_2 - x v_1 - \sin(x)\]
+
+<p>Combining this with the above expressions, we have:</p>
+
+\[\begin{align}
+v_1' &amp;= v_2 \\
+v_2' &amp;= v_3 \\
+v_3' &amp;= -2v_2 - xv_1 - \sin(x) 
+\end{align}\]
+
+<p>This is just a first order system of ODEs! We know we can solve this using standard numerical schemes and black box routines like <code class="language-plaintext highlighter-rouge">ode45()</code>. By introducing dummy variables, we’ve morphed our ODE into a first order system.</p>
+
+<p><em>Note:</em> we algebraically rearranged the equation since it makes it much easier to introduce dummy variables and write out the final system. This step doesn’t necessarily <em>need</em> to come before we introduce dummy variables, but it definitely helps.</p>
+
+<p>Once you actually transform the ODE though, you’re going to need to solve it numerically, For the sake of completeness, we’ll also do this here. Suppose I assign initial conditions as \(y(0) = v_1(0) = 1\), \(y'(0) = v_2(0) = 0\), and \(y''(0) = v_3(0) = 0.1\). The following script will then solve the equation numerically with <code class="language-plaintext highlighter-rouge">ode45()</code>:</p>
+
+<figure class="highlight"><pre><code class="language-matlab" data-lang="matlab"><span class="nb">clear</span> <span class="nb">all</span><span class="p">;</span> <span class="nb">close</span> <span class="nb">all</span>
+
+<span class="n">yp</span> <span class="o">=</span> <span class="o">@</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="p">[</span><span class="n">y</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span> <span class="n">y</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span> <span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">y</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="nb">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)];</span>
+
+<span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">Y</span><span class="p">]</span> <span class="o">=</span> <span class="nb">ode45</span><span class="p">(</span><span class="o">@</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="n">yp</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),</span> <span class="p">[</span><span class="mi">0</span> <span class="mi">5</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]);</span>
+
+<span class="nb">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Y</span><span class="p">(:,</span><span class="mi">1</span><span class="p">))</span></code></pre></figure>
+
+<p>which produces a plot of the numerical solution:</p>
+
+<p><img src="../../../assets/notes-figures/numerics2_HOex.png" alt="Higher order ODE example" /></p>
+
+<p>We should discuss one the implementation. First, note that I used an anonymous function to compute the \(y'\) vector that is fed into <code class="language-plaintext highlighter-rouge">ode45()</code>. In the first numerical methods notes, we used an anonymous function to compute a scalar, but in reality you can also use them to compute a vector. As we’ve done here, just hard code the vector, where each element is an expression in terms of the inputs.</p>
+
+<p>Secondly, note that the anonymous function produces a <em>column vector</em> and not a row vector. This is very important in <code class="language-plaintext highlighter-rouge">ode45()</code>, and it can cause issues if your derivative function (regardless of how it’s implemented) is outputting a row vector.</p>
+
+<p>Finally, note how I’ve plotted the solution. When you are solving a system of ODEs with <code class="language-plaintext highlighter-rouge">ode45()</code>, the function will output the domain <code class="language-plaintext highlighter-rouge">x</code> as a column vector, and the solution <code class="language-plaintext highlighter-rouge">Y</code> as a matrix, where each column is the solution for one of the variables in the system. (<code class="language-plaintext highlighter-rouge">ode45()</code> is essentially calculating a solution for every dummy variable along with \(y\).) When we set up the system, we had \(y = v_1\), so we want to take the first column of the matrix that <code class="language-plaintext highlighter-rouge">ode45()</code> outputs. To take all the rows in a column, use <em>slice notation</em> in MATLAB. Basically, put a colon in the index that you want to extra all of, and a specific value and range for the other index. Here, we put a colon for the row number, and 1 for the column. This gives us a vector containing all the rows in column 1.</p>
+
+<h3 id="last-comments-on-systems-and-higher-order-odes">Last Comments on Systems and Higher Order ODEs</h3>
+
+<p>Is this method easy? Not really. Painful? Occasionally. But once you hack past all the algebra (and a few implementation details), I think you’ll find the thought flow for converting higher-order ODEs into a system of first order ODEs to be very clear.</p>
+
+<p>To summarize, the algorithm for rewriting a higher order ODE (or higher order system) as a system of first order ODEs is:</p>
+
+<ol>
+  <li>Algebraically solve for the highest order derivatives in the system</li>
+  <li>Introduce “dummy variables” as necessary. For the highest order derivative of each function, you need to introduce one dummy variable for every derivative up to the highest order.</li>
+  <li>Rewrite the higher order system as a first order system using the dummy variables. Do not forget to include the relationships between the dummy variables when writing out your system, since these are what form a complete system</li>
+</ol>
+
+<p>Transforming higher order systems of ODEs into a first order system can be a bit tricky since there are a lot of details to keep track of and a lot of algebra to hack through. However, as long as you are dilligent about your bookkeeping with all the variables and follow the algorithm above, you will be a master of this in no time.</p>
+
+
+  </div>
+</article>
+
+    </div>
+
+    <div class="wrapper-footer">
+      <div class="container">
+        <footer class="footer">
+          
+<a href="mailto:timothy.isaac.anderson@gmail.com"><i class="svg-icon email"></i></a>
+
+
+<a href="https://github.com/timanderson1994"><i class="svg-icon github"></i></a>
+<a href="https://instagram.com/timmydingdong"><i class="svg-icon instagram"></i></a>
+<a href="https://www.linkedin.com/in/timanderson1994"><i class="svg-icon linkedin"></i></a>
+
+
+
+
+
+
+        </footer>
+      </div>
+    </div>
+
+    
+
+  </body>
+</html>

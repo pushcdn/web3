@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Linear Second Order ODEs: Part 1 – Tim Anderson</title>
+
+        <meta charset="utf-8" />
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0'>
+
+    
+    <meta name="description" content="Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. ">
+    <meta property="og:description" content="Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. " />
+    
+    <meta name="author" content="Tim Anderson" />
+
+    
+    <meta property="og:title" content="Linear Second Order ODEs: Part 1" />
+    <meta property="twitter:title" content="Linear Second Order ODEs: Part 1" />
+    
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" type="text/css" href="../../../style.css" />
+    <link rel="alternate" type="application/rss+xml" title="Tim Anderson - Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. " href="../../../feed.xml" />
+
+<!-- 
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+ -->
+
+  <!-- Created with Jekyll Now - http://github.com/barryclark/jekyll-now -->
+  </head>
+
+  <body>
+    <div class="wrapper-masthead">
+      <div class="container">
+        <header class="masthead clearfix">
+          <a href="../../../index.html" class="site-avatar"><img src="../../../assets/images-general/duck.jpg" /></a>
+
+          <div class="site-info">
+            <h1 class="site-name"><a href="../../../index.html">Tim Anderson</a></h1>
+            <!-- <p class="site-description">Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. </p> -->
+          </div>
+
+          <nav>
+            <a href="../../../Research/index.html">Research</a>
+            <a href="../../../Publications/index.html">Publications</a>
+            <a href="../../index.html">Resources</a>
+            <a href="../../../Misc/index.html">Misc</a>
+            <!-- <a href="/Blog/">Blog</a> -->
+            <a href="../../../About/index.html">About</a>
+          </nav>
+        </header>
+      </div>
+    </div>
+
+    <div id="main" role="main" class="container">
+          <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<!-- 
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    });
+
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+    </script>
+<style>
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+</style>
+ -->
+<article class="page">
+
+  <h1>Linear Second Order ODEs: Part 1</h1>
+
+  <div class="entry">
+    <h3 id="takeaways">Takeaways</h3>
+
+<ul>
+  <li>A solution basis for a linear second order ODE are two functions such that any solution to the ODE will be a linear combination of these two functions. So, if our solution basis is \(y_1(x)\) and \(y_2(x)\), any solution \(y(x)\) of the ODE will have the form \[ y(x) = C_1y_1(x) + C_2 y_2(x) \] for constants of integration \(C_1, C_2 \in \mathbb{R}\).</li>
+  <li>When solving the ODE, we solve for the basis functions, then use the initial conditions to algebraically solve for the constants</li>
+  <li>Reduction of order is a solution method for variable coefficient linear second order ODEs where one basis function \(y_1(x)\) is given. The second basis function has the formula:
+\[ y_2 = y_1 \int \frac{1}{y_1^2} e^{- \int p dx} dx \]</li>
+  <li>Characteristic equation is for constant coefficient linear second order ODEs of the form \(a y'' + by' + cy = 0\). We assume a solution of the form \(y(x) = C e^{\lambda x}\), plug in and solve the quadratic \(a \lambda^2 + b \lambda + c = 0\) for \(\lambda\), plug \(\lambda\) into the appropriate form for the solution.</li>
+  <li>Euler-Cauchy equations are a special case of the characteristic equation where we first make the substitution \(x = e^u\), solve for the solution \(y(u)\), then plug in \(u = \ln x\) to find the final solution.</li>
+</ul>
+
+<h3 id="linear-second-order-ode-definition">Linear Second Order ODE Definition</h3>
+
+<p>All linear second order ODEs by definition take on the form</p>
+
+\[y'' + p(x) y' + q(x)y = r(x)\]
+
+<p>The first thing to note about this equation is that it is in <strong>standard form</strong>. We define an ODE as being in standard form if the coefficient of the highest order derivative is \(1\). You can put an ODE into standard form by simply dividing through by the coefficient of the highest order derivative.</p>
+
+<p>The next thing to note is linearity. Notice that every term of the ODE is linear is \(y\). This may seem like a trivial point to make, but it is important since every solution method we present here and in the next set of notes relies almost entirely on the linearity of the equation to be applicable. So, at this juncture, be sure that you are <em>very</em> comfortable identifying whether or not an ODE is linear or nonlinear, since linearity is an absolutely essential condition for applying these solution methods.</p>
+
+<p>The definition of homogeneity is the same for a second order ODE (indeed, for any order of ODE) as it was for first order: the ODE is homogeneous if when we set \(y\) and its derivatives to \(0\), we have \(0 = 0\). For linear second order ODEs, the ODE is homogeneous only if \(r(x) = 0\), and inhomogeneous otherwise.</p>
+
+<p>Finally, we consider the coefficients. Here, we have written the coefficients as functions of \(x\), since in the most general case these will vary with \(x\). Whether or not these coefficient functions are constant is extremely important: linear second order ODEs are divided into constant and non-constant coefficient ODEs. As will become apparent soon enough, whether an ODE is constant or non-constant coefficients entirely determines which solution methods you can use.</p>
+
+<h3 id="homogeneous-vs-inhomogeneous-solution-methods">Homogeneous vs. Inhomogeneous Solution Methods</h3>
+
+<p>Inhomogeneous second order linear ODEs, just like their first order counterparts, have both homogeneous and particular solutions. The methods stated on this page (reduction of order, characteristic equation) are for homogeneous second order linear ODEs or finding the homgoeneous solution to an inhomogeneous problem. The methods in the next section are for finding the particular solution to an inhomogeneous linear second order ODE.</p>
+
+<p><em>Do not confuse homogeneous and inhomogeneous solution methods.</em> These methods are actually quite straightforward to carry out, but they will definitely deliver the wrong answer if you confusion the solution method and the type of problem it applies to. So bottom line: make sure you are <em>very</em> clear on which solution method is for which type of problem.</p>
+
+<h3 id="preliminaries-solution-basis">Preliminaries: Solution Basis</h3>
+
+<p>While the actual computation of the solution for a linear second order ODE is quite straightforward, understanding the motivation and derivation for the methods is a bit trickier and requires us to introduce to idea of a <strong>solution basis</strong>. However, before we even get to solution bases, we first need to discuss the concept of a <strong>linear combination</strong>.</p>
+
+<p>A linear combination of quantities is where you take the sum over the quantities with each multiplied by a constant. You have already seen this idea if you have taken vector calculus, and you were probably exposed to it in your precalculus class when you decomposed a 3D vector into a linear combination of basis vectors i.e. the \(x-y-z\) unit vectors in Cartesian space. For example, if we have some vector \(\vec v = (1,2,1)\) in Cartesian space, we can decompose this into the unit vectors as:</p>
+
+\[\vec v = \vec i + 2 \vec j + \vec k\]
+
+<p>Here, we have the <strong>basis vectors</strong> \(\vec i, \vec j, \vec k\) and we are taking a weighted sum of them to find the vector \(\vec v\). Basis vectors (or basis functions) are <em>linearly independent</em>, which means that you cannot take a linear combination of any of the basis vectors/functions and get back one of the other basis quantities. For example, if I have three linearly independent basis vectors (like the Cartesian unit vectors), I cannot take a linear combination of two of them to get the third.</p>
+
+<p>A solution basis to an ODE is exactly analogous to the 3D basis vectors: for any solution \(y^*\) of an \(n^{th}\) linear ODE, we can write the solution as a linear combination the basis functions \(y_1, y_2, ..., y_n\):</p>
+
+\[y^* = C_1y_1 + C_2y_2 + \cdots + C_n y_n\]
+
+<p>Solution bases are important since when we solve a homogeneous second order ODE, we will actually solve for the basis functions, then use the initial conditions to find the constants in the linear combination. Basis functions need to be linearly independent, and the definition of linear independence is exactly the same for basis functions as for basis vectors.</p>
+
+<p>A final point to make before we proceed is that for an \(n^{th}\) order ODE, we will have \(n\) basis functions in the solution. This holds for first order homogeneous ODEs, since—as we’ve seen earlier in the class—there is only one homogeneous solutuion to a first order ODE (assuming the solution is unique). <em>For linear homogeneous second order ODEs, there will always be two linearly independent solutions.</em></p>
+
+<h3 id="reduction-of-order">Reduction of Order</h3>
+
+<p>Now that we have covered the preliminaries, we can properly motivate our solution methods. The first solution method for homogeneous linear second order ODEs is <strong>reduction of order</strong>. Reduction of order applies to non-constant coefficient (variable coefficient) ODEs <em>where one of the basis solutions is already known</em>. This point is crucial to applying reduction of order: if you do not already have one of the solutions, the method doesn’t apply.</p>
+
+<p>The idea is that for a second order ODE</p>
+
+\[y'' + p(x) y' + q(x)y = 0\]
+
+<p>you are given the first basis solution \(y_1(x)\), and the problem is to find the second basis solution \(y_2(x)\). We do this by using the linear independence of the basis solutions. Because \(y_1(x)\) and \(y_2(x)\) must be linearly independent, \(y_2(x)\) cannot simply be a constant multiple of \(y_1(x)\). Therefore, we <em>must</em> have the relation</p>
+
+\[y_2(x) = u(x) y_1(x)\]
+
+<p>i.e. we need to multiply \(y_1(x)\) <em>by some function of \(x\)</em> to get \(y_2(x)\). So, we assume a solution of the form \(y_2(x) = u(x) y_1(x)\) and plug into the ODE:</p>
+
+\[\begin{gather*}
+y_2'' + p(x) y_2' + q(x) y_2 = 0 \\
+(u(x) y_1(x))'' + p(x) (u(x) y_1(x))' + q(x)u(x) y_1(x) = 0 \\
+u'' y_1 + 2 u' y_1' + uy_1'' + pu'y_1 + puy_1' + q u y_1 = 0 \\
+u'' y_1 + 2 u' y_1' + pu'y_1 + u(y_1'' + py_1' + q y_1) = 0 \\
+\end{gather*}\]
+
+<p>Then, using that \(y_1\) satisfies the original homogeneous ODE, we have \(y_1'' + py_1' + q y_1 = 0\). So:</p>
+
+\[u'' y_1 + 2 u' y_1' + pu'y_1 = 0\]
+
+<p>Now, substitute \(v = u'\), so:</p>
+
+\[v' y_1 + v(2y_1' + py_1) = 0\]
+
+<p>which is just a first order ODE for \(v\) we can easily solve via separation of variables. Solving for \(v\):</p>
+
+\[\begin{align*}
+v'y_1  &amp;= -v(2y_1' + py_1) \\
+\frac{v'}{v} &amp;= - \frac{1}{y_1} (2y_1' + py_1) \\
+\frac{v'}{v} &amp;= - 2\frac{y_1'}{y_1} - p \\
+\ln(v) &amp;= - 2\ln(y_1) - \int p dx \\
+\ln(vy_1^2) &amp;= - \int p dx \\
+v &amp;= \frac{1}{y_1^2} e^{- \int p dx} \\
+\end{align*}\]
+
+<p>Substituting back for \(u(x)\) and integrating (we can discard the constant of integration since it does not affect the basis function; work through this as an exercise to see why this is the case):</p>
+
+\[u  = \int \frac{1}{y_1^2} e^{- \int p dx} dx\]
+
+<p>So the final solution for \(y_2\) is:</p>
+
+\[y_2 = y_1 \int \frac{1}{y_1^2} e^{- \int p dx} dx \quad \blacksquare\]
+
+<p>This formula is a final closed form solution. It is perfectly fine to “plug and chug” with this formula, but make sure you fully understand the derivation and the conditions under which it applies. The solution algorithm for variations of parameters is then:</p>
+<ol>
+  <li>Check that you have one basis solution and ODE is linear second order</li>
+  <li>Put ODE in standard form</li>
+  <li>Using \(p(x)\) from the equation in standard form and \(y_1\) to solve for \(y_2\) using the formula.</li>
+</ol>
+
+<p>Let’s work through a short example to solidify how to use this formula. Suppose you are given the following problem:</p>
+
+\[xy'' - 2y' + (2-x) y = 0, \quad y_1 = e^x\]
+
+<p>and you need to solve for \(y_2\). We are given that \(y_1 = e^x\) and the ODE is a variable coefficient linear second order ODE, so reduction of order should immediately come to mind for solving this problem.</p>
+
+<p>To solve, we first put the ODE in standard form:</p>
+
+\[y'' - \frac{2}{x}y' + \frac{2-x}{x}y = 0\]
+
+<p>From here, use the above formula to solve for \(y_2\):</p>
+
+\[\begin{align} 
+y_2 &amp;= y_1 \int \frac{1}{y_1^2} e^{- \int p dx} dx \\
+&amp;= e^x \int \frac{1}{e^{2x}} e^{- \int - \frac{2}{x} dx} dx \\
+&amp;= e^x \int \frac{1}{e^{2x}} e^{ 2\ln(x) } dx \\
+&amp;= e^x \int e^{-2x} x^2 dx \\
+&amp;= e^x( 2x^2e^{-2x} + 2xe^{-2x} + e^{-2x}) \\
+&amp;= e^{-x}( 2x^2 + 2x + 1) \quad\blacksquare
+\end{align}\]
+
+<p>So the final solution to the ODE is:</p>
+
+\[y(x) = C_1e^{x} + C_2e^{-x}( 2x^2 + 2x + 1) \quad\blacksquare\]
+
+<h3 id="characteristic-equation">Characteristic Equation</h3>
+
+<p>The next solution method is actually <em>very</em> easy (as you’ll see), and probably comes as a much-needed break in the middle of the quarter. The idea of the characteristic equation solution method is that for a <em>constant coefficient</em> ODE of the form:</p>
+
+\[a y'' + b y' + c y = 0\]
+
+<p>We assume a solution of the form \(y(x) = Ce^{\lambda x}\), plug into the ODE, and solve for the \(\lambda\)(s). To see why this is so straightforward, first note that:</p>
+
+\[\begin{gather*}
+y' = C \lambda e^{\lambda x} \\
+y' = C \lambda^2 e^{\lambda x} 
+\end{gather*}\]
+
+<p>Then, plugging into the ODE:</p>
+
+\[\begin{gather*}
+a y'' + b y' + c y = 0 \\
+a C \lambda^2 e^{\lambda x} + b C \lambda e^{\lambda x} + c C e^{\lambda x} = 0
+\end{gather*}\]
+
+<p>Then dividing through by \(C e^{\lambda x}\):</p>
+
+\[a \lambda^2 + b \lambda + c = 0\]
+
+<p>which is just a quadratic equation for \(\lambda\)! So, solving a constant coefficient ODE with the characteristic equation is as easy as basic algebra.</p>
+
+<p>Because we have a quadratic equation for \(\lambda\), the solutions have a very similar structure to solutions to regular quadratic equations. Namely, we have separate cases for two distinct real \(\lambda\)’s, repeated root \(\lambda\), and two complex \(\lambda\)’s.</p>
+
+<p><strong>Case 1:</strong> two distinct real \(\lambda\)’s, we have exponential solutions of the form:</p>
+
+\[y(x) = C_1 e^{\lambda_1 x} + C_2 e^{\lambda_2 x}\]
+
+<p><strong>Case 2:</strong> repeated \(\lambda\) i.e. where the quadratic equation only has one root, we have a solution of the form:</p>
+
+\[y(x) = e^{\lambda x} ( C_1 + C_2 x)\]
+
+<p>(The extra factor of \(x\) on the \(C_2\) term is a consequence of there being two distinct basis solutions to this ODE. When you work through all the math using reduction of order, you’ll come out with \(u(x) = x\).)</p>
+
+<p><strong>Case 3:</strong> the most difficult case, complex \(\lambda\). A complex \(\lambda\) will be divided into the real part \(Re(\lambda)\) and imaginary part \(Im(\lambda)\). The solution for complex \(\lambda\) will then be:</p>
+
+\[y(x) = e^{Re(\lambda)x} (C_1 \sin(|Im(\lambda)| x) + C_2 \cos(|Im(\lambda)| x)\]
+
+<p>When solving for the solution to a linear second order constant coefficient ODE, you can just calculate \(\lambda\) based on the quadratic equation, then plug into the appropriate solution. So, the algorithm goes:</p>
+
+<ol>
+  <li>Check that the ODE is linear, second order, and constant coefficient</li>
+  <li>Solve for \(\lambda\) based on the quadratic equation</li>
+  <li>Plug \(\lambda\) into the appropriate formula</li>
+</ol>
+
+<p>Let’s work through a short example. For the following ODE:</p>
+
+\[y'' + 4y' + 4y = 0\]
+
+<p>to find the homogeneous solution, we first classify the ODE as linear, homogeneous, and second order. From here, we observe that the ODE is constant coefficient, so we should immediately think to use the characteristic equation to solve the ODE. So, the quadratic equation is:</p>
+
+\[\lambda^2 + 4 \lambda + 4 = 0\]
+
+<p>which has a single solution \(\lambda = -2\). So, we have a real repeated root, so we plug into the formula for Case 2 to arrive at the solution:</p>
+
+\[y(x) = e^{-2x}(C_1 + C_2x) \quad\blacksquare\]
+
+<p>Pretty straightforward, right? Per usual in this class, be careful, be systematic, and the problems will essentially solve themselves.</p>
+
+<h3 id="a-special-case-euler-cauchy-equations">A Special Case: Euler-Cauchy Equations</h3>
+
+<p>A Euler-Cauchy (pronounced “oiler” “ko-shi”) equation (for the purposes of this class) is a second order linear homogeneous ODE of the form:</p>
+
+\[ax^2 y'' + b xy' + cy = 0\]
+
+<p>While there are “plug and chug” cases for different combinations of \(a,b,c\) (these are given in the course reader), I think a more helpful way to look at this equation is as a special case of second order linear constant coefficient ODEs. To see this, consider making the substitution</p>
+
+\[\begin{align} 
+x &amp;= e^u \\
+dx &amp;= e^u du \\
+\frac{du}{dx} &amp;= e^{-u} \\
+\frac{dy}{dx} &amp;= \frac{dy}{du}\frac{du}{dx} \\
+&amp;= \frac{dy}{du} e^{-u} \\
+\frac{d^2 y}{dx^2} &amp;= \frac{d^2y}{dxdu} e^{-u} - \frac{dy}{du} \frac{du}{dx}e^{-u} \\
+&amp;= \frac{d^2 y}{du^2} e^{-2u} - \frac{dy}{du} e^{-2u} \\
+\end{align}\]
+
+<p>Then, we can plug this into the ODE:</p>
+
+\[\begin{gather}
+ax^2 y'' + b xy' + cy = 0 \\
+ae^{2u}(\frac{d^2 y}{du^2} e^{-2u} - \frac{dy}{du} e^{-2u}) + b e^u (\frac{dy}{du} e^{-u}) + cy = 0 \\
+a \frac{d^2y}{du^2} - a \frac{dy}{du} + b\frac{dy}{du} + cy = 0\\
+ay'' + (b-a)y' + cy = 0 \quad\blacksquare
+\end{gather}\]
+
+<p>This last equation shows that using a substitution, the Euler-Cauchy equation becomes a simple constant coefficient second order linear ODE. We can solve for the solution \(y(u)\) using the method above, then substitute in \(u = \ln x\) to find the final solution. This is the method used to arrive at the different cases/solutions given in the course reader.</p>
+
+  </div>
+</article>
+
+    </div>
+
+    <div class="wrapper-footer">
+      <div class="container">
+        <footer class="footer">
+          
+<a href="mailto:timothy.isaac.anderson@gmail.com"><i class="svg-icon email"></i></a>
+
+
+<a href="https://github.com/timanderson1994"><i class="svg-icon github"></i></a>
+<a href="https://instagram.com/timmydingdong"><i class="svg-icon instagram"></i></a>
+<a href="https://www.linkedin.com/in/timanderson1994"><i class="svg-icon linkedin"></i></a>
+
+
+
+
+
+
+        </footer>
+      </div>
+    </div>
+
+    
+
+  </body>
+</html>

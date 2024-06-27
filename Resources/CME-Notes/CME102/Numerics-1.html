@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Numerical Methods 1 – Tim Anderson</title>
+
+        <meta charset="utf-8" />
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0'>
+
+    
+    <meta name="description" content="Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. ">
+    <meta property="og:description" content="Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. " />
+    
+    <meta name="author" content="Tim Anderson" />
+
+    
+    <meta property="og:title" content="Numerical Methods 1" />
+    <meta property="twitter:title" content="Numerical Methods 1" />
+    
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" type="text/css" href="../../../style.css" />
+    <link rel="alternate" type="application/rss+xml" title="Tim Anderson - Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. " href="../../../feed.xml" />
+
+<!-- 
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+ -->
+
+  <!-- Created with Jekyll Now - http://github.com/barryclark/jekyll-now -->
+  </head>
+
+  <body>
+    <div class="wrapper-masthead">
+      <div class="container">
+        <header class="masthead clearfix">
+          <a href="../../../index.html" class="site-avatar"><img src="../../../assets/images-general/duck.jpg" /></a>
+
+          <div class="site-info">
+            <h1 class="site-name"><a href="../../../index.html">Tim Anderson</a></h1>
+            <!-- <p class="site-description">Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. </p> -->
+          </div>
+
+          <nav>
+            <a href="../../../Research/index.html">Research</a>
+            <a href="../../../Publications/index.html">Publications</a>
+            <a href="../../index.html">Resources</a>
+            <a href="../../../Misc/index.html">Misc</a>
+            <!-- <a href="/Blog/">Blog</a> -->
+            <a href="../../../About/index.html">About</a>
+          </nav>
+        </header>
+      </div>
+    </div>
+
+    <div id="main" role="main" class="container">
+          <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<!-- 
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    });
+
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+    </script>
+<style>
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+</style>
+ -->
+<article class="page">
+
+  <h1>Numerical Methods 1</h1>
+
+  <div class="entry">
+    <h3 id="takeaways">Takeaways</h3>
+
+<ul>
+  <li>We always consider an ODE \(y' = f(x,y)\) (just like in existence and uniqueness) since this is the most generalized kind of ODE</li>
+  <li>The forward Euler step equation is:
+\[ y_{i+1} = y_i + h f(x_i, y_i)\]</li>
+  <li>The backward Euler step equation is:
+\[ y_{i+1} = y_i + h f(x_{i+1},y_{i+1}) \]</li>
+  <li>Both methods are <em>locally</em> second order accurate and <em>globally</em> first order accurate</li>
+  <li>Backward Euler is <em>unconditionally stable</em></li>
+  <li>Forward Euler has a <em>maximum step size</em>:
+\[ h_{\max} = \frac{2}{|\lambda|} \]
+when applied to the <em>canonical equation</em> \(y' = \lambda y\).</li>
+</ul>
+
+<h3 id="overview">Overview</h3>
+
+<p>As I’m sure is becoming apparent to you, solving ODEs is hard. Even for the (relatively) simple equations we’ve considered thus far, it can be very difficult to find the right trick to transform an ODE so that it can be solved in closed form. The real world is not nearly as forgiving: nearly all phenomena in the world are nonlinear to some degree, causing the underlying ODEs to be nonlinear and therefore difficult or impossible to solve analytically. Furthermore, we may wish to model the system evolution with parameters that vary greatly across the domain (e.g. the density of air as an object falls from space) or even random (e.g. permeability of a subterranean rock body). These types of phenomena can almost never be modeled with a closed form function and solved analytically. Alas, where shall we turn? The answer is <em>numerical solutions</em> of differential equations.</p>
+
+<p>Up until now, we’ve focused on analytical solutions of ODEs, but a good portion of the remainder of this class will be focused on numerical solutions of ODEs. Numerical solutions are essential to working with differential equations for the simple fact that most differential equations—especially those of real-world relevance—cannot be solved by hand. Numerical methods and numerical analysis is a fascinating area of mathematics, and I hope that by the end of these notes (or at least the end of this class) you will also appreciate just how important this field is, and hopefully find it as beautiful and fascinating as I do.</p>
+
+<h3 id="what-is-a-numerical-method">What is a Numerical Method?</h3>
+
+<p>Before we dive into particular algorithms, it’s helpful to understand on a very high level what a numerical method actually is. In one sentence, <strong>a numerical method (or numerical scheme) is an algorithm that solves for an approximate solution to the ODE at discrete points</strong>. Our analytical solutions are defined for all \(x\) over the domain of interest: we are finding the solution for an infinite number \(x\) values. In a numerical solution however, we are only finding the solution at a finite number \(x\)’s. Because our solution is only at a few points, there will naturally be some error involved, hence why the numerical solution is only approximate.</p>
+
+<p>The relevant questions for a numerial scheme are:</p>
+
+<ol>
+  <li>How much error is involved in the solution, and how does it change with our step size (the spaces between the points where we find the numerical solution)?</li>
+  <li>How large or small can a step size be for a numerical solution to exist?</li>
+</ol>
+
+<p>Note that both of these questions (and especially the second) are predicated on there actually being a solution in the first place. This is why we teach the existence and uniqueness theorems: you can never expect to solve an ODE numerically if the solution does not even exist in theory.</p>
+
+<p>Below, we discuss each of these questions, address them for two of the most basic numerical methods, then implement a numerical solution with MATLAB’s popular <code class="language-plaintext highlighter-rouge">ode45()</code> function.</p>
+
+<h3 id="accuracy">Accuracy</h3>
+
+<p>Perhaps the most important part of a numerical scheme is how well it approximates the analytical solution: any numerical method for which you cannot analyze and predict the <strong>accuracy</strong> is functionally useless. Specifically, we are talking about measuring the difference between \(y_{i+1}\) (the numerical solution) and \(y(x_{i+1})\) (the analytical solution evaluated at the \(x\) value corresponding to the numerical solution).</p>
+
+<p>We express accuracy with what is known as “Big-O” notation. Big-O notation is a way of expression what <em>order</em> something is in terms of a variable (the “O” stands for order). You may have seen this type of notation in the context of computer algorithms. By order, we mean the highest power a variable is raised to,  (This is different from order when we characterize a differential equation.) For an example, suppose we have:</p>
+
+\[f(x,y) = 10x^3y\]
+
+<p>In this case \(f(x,y)\) is third order in \(x\) and first order in \(y\), so we denote it as \(\mathcal{O}(x^3y)\). Notice that we get rid of the constant, and only write out the power. This kind of analysis is very important when measuring error, since in this class we are just interested in how the error changes with respect to the step size, not necessarily the constant in front of the error.</p>
+
+<p>When we’re analyzing error, we’re also interested in two types of error: <strong>local error</strong>, and <strong>global error</strong>. Local error is how much error we incur by progressing a single step forward, whereas global error is the total amount of error we’ve incurred over the entire domain. These two types of errors are closely related, but they are distinct so be sure not to confuse them as we move on with these notes.</p>
+
+<p>As a last point on accuracy, when we refer to a method as being a certain order of accuracy (“Forward Euler is a first order accurate method”), this is made in reference to the global error, not the local error. This is a bit of confusing terminology, so I want to emphasize it from the beginning.</p>
+
+<h3 id="stability">Stability</h3>
+
+<p>Another very important concept in numerical analysis is the <strong>stability</strong> of a numerical method. When solving an ODE, we do not want to take too large of a step size since besides the accuracy deteriorating, we can actually have a solution that <em>diverges</em> i.e. the solution “blows up” when we run the code.</p>
+
+<p>Our numerical methods in many ways boil down to a map from one point \(y_i\) to the next point \(y_{i+1}\). To rigorously characterize when a solution might blow up, we derive an <strong>amplification factor</strong> for a numerical scheme, denoted as \(\sigma(h)\). The amplification factor is essentially how much the solution grows from step to step as a function of the step size we’re taking between steps. For a given numerical, we can find the amplification factor by algebraically rearranging it to be in the form :</p>
+
+\[y_{i+1} = \sigma(h) y_i\]
+
+<p>To do this, we use the <em>characteristic ODE</em> \(y' = \lambda y\). (Here we are assuming that the solution itself is stable i.e. \(\lambda &lt; 0\), since otherwise the solution would blow up as \(x\) goes to infinity.)</p>
+
+<p>Below, we’ll work through accuracy and stability analysis for two numerical schemes: forward and backward Euler.</p>
+
+<h3 id="the-basics-forward-euler">The Basics: Forward Euler</h3>
+
+<p>Forward Euler is the most basic numerical method and the building block of all other numerical methods, and forms the backbone of many industry-scale numerical packages even today. For example, in fluid dynamics forward Euler is still very commonly used simply because it is easy to implement and very fast compared to other methods (e.g. backward Euler, which we cover below).</p>
+
+<p>The basic equation for forward Euler is:</p>
+
+\[y_{i+1} = y_i + h f(x_i, y_i)\]
+
+<p>First and foremost, forward Euler is known as an <strong>explicit scheme</strong> because we everything on the right hand side is known i.e. we have a closed form for \(y_{i+1}\). This is in comparison to <strong>implicit methods</strong> such as backward Euler, where an unknown value like \(y_{i+1}\) might appear on the right hand side.</p>
+
+<p>Numerical methods are, for the purposes of this class, divided into explicit and implicit schemes. An explicit scheme is one where at step \(i\), we have all the information we need to solve for step \(i + 1\). Explicit schemes mathematically are nice because we have a closed form (i.e. “plug and chug”) way to calculate \(y_{i+1} \), as opposed to an implicit scheme where I will need to solve some sort of ugly equation to find the next step. We have a lot of very nice “black box” solvers using explicit methods (<code class="language-plaintext highlighter-rouge">ode45()</code> in MATLAB is a very nice one you will work with a lot this quarter and we discuss below).</p>
+
+<p>Let’s analyze the accuracy of this scheme. To do this, start with the analytical solution \(y(x_{i+1})\) and take the Taylor expansion about \(y(x_i)\):</p>
+
+\[\begin{gather}
+y(x_{i+1}) = y(x_i + h) = y(x_i) + h y' + \frac{h^2}{2} y'' + \frac{h^3}{6}y''' + \cdots
+\end{gather}\]
+
+<p>To calculate the local error for forward Euler, we subtract the forward Euler approximation \(y_{i+1}\) from the Taylor expansion of the analytical solution to find the order of the <em>leading error term</em>:</p>
+
+\[\begin{align}
+Error &amp;= y(x_{i+1}) - y_{i+1} \\
+&amp;= y(x_i) + h y' + \frac{h^2}{2} y'' + \cdots - (y_i + hy') \\
+&amp;= \frac{h^2}{2} y'' + \cdots \\
+&amp;= \mathcal{O}(h^2)
+\end{align}\]
+
+<p>There are a couple assumptions implicit in this. First, we’re assuming that \(y_i = y(x_i)\), since we’re really interested in the error that we incur at each step, or the local error. Secondly, we’re assuming that \(h&lt;1\). This assumption is made becaue in reality, \(h\) is going to be some fraction of our domain, and therefore is \(&lt;1\). This may seem a bit hand-wavy, but in reality this is also the only way we can really do meaningful analysis on numerical schemes.</p>
+
+<p>When we say the leading error term, we mean the error term that contains the <em>lowest</em> power of \(h\). \(h&lt;1\) implies that higher powers of \(h\) are smaller than the lower powers, so when analyzing the error, most of the error is coming from the power of \(h\) raised to the lowest power. For this reason, we say that the <strong>local error of forward Euler is \(\mathcal{O}(h^2)\)</strong>.</p>
+
+<p>After finding the local error, we want to find the global error. To do this, we simply multiply the local error by \(N\), the number of steps we take. However, notice that we have the relation:</p>
+
+\[h = \frac{x_f - x_0}{N} \implies N = \mathcal{O}(h^{-1})\]
+
+<p>When multiplying two quantities together that are expressed in big-O notation, we just multiply the powers together. Therefore, \(N \times \mathcal{O}(h^2) = \mathcal{O}(h)\), so <strong>forward Euler is a globally first order accurate scheme</strong>.</p>
+
+<p>Next, we want to derive what is the maximum step size we can take. To do this, we work with the model ODE \(y' = \lambda y\) (with \(\lambda &lt; 0\)). This ODE has many very nice properties. In particular though, we have for the \(n^{th}\) derivative: \(y^{(n)} =\lambda^n y\). (If this is not clear, work this out for yourself.) Because of this property, it is extremely easy to derive stability and even accuracy results for numerical schemes.</p>
+
+<p>To find the amplification factor, we simply plug the model ODE into our numerical scheme and step through it until we have a relation of the form \(y_{i+1} = \sigma(h) y_i\). For forward Euler, this is pretty straightforward:</p>
+
+\[\begin{align}
+y_{i+1} &amp;= y_i + h y' \\
+&amp;= y_i + h \lambda y_i \\
+&amp;= (1 + h\lambda) y_i\\
+\sigma(h) &amp;= 1 + h\lambda
+\end{align}\]
+
+<p>To keep our numerical solution from “blowing up”, we require that \(\lvert\sigma(h)\rvert &lt; 1\) (so when we raise sigma to a high power, it decays to zero instead of going to infinity). We can use this condition to derive the maximum step size:</p>
+
+\[\begin{align}
+|\sigma| &amp;&lt; 1\\
+1 + h \lambda &amp;&lt; 1\\
+h \lambda &amp;&lt; 0\\
+h &amp;&gt; 0, \qquad (\lambda &lt; 0\; \text{for stable ODEs})\\
+1 + h\lambda &amp;&gt; -1 \\
+h \lambda &amp;&gt; -2 \\
+h &amp;&lt; \frac{2}{|\lambda|}
+\end{align}\]
+
+<p>So, we have found the maximum allowable step size for this method. Note that we assume \(\lambda &lt; 0\). This is because the analytical solution would blow up for \(\lambda&gt;0\), and we can never hope to have a numerical method that doesn’t blow up when the solution itself blows up. When you perform this analysis with the model equation, always assume \(\lambda &lt; 0\).</p>
+
+<h3 id="backward-euler">Backward Euler</h3>
+
+<p>A similar but slightly more complicated method is the backward Euler method. The step equation for backward Euler is:</p>
+
+\[y_{i+1} = y_i + h f(x_{i+1}, y_{i+1})\]
+
+<p>Notice the difference between this and forward Euler: here, we are using the function values/information at the <em>next</em> time step (\(i+1\)) to approximate the derivative instead of the values at the current time step. This is known as an <strong>implicit method</strong>, since \(y_{i+1}\) is given <em>implicitly</em> in the equation. (That is, we cannot simply plug in a few values and calculate \(y_{i+1}\), we instead will usually need to solve some sort of nonlinear equation.)</p>
+
+<p>To analyze the accuracy of this method, we actually turn to the model ODE. When analyzing accuracy, it is often much easier and in a lot of cases only possible to do so using the model ODE. Basically, we first derive the amplification factor, then we compare the Taylor expansion of the amplification factor to the Taylor expansion of the analytical solution to see for which terms they differ.</p>
+
+<p>We first need to plug the model ODE into our equation:</p>
+
+\[y_{i+1} = y_i + h \lambda y_{i+1}\]
+
+<p>From here, we solve out for \(y_{i+1}\):</p>
+
+\[y_{i+1} = \frac{1}{1 - h \lambda} y_{i}\]
+
+<p>We now need to take the Taylor expansion of the amplification factor:</p>
+
+\[\frac{1}{1 - h \lambda} = 1 + h\lambda + h^2 \lambda^2 + h^3\lambda^3 + \cdots\]
+
+<p>Now, recall the Taylor expansion for the analytical solution:</p>
+
+\[\begin{align}
+y(x_{i+1}) &amp;= y(x_i) + h y' + \frac{h^2}{2} y'' + \frac{h^3}{6}y''' + \cdots \\
+&amp;= (1 + h\lambda + \frac{h^2\lambda^2}{2} + \frac{h^3 \lambda^3}{6} + \cdots) y_i
+\end{align}\]
+
+<p>When we subtract the numerical from the analytical solution, the difference will be the differences in the amplification factors (convince yourself of this before proceeding). Here, the amplification factors match up to the \(\mathcal{O}(h^2)\) term, so the local error for backward Euler is \(\mathcal{O}(h^2)\). To find the global error, we simply lower the local error by one power of \(h\) (equivalent to multiplying by \(\mathcal{O}(h^{-1})\)). Global error is then \(\mathcal{O}(h)\), and backward Euler is a first order accurate scheme.</p>
+
+<p>Finally, for stability, note that because \(\lambda &lt; 0\), \(1 - h \lambda &gt; 1\), so the amplification factor \(\lvert\sigma\rvert &lt; 1\) for all \(h\) in the backward Euler scheme. So, all step sizes are stable, and backward Euler is known as an <em>unconditionally stable</em> numerical scheme.</p>
+
+<p>As a note about unconditionally stable schemes: even if a scheme is stable, it doesn’t mean it’s accurate. Backward Euler being unconditionally stable just guarantees it doesn’t blow up for a large step, but we’re still incurring first order errors. This is something to be aware of when computing numerical solutions.</p>
+
+<h3 id="ode45-in-matlab"><code class="language-plaintext highlighter-rouge">ode45()</code> in MATLAB</h3>
+
+<p>The last important thing we need to talk about here is using “black box” numerical ODE solvers. In reality, you will almost never write your own code to solve differential equations numerically. Instead, you will use some sort of “black box” solver, where you feed the subroutine your problem, initial conditions, and a few other pieces of information, and the solver finds the solution for you. We use outside code to do things like solve ODEs since the outside package has been refined for many years and contains many more features than you yourself could realistically implement for your own problem in a reasonable amount of time.</p>
+
+<p>In MATLAB, the main workhorse for solving ODEs numerically is <code class="language-plaintext highlighter-rouge">ode45()</code>. <code class="language-plaintext highlighter-rouge">ode45()</code> is known as an <em>adaptive step size</em> ODE solver, because it contains subroutines that check to see if we need to make the step size smaller or larger based on the characteristics of the ODE. <code class="language-plaintext highlighter-rouge">ode45()</code> has “45” in the name because its main numerical scheme is fourth-order accurate, and it uses a fifth order scheme to occasionally check that the fourth order scheme is accurate enough. (4 and 5, get it?) If the fifth-order scheme detects too much error from the fourth order scheme, it shrinks the step size, and if the fourth order scheme is achieving extremely high accuracy, it will make the step size larger to speed up the computation.</p>
+
+<p>If you are working with ODEs, it is absolutely critical that you learn how to numerically solve ODEs with <code class="language-plaintext highlighter-rouge">ode45()</code>, and in general solve with pre-exiting code. To do this, let’s go through an example of implementing an ODE. Consider the ODE from the equilibria and stability notes:</p>
+
+\[y' = (y - 2)(y+1)^2(y+3), \qquad y(0) = 1.9\]
+
+<p>We can solve this ODE numerically using the code below:</p>
+
+<figure class="highlight"><pre><code class="language-matlab" data-lang="matlab"><span class="nb">clear</span> <span class="nb">all</span><span class="p">,</span> <span class="nb">close</span> <span class="nb">all</span>
+
+<span class="n">yp</span> <span class="o">=</span> <span class="o">@</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">y</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">^</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">y</span><span class="o">+</span><span class="mi">3</span><span class="p">);</span> <span class="c1">% Anonymous function for y'</span>
+
+<span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span> <span class="o">=</span> <span class="nb">ode45</span><span class="p">(</span> <span class="o">@</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="n">yp</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span> <span class="mf">1.9</span><span class="p">);</span>
+
+<span class="nb">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span></code></pre></figure>
+
+<p>Before we show the solution, let’s first talk about the implementation details, since there are a few important things in this snippet of code. The first is the <em>anonymous function</em> for \(y'\). In MATLAB, not all functions need to be stored in  separate files. Especially if we’re dealing with really short functions (like evaluating a derivative), we can implement it as a one-line function known as an <em>anonymous function</em>. (I don’t know where the name comes from, but perhaps someone smarter than me knows.)</p>
+
+<p>The basic syntax for an anonymous function is <code class="language-plaintext highlighter-rouge">name = @(arguments) expression;</code>. You need to put an “@” symbol in front of the arguments in parentheses so MATLAB knows what you’re passing into the function. From there, you write out the function in terms of the arguments like you would a regular function in MATLAB.</p>
+
+<p>Next, we need to discuss the syntax of <code class="language-plaintext highlighter-rouge">ode45()</code>. The syntax is:</p>
+
+<p><code class="language-plaintext highlighter-rouge">[domain, range] = ode45(@(x,y) YPrime(x,y), [Domain Span], [Initial Condition(s)])</code></p>
+
+<p><code class="language-plaintext highlighter-rouge">ode45()</code> will output two vectors: the numerical solution (<code class="language-plaintext highlighter-rouge">range</code>), and the points where the solution was evaluated (<code class="language-plaintext highlighter-rouge">domain</code>). We then need to have a function to evaluate \(y'\) that takes the independent variable and the function value as inputs. The most important thing to note about <code class="language-plaintext highlighter-rouge">YPrime(x,y)</code> is that MATLAB only expects your derivative function to take two inputs. You need to write your derivative function such that it only has two inputs or <code class="language-plaintext highlighter-rouge">ode45()</code> will not work.</p>
+
+<p>Finally, we have <code class="language-plaintext highlighter-rouge">[Domain Span]</code>, which is an array containing two elements that tell <code class="language-plaintext highlighter-rouge">ode45()</code> the range over which to solve the ODE, and <code class="language-plaintext highlighter-rouge">[Initial Condition(s)]</code>, which is an array containing all of the initial conditions for the ODE. Here, we are only solving for \(y\), so we have only one initial condition. When we solve a system of ODEs (as we’ll do in the next set of numerical methods notes), the initial conditions will be a vector containing the initial condition for every variable we’re solving for.</p>
+
+<p>Now that we’ve discussed the implementation in gory detail, we can show the resulting numerical solution:</p>
+
+<p><img src="../../../assets/notes-figures/numerics1_ode45ex.png" alt="ode45() example" /></p>
+
+<p>More importantly though, let’s also take a look at the step sizes that <code class="language-plaintext highlighter-rouge">ode45()</code> uses:</p>
+
+<p><img src="../../../assets/notes-figures/numerics1_ode45stepsize.png" alt="ode45() step sizes" /></p>
+
+<p>Notice how the step sizes are small when \(y(x)\) is changing rapidly, but large when it is changing slowly? This is the advantage of using an adaptive step size solver. Evaluating the function’s derivatives can be extremely expensive, so we want to minimize how many times we do it. When the function is changing slowly, its derivatives (and therefore the errror terms) are quite small, meaning we can take larger step sizes and make less function evaluations while still have the same amount of error.</p>
+
+<h3 id="key-terms">Key Terms</h3>
+
+<p>Numerical methods are almost as much a matter of vocabulary as they are of mathematics: if you do not know what property of a scheme a question is refering to, it’s impossible to know how to work with it. To close this section of notes, I want to list some of the key terms for you to know. You should reference this section often until you have these memorized.</p>
+
+<ul>
+  <li><strong>Explicit scheme:</strong> numerical scheme where the next step \(y_{i+1}\) is only dependent on previous \(x\) and \(y\) values. For now, we mean that \(y_{i+1}\) is dependent only on \(x_i\) and \(y_i\), although later on we will discuss <em>multi-step schemes</em>, where \(y_{i+1}\) is dependent on many previous steps
+    <ul>
+      <li>Forward Euler: the most basic explicit scheme, defined as \(y_{i+1} = y_i + f(x_i,y_i)\)</li>
+    </ul>
+  </li>
+  <li><strong>Implicit scheme:</strong> numerical scheme where the next step \(y_{i+1}\) is dependent on itself and previous \(x\) and \(y\) values.
+    <ul>
+      <li>Backward Euler: the most basic implicit scheme, defined as \(y_{i+1} = y_i + f(x_{i+1},y_{i+1})\)</li>
+    </ul>
+  </li>
+  <li><strong>Step size:</strong> the spacing in \(x\) values we use to estimate \(y\). Usually denoted as \(h\).
+    <ul>
+      <li>Constant step size scheme: where \(h\) is constant across the entire domain. More mathematically, we have \(h = x_{i+1} - x_i\) for all \(i\)</li>
+      <li>Adapative step size scheme: where \(h\) varies across the domain. <code class="language-plaintext highlighter-rouge">ode45()</code> belongs to this category of solvers</li>
+      <li><code class="language-plaintext highlighter-rouge">ode45()</code>: an adaptive step “black box” ODE solver available in MATLAB</li>
+    </ul>
+  </li>
+  <li><strong>Stability:</strong> analysis that determines under which conditions, if any, the solution diverges. This is a numerical effect different from the accuracy.
+    <ul>
+      <li>Model Equation: the ODE \(y' = \lambda y\) with \(\lambda &lt; 0\)</li>
+      <li>Conditionally stable: scheme that will not diverge as long as the step size satisfies some conditions</li>
+      <li>Unconditionally stable: a scheme that is stable for all step sizes</li>
+      <li>Amplification factor: how much a solution grows for each step, written as \(y_{i+1} = \sigma(h) y_i\)</li>
+    </ul>
+  </li>
+  <li><strong>Accuracy:</strong> how well the numerical solution approximates the analytical solution
+    <ul>
+      <li>Local error: difference between the numerical and analytical solutions at a single time step</li>
+      <li>Global error: total error over the entire domain for all steps</li>
+    </ul>
+  </li>
+</ul>
+
+
+  </div>
+</article>
+
+    </div>
+
+    <div class="wrapper-footer">
+      <div class="container">
+        <footer class="footer">
+          
+<a href="mailto:timothy.isaac.anderson@gmail.com"><i class="svg-icon email"></i></a>
+
+
+<a href="https://github.com/timanderson1994"><i class="svg-icon github"></i></a>
+<a href="https://instagram.com/timmydingdong"><i class="svg-icon instagram"></i></a>
+<a href="https://www.linkedin.com/in/timanderson1994"><i class="svg-icon linkedin"></i></a>
+
+
+
+
+
+
+        </footer>
+      </div>
+    </div>
+
+    
+
+  </body>
+</html>

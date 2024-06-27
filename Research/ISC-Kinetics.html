@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Modeling ISC Chemical Kinetics – Tim Anderson</title>
+
+        <meta charset="utf-8" />
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0'>
+
+    
+    <meta name="description" content="Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. ">
+    <meta property="og:description" content="Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. " />
+    
+    <meta name="author" content="Tim Anderson" />
+
+    
+    <meta property="og:title" content="Modeling ISC Chemical Kinetics" />
+    <meta property="twitter:title" content="Modeling ISC Chemical Kinetics" />
+    
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" type="text/css" href="../style.css" />
+    <link rel="alternate" type="application/rss+xml" title="Tim Anderson - Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. " href="../feed.xml" />
+
+<!-- 
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+ -->
+
+  <!-- Created with Jekyll Now - http://github.com/barryclark/jekyll-now -->
+  </head>
+
+  <body>
+    <div class="wrapper-masthead">
+      <div class="container">
+        <header class="masthead clearfix">
+          <a href="../index.html" class="site-avatar"><img src="../assets/images-general/duck.jpg" /></a>
+
+          <div class="site-info">
+            <h1 class="site-name"><a href="../index.html">Tim Anderson</a></h1>
+            <!-- <p class="site-description">Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. </p> -->
+          </div>
+
+          <nav>
+            <a href="index.html">Research</a>
+            <a href="../Publications/index.html">Publications</a>
+            <a href="../Resources/index.html">Resources</a>
+            <a href="../Misc/index.html">Misc</a>
+            <!-- <a href="/Blog/">Blog</a> -->
+            <a href="../About/index.html">About</a>
+          </nav>
+        </header>
+      </div>
+    </div>
+
+    <div id="main" role="main" class="container">
+          <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<!-- 
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    });
+
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+    </script>
+<style>
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+</style>
+ -->
+<article class="page">
+
+  <h1>Modeling ISC Chemical Kinetics</h1>
+
+  <div class="entry">
+    <p>Enhanced oil recovery (EOR) typically involves applying heat, pressure, or a chemical solvent to a reservoir to increase the amount of oil recovered. In-situ combustion (ISC) is a form of thermal EOR where instead of injecting an external source of heat and/or pressure (e.g. steam), air is injected into the reservoir and the oil is burned in place. Lighter components of the oil are mobilized and pushed ahead of the combustion front where they are eventually recovered at the extraction well, while heavier components stay behind and burn:</p>
+
+<div style="width:100%; padding: 5px; float: left">
+<img src="../assets/research-figures/ISC.png" style="width:100%; display: block; margin: auto; padding: 5px" />
+<figcaption style="width: 70%; display: block; margin: auto; font-style: italic; font-size: 10pt">In-situ combustion oil recovery. Oil is burned in-place, which creates a steam front an oil bank that propagates from the injection to the extraction well. <a href="http://www.alrc.doe.gov/technologies/oil-gas/publications/eordrawings/Color/colsf.pdf">Original image.</a></figcaption>
+</div>
+
+<div style="clear: both;"></div>
+
+<h3 id="calibrating-reaction-models">Calibrating Reaction Models</h3>
+<p>One of the biggest questions for ISC is <strong>how does oil burn?</strong> Oil is very chemically complex, so we can’t actually model every single reaction taking place. Instead, we choose to model oil burning as a series of reactions with hydrocarbon <em>pseudocomponents</em> e.g.:</p>
+
+\[\begin{align*}
+\text{Oil} + \text{O}_2 &amp;\rightarrow \text{Oil}_2 + \text{H}_2\text{O} \\
+\text{Oil}_2 &amp;\rightarrow \text{Coke} + \text{CO}_2 \\
+\text{Oil}_2 + \text{O}_2 &amp;\rightarrow \text{CO} + \text{CO}_2 + \text{H}_2\text{O} \\
+\text{Coke} + \text{O}_2 &amp;\rightarrow \text{CO} + \text{CO}_2
+\end{align*}\]
+
+<p>This gives us a simplified chemical reaction model which we can upscale to reservoir-scale simulations of ISC. To obtain a useful model, we need to fit the kinetics parameters (stoichiometric coefficients, activation energies, etc.) to match experimental data obtained from burning oil in a controlled laboratory setting.</p>
+
+<div style="width: 50%; padding:5px; float: left">
+<img src="../assets/research-figures/O2_consumption.png" style="width: 90%; margin: auto; display: block" />
+<figcaption style="width: 100%; font-style: italic; font-size: 10pt; margin: auto">Oxygen consumption data from batch reactor effluence data. ISC reaction sequences generally have distinct low- and high-temperature oxidation phases.</figcaption>
+</div>
+
+<div style="width: 50%; padding:5px; float: left">
+<img src="../assets/research-figures/perturbed_final.png" style="width: 95%; margin: auto; display: block" />
+<figcaption style="font-style: italic; font-size: 10pt; margin: auto">Example of matching chemical reaction parameters over different heating rates using synthetic data.</figcaption>
+</div>
+
+<div style="clear: both;"></div>
+
+<p>My research explores three challenges in calibrating ISC reactions:</p>
+
+<ol>
+  <li>How do we efficiently calibrate parameters to experimental data and quantify uncertainty in these matched parameters?</li>
+  <li>What is the relationship between a reaction scheme’s structure and its ability to fit ISC data?</li>
+  <li>How can we determine the best reaction scheme to describe a given oil sample?</li>
+</ol>
+
+<p>The goal is to obtain a simplified but descriptive chemical reaction model for petroleum combustion that eventually can be upscaled to a reservoir-scale simulation of ISC. Work in this area is ongoing, although results for this project will be published in the near future.</p>
+
+<h3 id="predicting-kinetics-directly-from-laboratory-data">Predicting Kinetics Directly from Laboratory Data</h3>
+
+<p>One way we can track the progress of an ISC reaction is examining the oxygen conversion, or the proportion of total oxygen that has been reacted at time \(t\):</p>
+
+\[\begin{align*}
+C_{\text{O}_2} = \frac{\int_0^t ([\text{O}_2]_{\text{in}} - [\text{O}_2](\tau)) d\tau}{\int_0^\infty ([\text{O}_2]_{\text{in}} - [\text{O}_2](\tau)) d\tau}
+\end{align*}\]
+
+<p>An idea we have explored is predicting \(\text{O}_2\) conversion curves using a data driven model. Using the fact that \(\text{O}_2\) conversion rate is independent of the time \(t\), we can model the conversion rate \(C_{\text{O}_2}'\) as only a function of the temperature \(T\) and the current \(\text{O}_2\) conversion:</p>
+
+\[\begin{align*}
+C_{\text{O}_2}' = f(T, C_{\text{O}_2})
+\end{align*}\]
+
+<p>This predictive model can then be used with an ODE solver to generate conversion curves for an input temperature schedule.</p>
+
+<p>Previous work in our lab has used a linear interpolation or lookup table approach for the model \(f(T, C_{\text{O}_2})\). However, these methods are unable to capture combustion dynamics at query points outside the range of experimental data. To overcome this challenge, we proposed to use locally-weighted linear regression to predict the consumption rate at a given query point. The nonparametric regression model allows us to reconstruct the entire consumption rate surface, including points for high temperature/low consumption that are undefined with an interpolation approach:</p>
+
+<div style="width: 50%; padding:5px; float: left">
+<img src="../assets/research-figures/interp_surf.png" style="width: 95%; margin: auto; display: block; padding: 5px" />
+<figcaption style="width: 85%; font-style: italic; font-size: 10pt; margin: auto">Conversion rate surface predicted with interpolation method and using nearest-neighbors extrapolation.</figcaption>
+</div>
+
+<div style="width: 50%; padding:5px; float: left">
+<img src="../assets/research-figures/namla_surf.png" style="width: 95%; margin: auto; display: block; padding: 5px" />
+<figcaption style="width: 85%; font-style: italic; font-size: 10pt; margin: auto">Conversion rate surface predicted using local linear regression method.</figcaption>
+</div>
+
+<p>This allows us to simulate temperature schedules that lie outside the range of experimentally-observed \((T, C_{\text{O}_2}, C_{\text{O}_2}')\) values:</p>
+
+<div style="width: 50%; padding:5px; float: left">
+<img src="../assets/research-figures/chichimene_5.0.png" style="width: 95%; margin: auto; display: block; padding: 5px" />
+<figcaption style="width: 85%; font-style: italic; font-size: 10pt; margin: auto">Simulating a temperature schedule that lies within experimentally-observed points.</figcaption>
+</div>
+
+<div style="width: 50%; padding:5px; float: left">
+<img src="../assets/research-figures/chichimene_20.0.png" style="width: 95%; margin: auto; display: block; padding: 5px" />
+<figcaption style="width: 85%; font-style: italic; font-size: 10pt; margin: auto">Simulating a temperature schedule outside the observed datapoints.</figcaption>
+</div>
+
+<p>An additional advantage of the regression approach is that we can quantify uncertainty in the predicted values:</p>
+
+<div style="float: none; display: block; overflow:hidden">
+<div style="width: 33%; padding:5px; float: left">
+<img src="../assets/research-figures/nonlinear_temperature.png" style="width: 100%; margin: auto; display: block; padding: 5px" />
+<figcaption style="width: 85%; font-style: italic; font-size: 10pt; margin: auto">Temperature schedule</figcaption>
+</div>
+
+<div style="width: 33%; padding:5px; float: left">
+<img src="../assets/research-figures/nonlinear_conversion.png" style="width: 100%; margin: auto; display: block; padding: 5px" />
+<figcaption style="width: 85%; font-style: italic; font-size: 10pt; margin: auto">Synthetic conversion curve</figcaption>
+</div>
+
+<div style="width: 33%; padding:5px; float: left">
+<img src="../assets/research-figures/nonlinear_consumption.png" style="width: 100%; margin: auto; display: block; padding: 5px" />
+<figcaption style="width: 85%; font-style: italic; font-size: 10pt; margin: auto">Consumption curve with 95% confidence interval</figcaption>
+</div>
+</div>
+
+<p>Our hope is that this work will allow us to create synthetic \(\text{O}_2\) consumption curves which can be used to improve fitting kinetics parameters to pseudocomponent chemical reaction models.</p>
+
+<p>[<a href="https://github.com/supri-a/NAML">Data-driven kinetics code</a>]</p>
+
+  </div>
+</article>
+
+    </div>
+
+    <div class="wrapper-footer">
+      <div class="container">
+        <footer class="footer">
+          
+<a href="mailto:timothy.isaac.anderson@gmail.com"><i class="svg-icon email"></i></a>
+
+
+<a href="https://github.com/timanderson1994"><i class="svg-icon github"></i></a>
+<a href="https://instagram.com/timmydingdong"><i class="svg-icon instagram"></i></a>
+<a href="https://www.linkedin.com/in/timanderson1994"><i class="svg-icon linkedin"></i></a>
+
+
+
+
+
+
+        </footer>
+      </div>
+    </div>
+
+    
+
+  </body>
+</html>

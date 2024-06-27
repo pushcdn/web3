@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Imaging Methods for Source Rock Characterization – Tim Anderson</title>
+
+        <meta charset="utf-8" />
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0'>
+
+    
+    <meta name="description" content="Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. ">
+    <meta property="og:description" content="Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. " />
+    
+    <meta name="author" content="Tim Anderson" />
+
+    
+    <meta property="og:title" content="Imaging Methods for Source Rock Characterization" />
+    <meta property="twitter:title" content="Imaging Methods for Source Rock Characterization" />
+    
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" type="text/css" href="../style.css" />
+    <link rel="alternate" type="application/rss+xml" title="Tim Anderson - Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. " href="../feed.xml" />
+
+<!-- 
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+ -->
+
+  <!-- Created with Jekyll Now - http://github.com/barryclark/jekyll-now -->
+  </head>
+
+  <body>
+    <div class="wrapper-masthead">
+      <div class="container">
+        <header class="masthead clearfix">
+          <a href="../index.html" class="site-avatar"><img src="../assets/images-general/duck.jpg" /></a>
+
+          <div class="site-info">
+            <h1 class="site-name"><a href="../index.html">Tim Anderson</a></h1>
+            <!-- <p class="site-description">Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. </p> -->
+          </div>
+
+          <nav>
+            <a href="index.html">Research</a>
+            <a href="../Publications/index.html">Publications</a>
+            <a href="../Resources/index.html">Resources</a>
+            <a href="../Misc/index.html">Misc</a>
+            <!-- <a href="/Blog/">Blog</a> -->
+            <a href="../About/index.html">About</a>
+          </nav>
+        </header>
+      </div>
+    </div>
+
+    <div id="main" role="main" class="container">
+          <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<!-- 
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    });
+
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+    </script>
+<style>
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+</style>
+ -->
+<article class="page">
+
+  <h1>Imaging Methods for Source Rock Characterization</h1>
+
+  <div class="entry">
+    <p>Image-based characterization is critical for understanding and fully utilizing energy resources in petroleum source rocks. Shale formations are particularly challenging due to their highly multiscale nature: features at length scales across 10 orders of magnitude can all affect the recovery factor from a shale reservoir. <strong>Image-based scale translation</strong> methods have the potential to understand features across length scales using non-destructive imaging methods while preserving samples for further experimentation.</p>
+
+<p>Image-based scale translation includes translation between scales (upscaling and downscaling), modalities (image translation), and synthesis. My research has focused largely on three types of image-based scale translation:</p>
+
+<ol>
+  <li><strong>Modality translation:</strong> predicting high-resolution microscopy images and image volumes from non-destructive CT images</li>
+  <li><strong>Data synthesis:</strong> generating synthetic images of source rocks for quantification of petrophysical properties</li>
+  <li><strong>Image downscaling (single image super-resolution):</strong> predicting a high resolution image from low-resolution inputs</li>
+</ol>
+
+<p>I have primarily focused on developing deep learning-based methods for each of these tasks, specifically using generative adversarial networks (GANs) and generative flow models.</p>
+
+<h3 id="modality-translation">Modality Translation</h3>
+
+<p>Image-based characterization relies on acquisition of high-resolution images usable for applications such as organic matter segmentation or pore network extraction. An important imaging method for this is focused ion beam-scanning electron microscopy (FIB-SEM), where a rock sample is milled down slice-by-slice and SEM images are obtained for each step. This method creates very high-resolution rock images, but destroys the rock sample in the process. Nanoscale computed tomography (nano-CT) meanwhile offers nanoscale resolution while preserving the sample, but has much lower resolution than FIB-SEM images and much more noise.</p>
+
+<div style="float: none; display: block; overflow:hidden">
+<div style="width: 33%; padding:5px; float: left">
+<img src="../assets/research-figures/TXMVolume.jpg" style="width: 80%; margin: auto; display: block; padding: 5px" />
+<figcaption style="width: 85%; font-style: italic; font-size: 10pt; margin: auto">Example nano-CT volume of shale source rock.</figcaption>
+</div>
+
+<div style="width: 33%; padding:5px; float: left">
+<img src="../assets/research-figures/TXM.png" style="width: 95%; margin: auto; display: block; padding: 5px" />
+<figcaption style="width: 85%; font-style: italic; font-size: 10pt; margin: auto">Paired nano-CT image slice from volume.</figcaption>
+</div>
+
+<div style="width: 33%; padding:5px; float: left">
+<img src="../assets/research-figures/SEM.png" style="width: 95%; margin: auto; display: block; padding: 5px" />
+<figcaption style="width: 85%; font-style: italic; font-size: 10pt; margin: auto">FIB-SEM image corresponding to the nano-CT image.</figcaption>
+</div>
+</div>
+
+<p>In this project, we want to apply deep learning learning techniques to predict high-resolution FIB-SEM images using non-destructive nano-CT image. We are focused on two main challenges:</p>
+
+<ol>
+  <li>2D-to-2D image translation for paired training data</li>
+  <li>Translation of 3D nano-CT volumes when only 2D paired training data is available</li>
+</ol>
+
+<p>Addressing these relies on deep learning techniques. Specifically, for (1), we use CNN, pix2pix, SR-CNN, and SR-GAN models, and for (2) we employ a combination of new regularization terms during model training and morphological post-processing:</p>
+
+<div style="width: 100%; padding:5px; float: left">
+<img src="../assets/research-figures/pix2pix.png" style="width: 100%; margin: auto; display: block; padding: 5px" />
+<figcaption style="width: 85%; font-style: italic; font-size: 10pt; margin: auto">pix2pix model with Jacobian regularization term. The Jacobian regularization term is shown to improve volume reconstruction.</figcaption>
+</div>
+
+<p>Using these techniques, we are able to reconstruct FIB-SEM volumes from input TXM image slices:</p>
+
+<div style="width: 50%; padding:5px; float: left">
+<img src="../assets/research-figures/srgan_original.png" style="width: 95%; margin: auto; display: block; padding: 5px" />
+<figcaption style="width: 85%; font-style: italic; font-size: 10pt; margin: auto">Predicted FIB-SEM volume by training an SR-GAN model and independently evaluating each TXM slice</figcaption>
+</div>
+
+<div style="width: 50%; padding:5px; float: left">
+<img src="../assets/research-figures/srgan_filtered.png" style="width: 95%; margin: auto; display: block; padding: 5px" />
+<figcaption style="width: 85%; font-style: italic; font-size: 10pt; margin: auto">Predicted FIB-SEM volume with Jacobian regularization and post-processing</figcaption>
+</div>
+
+<p>These volumes can then be segmented and used as a simulation domain to compute flow and permeability properties using a Lattice-Boltzmann solver:</p>
+
+<div style="width: 100%; padding:5px; float: left">
+<img src="../assets/research-figures/lbm.png" style="width: 100%; margin: auto; display: block; padding: 5px" />
+<figcaption style="width: 85%; font-style: italic; font-size: 10pt; margin: auto">Example output from an LBM simulation on a predicted FIB-SEM shale volume</figcaption>
+</div>
+
+<p>[<a href="https://github.com/supri-a/TXM2SEM">Modality translation code</a>]</p>
+
+<h3 id="source-rock-image-synthesis">Source Rock Image Synthesis</h3>
+
+<p>Digital rock physics techniques allow for computation of petrophysical properties directly from image data. However, a persistent challenge in image-based characterization is obtaining sufficient image data to accurately estimate and quantify uncertainty in computed morphological and flow properties. A possible solution to this is to train a <em>generative model</em> for the rock images, then compute properties by sampling images from this model. Existing approaches have shown much success for synthesizing rock images, but these methods are not generlized for:</p>
+
+<ol>
+  <li>Generating grayscale 3D image volumes from 2D training data</li>
+  <li>Generating multimodal image volumes, particularly when only 2D input data is available</li>
+</ol>
+
+<p>These two problems are of particular interest for image-based characterization of shales, where 2D microscopy data is often the only data available, and the grayscale pixel/voxel values carry important information about the composition and properties of the sample.</p>
+
+<p>In this line of work we have developed RockFlow, a method to synthesize grayscale, multimodal, and 3D rock images from only 2D training data by exploiting the latent space interpolation property of <a href="https://arxiv.org/abs/1807.03039">generative flow models</a>. Using this algorithm, we can synthesize realistic rock image volumes from only 2D training data. This generative model can be used in a broader image-based characterization workflow for source rock samples:</p>
+
+<div style="width: 95%; padding:5px; float: left">
+<img src="../assets/research-figures/RockflowWorkflow.png" style="width: 95%; margin: auto; display: block; padding: 5px" />
+<figcaption style="width: 85%; font-style: italic; font-size: 10pt; margin: auto">Image-based characterization workflow using RockFlow</figcaption>
+</div>
+
+<p>Multimodal images are increasingly important for source rock characterization. Our method is the first to synthesize multimodal source rock images, and the first such model to produce 3D image volumes from only 2D input data:</p>
+
+<div style="width: 50%; padding:5px; float: left">
+<img src="../assets/research-figures/vol_txm.png" style="width: 95%; margin: auto; display: block; padding: 5px" />
+<figcaption style="width: 85%; font-style: italic; font-size: 10pt; margin: auto">Synthetic TXM image volume</figcaption>
+</div>
+
+<div style="width: 50%; padding:5px; float: left">
+<img src="../assets/research-figures/vol_sem.png" style="width: 95%; margin: auto; display: block; padding: 5px" />
+<figcaption style="width: 85%; font-style: italic; font-size: 10pt; margin: auto">Synthetic SEM image volume</figcaption>
+</div>
+
+<p>We hope to apply this method to new combinations of image modalities, and further generalize the approach to accommodate heterogeneous types of data, e.g. NMR response curves with micro-CT images of shales.</p>
+
+<p>[<a href="https://github.com/supri-a/RockFlow">RockFlow code</a>]</p>
+
+<h3 id="image-downscaling-with-single-image-super-resolution">Image Downscaling with Single Image Super-Resolution</h3>
+
+<p>In a supporting capacity, I have also been involved with a project to dynamically image reactive transport processes in shale using single image super-resolution (SISR) models trained with multiscale CT/micro-CT data. Characterizing reactive transport processes in shales require at least microscale resolution. Micro-CT images, however, require minutes to hours to acquire, making micro-CT inapplicable for imaging transport processes taking place on time scales of second or minutes. Medical CT images meanwhile have an order of magnitude lower resolution than micro-CT but have acquisition times 1-2 orders of magnitude smaller. Our goal is to train deep learning SISR models to predict high-resolution micro-CT image volumes from low-resolution medical CT scans, then deploy this model to downscale images acquired during a reactive transport experiment.</p>
+
+<div style="width: 100%; padding:5px; float: left">
+<img src="../assets/research-figures/sisrworkflow.png" style="width: 100%; margin: auto; display: block; padding: 5px" />
+</div>
+
+<p>This project is still in early development, but our hope is that this imaging setup will enable dynamic imaging of reactive transport processes in shale.</p>
+
+  </div>
+</article>
+
+    </div>
+
+    <div class="wrapper-footer">
+      <div class="container">
+        <footer class="footer">
+          
+<a href="mailto:timothy.isaac.anderson@gmail.com"><i class="svg-icon email"></i></a>
+
+
+<a href="https://github.com/timanderson1994"><i class="svg-icon github"></i></a>
+<a href="https://instagram.com/timmydingdong"><i class="svg-icon instagram"></i></a>
+<a href="https://www.linkedin.com/in/timanderson1994"><i class="svg-icon linkedin"></i></a>
+
+
+
+
+
+
+        </footer>
+      </div>
+    </div>
+
+    
+
+  </body>
+</html>

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Linear First Order ODEs – Tim Anderson</title>
+
+        <meta charset="utf-8" />
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0'>
+
+    
+    <meta name="description" content="Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. ">
+    <meta property="og:description" content="Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. " />
+    
+    <meta name="author" content="Tim Anderson" />
+
+    
+    <meta property="og:title" content="Linear First Order ODEs" />
+    <meta property="twitter:title" content="Linear First Order ODEs" />
+    
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" type="text/css" href="../../../style.css" />
+    <link rel="alternate" type="application/rss+xml" title="Tim Anderson - Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. " href="../../../feed.xml" />
+
+<!-- 
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+ -->
+
+  <!-- Created with Jekyll Now - http://github.com/barryclark/jekyll-now -->
+  </head>
+
+  <body>
+    <div class="wrapper-masthead">
+      <div class="container">
+        <header class="masthead clearfix">
+          <a href="../../../index.html" class="site-avatar"><img src="../../../assets/images-general/duck.jpg" /></a>
+
+          <div class="site-info">
+            <h1 class="site-name"><a href="../../../index.html">Tim Anderson</a></h1>
+            <!-- <p class="site-description">Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. </p> -->
+          </div>
+
+          <nav>
+            <a href="../../../Research/index.html">Research</a>
+            <a href="../../../Publications/index.html">Publications</a>
+            <a href="../../index.html">Resources</a>
+            <a href="../../../Misc/index.html">Misc</a>
+            <!-- <a href="/Blog/">Blog</a> -->
+            <a href="../../../About/index.html">About</a>
+          </nav>
+        </header>
+      </div>
+    </div>
+
+    <div id="main" role="main" class="container">
+          <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<!-- 
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    });
+
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+    </script>
+<style>
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+</style>
+ -->
+<article class="page">
+
+  <h1>Linear First Order ODEs</h1>
+
+  <div class="entry">
+    <h3 id="takeaways">Takeaways</h3>
+
+<ul>
+  <li>A <em>linear first order ODE</em> is an ODE of the form:
+\[ y’ + p(x)y = r(x)\]</li>
+  <li>These ODEs have a closed form (i.e. “plug and chug”) solution:
+\[ y(x) = e^{-\int p(x)dx}\left[ \int r(x) e^{\int p(x)dx} dx + C \right] \]</li>
+  <li>Bernoulli equations have the form:
+\[ y’ + p(x)y = q(x)y^n \]</li>
+  <li>We can put Bernoulli equations into the form of a linear first order ODE by the substitution \(u = y^{1-n}\). This gives us the linear first order ODE: \[ u’ + (1-n)p(x)u = (1-n)q(x) \] which is easily solved with the above closed form solution to a linear first order ODE.</li>
+</ul>
+
+<h3 id="overview">Overview</h3>
+
+<p>Linear first order ODE are a very special family of ODEs that we study because they occur in a surprising number of engineering contexts. Although linear ODEs are exceedingly uncommon—the world is naturally nonlinear, which you will hopefully understand and appreciate after this class is over—and first order differential equations can only model a limited number of phenomena, in many contexts, first order linear differential equations models are actually work very well.</p>
+
+<p>Mathematically, linear first order ODEs are very nice because they have a <em>closed form solution</em>. A closed form solution just means a solution that doesn’t involve any unsolved integrals or large approximations. In mathematics—and especially differential equations—we can usually only characterize how the solution looks or bound the maximum value it attains, but we cannot actually find the solution itself. Other times, we might have <em>a</em> solution, but it’s not necessarily a <em>useful</em> solution. An example of this would be a solution that contains lots of unsolved integrals or bizarre mathematical functions. (A former professor of mine in applied physics once told a story about spending an hour with his doctoral advisor deriving a solution to an incredibly compilcated ODE, only to realize at the end that the solution they came up with was so messy and contained so many unresolved integrals that it gave zero useful intuition into the problem.)</p>
+
+<p>For our purposes, we really like linear first order ODEs because they have a very clean closed form solution containing no unsolved integrals or strange functions or approximations. For you, this is great since once you identify that an ODE is linear first order or transform it to be, it’s just a matter of plugging the right parts of the ODE into the solution formula and solve the integrals correctly.</p>
+
+<h3 id="classification">Classification</h3>
+
+<p>The first step to solving any ODE is correctly classifying it, since it is only after we classify an ODE that we are able to pick the correct solution method. A linear first order ODE is an ODE of the form:</p>
+
+\[y' + p(x)y = r(x)\]
+
+<p>This is the <em>only</em> form for a linear first order ODE. Later we will see that we can transform some ODEs into linear first order ODEs through a substitution, but by definition this is the only form a linear first order ODE can take. Note that:</p>
+<ol>
+  <li>The equation is linear because the terms containing \(y'\) and \(y\) are linear in \(y\) and its derivative</li>
+  <li>It is first order because \(y'\) is the highest order derivative appearing in the equation</li>
+  <li>The equation is inhomogeneous since if we set \(y' = 0\) and \(y = 0\) we have \(0 = r(x)\) which is not true unless \(r(x) = 0\)</li>
+</ol>
+
+<p>If our ODE is linear first order and homogeneous, then you would just solve using separation of variables (do you see why this is?).</p>
+
+<h3 id="deriving-the-closed-form-solution">Deriving the Closed Form Solution</h3>
+
+<p>We start with the ODE in question:</p>
+
+\[y' + p(x)y = r(x)\]
+
+<p>We can derive the solution to this ODE using an <em>integrating factor</em>. An integrating factor is a function we multiply both sides of the equation by to put the ODE into a solvable form (a multiplicative <em>factor</em> we use to put the ODE into a form that lets us <em>integrate</em> to get the solution). There are some formal ways to derive integrating factors, but in general it’s just something you have to see in the structure of the differential equation.</p>
+
+<p>Look at the left hand side of the equation. Notice that we have \(y'\) in one term, and \(y\) times some function in the other. This looks like a product rule of some sort, so the question is: <em>what can we multiply this by to put it in the form of a product rule?</em> The answer is that some very smart people at some point looked at this equation and realized if you multiply both sides by</p>
+
+\[\mu = e^{\int p(x) dx}\]
+
+<p>the left hand side becomes</p>
+
+\[e^{\int p(x) dx}\left[ y' + p(x) y\right] = e^{\int p(x) dx} y' + e^{\int p(x) dx}p(x) y = \frac{d}{dx}\left[ e^{\int p(x)dx} y\right]\]
+
+<p>and the right hand side is:</p>
+
+\[e^{\int p(x) dx} r(x)\]
+
+<p>Work through this on your own if this doesn’t look satisfactory at first—this product rule relationship is <em>very</em> important to fully understand. Also, if you don’t think you could have come up with this on your own, don’t worry, I know I definitely couldn’t have either. This is one of those things that doesn’t have much of a justification beyond that it works.</p>
+
+<p>To summarize so far, we have multiplied both sides by the integrating factor \(e^{\int p(x) dx}\) and put the right side into a condensed form to arrive at the equation:</p>
+
+\[\frac{d}{dx}\left[ e^{\int p(x)dx} y\right] = e^{\int p(x) dx} r(x)\]
+
+<p>We see that the equation is now separable! This means we can simply apply separation of variables (or here we actually just apply direct integration) to arrive at the solution:</p>
+
+\[\begin{gather*}
+\frac{d}{dx}\left[ e^{\int p(x)dx} y\right] = e^{\int p(x) dx} r(x)  \\
+e^{\int p(x)dx} y = \int e^{\int p(x) dx} r(x)dx + C \\
+y = e^{ - \int p(x)dx } \left[ \int e^{\int p(x) dx} r(x)dx + C \right] \quad\blacksquare 
+\end{gather*}\]
+
+<p>See? Not too bad, right?</p>
+
+<h3 id="example-problem">Example Problem</h3>
+
+<p>Consider the following ODE:</p>
+
+\[y' - x y = x\]
+
+<p>This equation is a linear first order ODE, so we can apply the closed form solution from above. We first identify the parts of the equation. Namely,</p>
+
+\[p(x) = -x, \quad r(x) = x\]
+
+<p>Then, we plug into the solution from above:</p>
+
+\[y = e^{ - \int (-x) dx } \left[ \int x e^{\int (-x) dx} dx + C \right]\]
+
+<p>Finally, we integrate to solve:</p>
+
+\[\begin{gather*}
+y(x) = e^{\frac{1}{2} x^2} \left[ -e^{\frac{1}{2}x^2 }  + C \right] \\
+y(x) = -1 + Ce^{\frac{1}{2} x^2} \quad\blacksquare 
+\end{gather*}\]
+
+<p>The challenge with linear first order ODEs is either putting the ODE into linear first order form (as we’ll see below), or identifying the ODE. Beyond that, it’s literally just plug and chug.</p>
+
+<p>To summarize, the algorithm for solving a linear first order ODE is:</p>
+<ol>
+  <li>Identify the different parts of the ODE i.e. \(p(x)\) and \(r(x)\)</li>
+  <li>Plug into the linear first order ODE closed form solution</li>
+  <li>Integrate to find the final solution</li>
+</ol>
+
+<p>Note that the part that trips the most people up is the integration, so make sure you are absolutely comfortable with integration so you do this step successfully. Also, this solution formula is exceedingly important (as I’m sure you can tell by now), so it would behoove you to commit this to memory.</p>
+
+<h3 id="extension-bernoulli-equations">Extension: Bernoulli Equations</h3>
+
+<p>An interesting class of differential equation are Bernoulli Equations. These are differential equations of the form:</p>
+
+\[y' + p(x)y = q(x)y^n\]
+
+<p>The equation is named after Daniel Bernoulli, who was a member of the famous <a href="https://en.wikipedia.org/wiki/Bernoulli_family">Bernoulli family</a>. Daniel Bernoulli derived an equation of this form in his work on hydrodynamics (how stuff flows). We study the equation here since it is an interesting application of linear first order ODEs, and shows that with a clever substitution, we can turn a distinctly nonlinear first order ODE into a linear ODE that is easily solved.</p>
+
+<p>Once again, we start with a seemingly unintutive substitution that some very smart people came up with. We do this because it works, not necessarily because it has a rigorous justification. Here, we substitute \(u = y^{1-n}\) to get:</p>
+
+\[u' = (1-n)y^{-n}y' \implies \frac{1}{1-n} y^{n} u' = y', \quad y^{n}u = y\]
+
+<p>which we can plug into the equation to get an equation in terms of \(u\) and \(y\):</p>
+
+\[\frac{1}{1-n} y^{n} u'  + p(x) y^{n}u = q(x) y^n\]
+
+<p>Notice that we have a \(y^{n}\) term throughout, so we can simply divide this away to get an equation for \(u\):</p>
+
+\[\frac{1}{1-n} u' + p(x) u = q(x)\]
+
+<p>Multiplying through by \(1-n\), we arrive at the form of the solution give in the course reader:</p>
+
+\[u' + (1-n)p(x) u = (1-n) q(x) \quad \blacksquare\]
+
+<p>This is just a linear first order ODE, so we can easily solve it using the closed form solution above.</p>
+
+<p>As a closing remark for Bernoulli equations, it is perfectly fine to jump straight from the Bernouill equation to the linear first order form after the substitution (i.e. it is not necessary to rederive everything with the substitution, you can just identify what \(n\), \(p(x)\), and \(q(x)\) are and write down the equation in terms of \(u(x)\)). However, make sure you understand all the steps we took to get there. There are a lot of final results in this class that you will use to actually compute the answer but took significant derivation to arrive at. It’s perfectly okay to just use the final result (after all, there’d be no point in a final result you aren’t allowed to use), but it’s paramount you understand the derivation and motivations behind it.</p>
+
+  </div>
+</article>
+
+    </div>
+
+    <div class="wrapper-footer">
+      <div class="container">
+        <footer class="footer">
+          
+<a href="mailto:timothy.isaac.anderson@gmail.com"><i class="svg-icon email"></i></a>
+
+
+<a href="https://github.com/timanderson1994"><i class="svg-icon github"></i></a>
+<a href="https://instagram.com/timmydingdong"><i class="svg-icon instagram"></i></a>
+<a href="https://www.linkedin.com/in/timanderson1994"><i class="svg-icon linkedin"></i></a>
+
+
+
+
+
+
+        </footer>
+      </div>
+    </div>
+
+    
+
+  </body>
+</html>

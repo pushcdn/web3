@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Nonlinear Second Order ODEs – Tim Anderson</title>
+
+        <meta charset="utf-8" />
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0'>
+
+    
+    <meta name="description" content="Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. ">
+    <meta property="og:description" content="Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. " />
+    
+    <meta name="author" content="Tim Anderson" />
+
+    
+    <meta property="og:title" content="Nonlinear Second Order ODEs" />
+    <meta property="twitter:title" content="Nonlinear Second Order ODEs" />
+    
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" type="text/css" href="../../../style.css" />
+    <link rel="alternate" type="application/rss+xml" title="Tim Anderson - Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. " href="../../../feed.xml" />
+
+<!-- 
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+ -->
+
+  <!-- Created with Jekyll Now - http://github.com/barryclark/jekyll-now -->
+  </head>
+
+  <body>
+    <div class="wrapper-masthead">
+      <div class="container">
+        <header class="masthead clearfix">
+          <a href="../../../index.html" class="site-avatar"><img src="../../../assets/images-general/duck.jpg" /></a>
+
+          <div class="site-info">
+            <h1 class="site-name"><a href="../../../index.html">Tim Anderson</a></h1>
+            <!-- <p class="site-description">Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. </p> -->
+          </div>
+
+          <nav>
+            <a href="../../../Research/index.html">Research</a>
+            <a href="../../../Publications/index.html">Publications</a>
+            <a href="../../index.html">Resources</a>
+            <a href="../../../Misc/index.html">Misc</a>
+            <!-- <a href="/Blog/">Blog</a> -->
+            <a href="../../../About/index.html">About</a>
+          </nav>
+        </header>
+      </div>
+    </div>
+
+    <div id="main" role="main" class="container">
+          <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<!-- 
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    });
+
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+    </script>
+<style>
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+</style>
+ -->
+<article class="page">
+
+  <h1>Nonlinear Second Order ODEs</h1>
+
+  <div class="entry">
+    <h3 id="takeaways">Takeaways</h3>
+
+<ul>
+  <li>When the ODE is “missing \(y\)”, we make the substitution \(u = y'\) and solve the resulting first order ODE</li>
+  <li>When the ODE is “missing \(x\)”, we make the substitution \(u(y) = y'\) (and \(y'' = u' u\)) and solve the resulting first order ODE</li>
+  <li>When the ODE is missing \(x\) and missing \(y\), we can apply either method</li>
+</ul>
+
+<h3 id="overview">Overview</h3>
+
+<p>Nonlinear differential equations are one of the most well-studied yet least understood fields of engineering and applied mathematics. The fact is that the world is nonlinear, and many interesting phenomena arise when we begin to take nonlinearity into account. (Check out <a href="https://www.amazon.com/Chaos-Making-Science-James-Gleick/dp/0143113453/">James Gleick’s book “Chaos”</a> for an excellent history and overview of the field of chaos theory and nonlinear dynamics.)</p>
+
+<p>The tradeoff is that nonlinear ODEs are impossible to solve analytically in most cases, and we therefore have to resort to numerical methods (which is why we make you spend so much time on numerics in this class). However, for second order nonlinear ODEs, there exist a few special cases where we have methods that can be used to derive analytical solutions. So, not to fret—there’s plenty of fun (not really) ahead of you for solving nonlinear ODEs in this class.</p>
+
+<p>Start by remembering the most general form for a second order ODE:</p>
+
+\[f(x,y,y',y'') = 0\]
+
+<p>There’s lots of implications to viewing an ODE in this way (notice how it’s just a zero level set of a function of four variables?), but the more important takeaway is that when we write the ODE this way, we can immediately tell which variables \(f(\cdot)\) depends on. In the following sections, we will write our ODEs this way to allow us to see if \(f(\cdot)\) is “missing” any of the variables i.e. is not dependent on them.</p>
+
+<p><em>Note:</em> for these notes, I have mainly used the examples in Hung Le’s course reader and added my own commentary or tips for deriving the solution. However, other examples are given in the section worksheets for this topic.</p>
+
+<h3 id="missing-y-method">Missing y Method</h3>
+
+<p>First up is the “missing \(y\)” method. “Missing y” just means that our ODE has the form \(f(x, y',y'') = 0\). While this ODE on paper is a second order ODE, notice that if we make the substitution \(u(x) = y'\) (and then \(u' = y''\)), we can make this into a first order ODE \(f(x, u, u') = 0\). First order ODEs are much nicer to deal with than second order so if we can make a substitution like this, our lives will be significantly easier.</p>
+
+<p>In general, all of the methods discussed here follow the same flow of logic: declare one of the variables to be the independent variable, and make a substitution such that we have a first order ODE (in terms of the independent variable, the function, and its first derivative). This may not make sense right now, but come back to it after reading the remainder of this page and I think it will become clear.</p>
+
+<p>So back to the missing \(y\) method. The method itself is pretty simple—substitute \(y' = u\) and go from there—so let’s work through an example to see how this is used in practice. Consider the ODE (Example 6-1 in Prof. Le’s course reader):</p>
+
+\[y'' = x (y')^3\]
+
+<p>If we make the substitution (treating \(u(x)\) as a function of \(x\)), we have:</p>
+
+\[u' = x u^3\]
+
+<p>We can easily solve this using separation of variables to find:</p>
+
+\[-\frac{1}{2u^2} = \frac{1}{2}x^2 + C_1^2  \implies u(x) = \frac{1}{\sqrt{C_1^2 - x^2}}\]
+
+<p>(Here we’ve written the constant of integration as \(C_1^2\) since this will make things a bit cleaner in the next step. However, you can write it the normal way too—remember, it’s an arbitrary constant, so as long as it is constant we are fine.)</p>
+
+<p>From here, we can directly integrate to find \(y(x)\):</p>
+
+\[y(x) = \sin^{-1}(x / C_1) + C_2\]
+
+<p>This goes to show how messy the solutions can get for nonlinear ODEs. It’s also a good lesson in why you need to know your integrals backwards and forwards—even for those pesky inverse trig and hyperbolic functions.</p>
+
+<h3 id="missing-x-method">Missing x Method</h3>
+
+<p>The missing \(x\) method follows a similar flow of logic as the missing \(y\) method, although it is a bit trickier to wrap your head around. In an ODE that’s missing \(x\) i.e. an ODE of the form \(F(y, y', y'') = 0\), we want to transform the problem such that \(y\) becomes the independent variable, and also make a substitution so that \(u = y'\) to reduce the equation to first order.</p>
+
+<p>To do this, make the substitution \(u(y) = y'\), then take the derivative:</p>
+
+\[y'' = \frac{d}{dx}u = \frac{du}{dy}\frac{dy}{dx} = u' u\]
+
+<p>Using this, we can substitute into the ODE to find the solution. Let’s work through an example (Example 6-2 from Prof. Le’s course reader):</p>
+
+\[y y'' = (y')^2\]
+
+<p>Making the above substitutions:</p>
+
+\[y(u' u) = u^2 \implies \frac{du}{u} = \frac{dy}{y} \implies \ln|u| = \ln|y| + C \implies u = C_1y\]
+
+<p>From here, we simply integrate to find:</p>
+
+\[y(x) = C_2 e^{C_1 x}\]
+
+<h3 id="missing-x-and-y-equations">Missing x and y Equations</h3>
+
+<p>Finally, we have “missing \(x\) missing \(y\)” equations, where the ODE is of the form \(F(y', y'') = 0\). These equations don’t have a separate method—after all, this type of ODE fits the restrictions we put on the above two methods. To solve these ODEs, you really just need to pick one to try first (you should try missing \(y\) first since it is easier to deal with), and if that doesn’t work try the other method.</p>
+
+<p>We’ll close by working through one last example to demonstrate this method. Consider the ODE:</p>
+
+<p>\[ y’’ + 5y’ = 0\]</p>
+
+<p>This ODE becomes linear first order homogeneous if we use the missing \(x\) method, so we choose that one to start with. Making the substitutions, we have:</p>
+
+<p>\[ u’ + 5u = 0\]</p>
+
+<p>so:</p>
+
+<p>\[ u = C_1 e^{-5 x} \]</p>
+
+<p>Then, integrating for \(y(x)\), we have:</p>
+
+<p>\[ y(x) = \tilde{C_1}e^{-5x} + C_2 \]</p>
+
+<p>(The tilde here is because \(C_1\) has an extra factor of \(1/5\) after we integrate.)</p>
+
+<h3 id="closing-remarks">Closing Remarks</h3>
+
+<p>Overall, solving nonlinear ODEs in CME 102 is very systematic:</p>
+
+<ol>
+  <li>Determine the type of nonlinear second order ODE (missing \(x\), missing \(y\), or missing \(x\) and \(y\))</li>
+  <li>Make an appropriate substitution based on the missing \(x\) or missing \(y\) method</li>
+  <li>Solve using know techniques (often separation of variables)</li>
+</ol>
+
+<p>While nonlinear ODEs may seem somewhat rudimentary in this class, don’t let this hurt your enthusiasm: the fact is that nonlinear differential equations are one of the richest fields of applied mathematics, and indeed some of the most important open questions in fluid dynamics, neuroscience, and finance revolve around nonlinear dynamics and differential equations.</p>
+
+
+  </div>
+</article>
+
+    </div>
+
+    <div class="wrapper-footer">
+      <div class="container">
+        <footer class="footer">
+          
+<a href="mailto:timothy.isaac.anderson@gmail.com"><i class="svg-icon email"></i></a>
+
+
+<a href="https://github.com/timanderson1994"><i class="svg-icon github"></i></a>
+<a href="https://instagram.com/timmydingdong"><i class="svg-icon instagram"></i></a>
+<a href="https://www.linkedin.com/in/timanderson1994"><i class="svg-icon linkedin"></i></a>
+
+
+
+
+
+
+        </footer>
+      </div>
+    </div>
+
+    
+
+  </body>
+</html>

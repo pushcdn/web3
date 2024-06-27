@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Introduction – Tim Anderson</title>
+
+        <meta charset="utf-8" />
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0'>
+
+    
+    <meta name="description" content="Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. ">
+    <meta property="og:description" content="Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. " />
+    
+    <meta name="author" content="Tim Anderson" />
+
+    
+    <meta property="og:title" content="Introduction" />
+    <meta property="twitter:title" content="Introduction" />
+    
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" type="text/css" href="../../../style.css" />
+    <link rel="alternate" type="application/rss+xml" title="Tim Anderson - Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. " href="../../../feed.xml" />
+
+<!-- 
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+ -->
+
+  <!-- Created with Jekyll Now - http://github.com/barryclark/jekyll-now -->
+  </head>
+
+  <body>
+    <div class="wrapper-masthead">
+      <div class="container">
+        <header class="masthead clearfix">
+          <a href="../../../index.html" class="site-avatar"><img src="../../../assets/images-general/duck.jpg" /></a>
+
+          <div class="site-info">
+            <h1 class="site-name"><a href="../../../index.html">Tim Anderson</a></h1>
+            <!-- <p class="site-description">Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. </p> -->
+          </div>
+
+          <nav>
+            <a href="../../../Research/index.html">Research</a>
+            <a href="../../../Publications/index.html">Publications</a>
+            <a href="../../index.html">Resources</a>
+            <a href="../../../Misc/index.html">Misc</a>
+            <!-- <a href="/Blog/">Blog</a> -->
+            <a href="../../../About/index.html">About</a>
+          </nav>
+        </header>
+      </div>
+    </div>
+
+    <div id="main" role="main" class="container">
+          <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<!-- 
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    });
+
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+    </script>
+<style>
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+</style>
+ -->
+<article class="page">
+
+  <h1>Introduction</h1>
+
+  <div class="entry">
+    <h3 id="takeaways">Takeaways</h3>
+
+<ul>
+  <li>Differential equations are <em>extremely</em> important in all areas of engineering and sciences</li>
+  <li>They are presented in the form \(0 = f(x,y,y',...)\) and the goal is to use this relationship and exploit the structure of \(f(\cdot)\) to find the function \(y\).</li>
+  <li>We are often given (or the problem implies) an <strong>initial condition</strong> \( y(x_0) = y_0 \), which we can think of as a starting point for the problem. When we integrate to solve for \(y(x)\), we are left with a constant of integration (just like when you did integrals in Calc 1). We use the initial condition to solve for this constant of integration.</li>
+</ul>
+
+<h3 id="what-is-an-ode">What is an ODE?</h3>
+
+<p>The simplest definition of an ODE is an equation of the form:</p>
+
+\[0 = f(x,y,y',...)\]
+
+<p>where \(y(x)\) is a differentiable scalar-valued function of a scalar \(x\). If we are dealing with a vector-valued function \(\vec y(x)\) of a scalar \(x\) (e.g. where two chemical species concentrations are changing over time), then we would write this as:</p>
+
+\[0 = f(x,\vec{y},\vec{y}',...)\]
+
+<p>Both of these equations demonstrate the most basic definition of a differential equation:</p>
+
+<div style="width: 85%; margin: auto; display: block">
+<p style="text-align: center; font-weight: bold; font-style: italic"> A differential equation is an equation relating the function value and its input to its rate of change at a given point. </p>
+</div>
+
+<p>Another way we can think of this is the differential equation relates the rate of change of the function to its current <em>state</em> e.g. its position \(x\) and value \(y\) (or values in the vector case). We study ordinary differential equations we want to characterize the function \(y(x)\) based on this relationship, and in engineering we are especially interested in analytically solving for the function itself or using numerical methods to generate a computational solution.</p>
+
+<p>This brings us to another important point: while most of your mathematics courses up until this point have focused on solving for specific values using given functions, in differential equations we give you a few properties of the function (i.e. a relationship between the function and its derivatives, and—as you’ll learn below—a starting point for the function), and ask you to find the function itself. Solving for a function is noticably more challenging than simply computing a value, but finding analytical solutions and computing numerical approximations of solution functions are the primary focus of CME 102, and indeed form the core for much of engineering.</p>
+
+<h3 id="whats-the-point-of-studying-differential-equations">What’s the point of studying differential equations?</h3>
+
+<p>Differential equations are at the heart of nearly every field of science and engineering. Personally, I would argue that differential equations is <em>the</em> most important topic for any engineer to know. A close second is linear algbra, since amongst other reasons, we often approximate solving a differential equation by transforming it into solving a system of linear equations. (This is something you will learn to do later this quarter.) However, differential equations ultimately win out since you absolutely need to understand and have intuition for how the system is evolving before you will have any hope of solving it numerically.</p>
+
+<p>To give a few examples of differential equations in action:</p>
+<ul>
+  <li>Mechanical engineering: modeling combustion in a jet engine, simulating brain tissue deformation during traumatic injury</li>
+  <li>Civil engineering: evaluating a structure for strength and failure points using statics simulations, predicting the spread of a contaminant in an aquifer or surface body of water</li>
+  <li>Electrical engineering: using the <em>dynamics</em> of a system (i.e. how the system evolves over time) to filter a signal, image processing and segmentation, anything involving robotics</li>
+  <li>Computer science: graphics</li>
+  <li>Management science: financial market fluctuations, asset pricing model simulations and optimization</li>
+  <li>Aero/Astro: design optimization e.g. optimally shaping an airplane wing</li>
+  <li>Bioengineering: anything involving systems biology, biomechanical modeling</li>
+  <li>Chemical engineering: fluid flow and thermodynamics modeling, reactor design</li>
+  <li>Medicine: cancer growth modeling, radiation therapy planning and optimization</li>
+  <li>Neuroscience: neural spiking modeling, epilepsy modeling and detection, neural network learning dynamics</li>
+  <li>Earth sciences: climate modeling, petroleum flow and production optimization, earthquake modeling and hazard assessment</li>
+  <li>Biology: population models, evolutionary dynamics</li>
+  <li>Chemistry: reaction kinectics</li>
+  <li>Physics: literally everything in physics.</li>
+</ul>
+
+<p>You get the idea: differential equations are everywhere. As you can see from these examples, differential equations are all about modeling how a system changes over time (or sometimes how it changes over space). This is the <em>differential</em> part of the name: a differential equation axiomatically involves a rate of change, which is why the mathematical tools you’ll learn in this class apply everywhere we study a system under change.</p>
+
+<h3 id="parsing-through-a-differential-equation">Parsing through a differential equation</h3>
+
+<p>Let’s go back to the statement made at the very beginning. All of this is almost certainly confusing at this point, which is perfectly fine—what matters most in math is your facility with the material built over time, not instantaneous understanding. For the rest of this page, we will only treat the scalar case listed above, since this is much easier to understand at first, and the vector case will be come readily apparent a bit later in the quarter.</p>
+
+<p>From above:</p>
+
+\[0 = f(x,y,y',...)\]
+
+<p>Here we have a scalar-valued function \(y(x)\) that takes as an input a scalar \(x\). In math we sometimes refer to functions as <em>maps</em>. When trying to characterize a function, it is often very helpful to ask ourselves what space does the function map from and map to. In this case, the input and output are real-valued scalars, so we can write \(y : \mathbb{R} \rightarrow \mathbb{R}\) where \(\mathbb{R}\) denotes the set of all real numbers.</p>
+
+<p>\(y(x)\) is scalar-valued, so its derivative is also clearly scalar-valued (convince yourself of this before proceeding further—this fact is critical to nearly everything we will do in differential equations). That is to say, \(y' \in \mathbb{R}\), where “\(\in\)” is math notation for “is a member of” a set. (This notation may seem a bit gratuitous at this point, but understanding mathematical notation is critical for building mathetical maturity as an engineer.)</p>
+
+<h3 id="starting-from-the-beginning-of-time">Starting from the beginning (of time)</h3>
+
+<p>We’ve gotten so caught up in the differential equation itself that we’ve forgotten something very important. The last point to address is the <strong>initial condition</strong>. A more complete way to write a differential equation would be:</p>
+
+\[0 = f(x,y,y',...)\]
+
+<p>which has an <em>initial condition</em></p>
+
+\[y(x_0) = y_0\]
+
+<p>The initial condition can be thought of as the starting point of the system, since in a physical system we often will have very certain knowledge of what the system’s initial state was, and we want to solve for the points coming later in time. For this reason, we call this type of ODE an <em>initial value problem</em>. (Much later this the quarter, you will learn how to solve ODEs where the function has definite start and end points, which is known as a <em>boundary value problem</em>. No need to worry about this for now.)</p>
+
+<p>Initial conditions are a very big deal for a simple reason: the initial condition defines the particular solution for the problem. You can think of this as the differential equation defines the problem (and the structure of the solution), and the initial condition defines the solution itself. Remember that when we integrate a function, we have a <em>constant of integration</em>. For example,</p>
+
+<p>\[ \int x dx = \frac{1}{2} x^2 + C \]</p>
+
+<p>where \(C\) is some unknown constant. In a similar fashion, since our differential equation contains a first derivative, we will have a constant of integration in the solution. The initial condition provides a relationship between the input and output values of the function, which we can in turn use to solve for this constant of integration.</p>
+
+<h3 id="so-how-do-i-solve-for-y">So how do I solve for \(y\)?</h3>
+
+<p>At the root of solving for \(y\) is using the structure of \(f(\cdot)\) to extract \(y\). So what is \(f(\cdot)\)? The short (and unhelpful) answer is that \(f(x,y, y',...)\) can be basically anything. Sometimes it is just a function of \(x\), sometimes just a function of \(y\), sometimes linear, sometimes nonlinear. Indeed, the form of \(f(x,y, y',...)\) almost single-handedly dictates which method we use to solve a given ODE, or even determines if the ODE can be solved in the first place.</p>
+
+<p>Here follows a few (simple) examples of differential equations. First let’s consider a simple case: the velocity of an object falling in a vacuum that starts from rest. Remember that from Newton’s third law (which you are going to use very often this quarter), we have:</p>
+
+\[F = ma\]
+
+<p>Also recall that acceleration is just the first derivative of velocity i.e. \(a = v'\), and force due to gravity is \(F = -mg\). So, we can write the differential equation as:</p>
+
+\[\begin{align*} 
+ma &amp;= F \\
+mv' &amp;= -mg \\
+v' &amp;= -g 
+\end{align*}\]
+
+<p>This is an example where \(f\) only depends on the input variable, so we can solve via <em>direct integration</em>:</p>
+
+\[\begin{align*} 
+v' &amp;= -g \\
+\frac{dv}{dt} &amp;= -g \\
+dv &amp;= -g dt \\
+v &amp;= -gt + C 
+\end{align*}\]
+
+<p>Finally, we need to solve for the constant of integration using the initial condition. However, we weren’t given a nicely written initial condition e.g. \(y(x_0) = y_0\). This is very common in ODEs problems, and often one of the major challenges for solving an ODE is teasing out the correct initial condition from the problem setup. Here, we stated that the object began <em>at rest</em>, so the natural intiiaon condition to use is \(v(0) = 0\). Plugging this in and solving for \(C\), we have:</p>
+
+\[v(t) = -gt \quad\blacksquare\]
+
+<p>An example of an ODE where \(f(\cdot)\) only depends on the output \(y\) is Newton’s Law of Cooling. Newton’s Law of Cooling is stated as:</p>
+
+\[T' = r(T - T_A)\]
+
+<p>That is, the temperature is changing at a rate proportional to the difference between the object temperature and the ambient temperature. (Intuitively, if the object is cooler than its surroundings, it’ll become warmer, and conversely if it is warmer it will cool off.)</p>
+
+<p>To solve this equation, we also proceed via <em>direct integration</em> (a technique we’ll discuss in the next section, but you’ve probably already seen in e.g. AP Calc, Math 42, etc.). To solve:</p>
+
+\[\begin{align*} 
+\frac{dT}{dt} &amp;= r(T - T_A) \\
+\frac{dT}{T - T_A} &amp;= r dt \\
+\ln(T - T_A) &amp;= rt + C \\
+T &amp;= C'e^{rt} + T_A \quad\blacksquare
+\end{align*}\]
+
+<p>Using that the temperature at the starting time is \(T(0) = T_0\), we have:</p>
+
+\[\begin{align*}
+T &amp;= C'e^{rt} + T_A \\
+T(0) &amp;= T_0 \\
+&amp;= C' + T_A \\
+C' &amp;= T_0 - T_A \\
+T(t) &amp;= (T_0 - T_A)e^{rt} + T_A
+\end{align*}\]
+
+<p>This problem illustrates a few important points:</p>
+<ul>
+  <li>Using some physical intuition, we were able to write down a model for the system</li>
+  <li>Using basic tools from calculus (i.e. single variable integration), we were able to solve for the function governing the system’s behavior.</li>
+  <li>When solving for constants of integration, we can simplify things considerably by introducing new or transformed constants (here we’ve changed \(e^C\) to \(C'\), since \(e^C\) is also just a constant)</li>
+</ul>
+
+
+  </div>
+</article>
+
+    </div>
+
+    <div class="wrapper-footer">
+      <div class="container">
+        <footer class="footer">
+          
+<a href="mailto:timothy.isaac.anderson@gmail.com"><i class="svg-icon email"></i></a>
+
+
+<a href="https://github.com/timanderson1994"><i class="svg-icon github"></i></a>
+<a href="https://instagram.com/timmydingdong"><i class="svg-icon instagram"></i></a>
+<a href="https://www.linkedin.com/in/timanderson1994"><i class="svg-icon linkedin"></i></a>
+
+
+
+
+
+
+        </footer>
+      </div>
+    </div>
+
+    
+
+  </body>
+</html>

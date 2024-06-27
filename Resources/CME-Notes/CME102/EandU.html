@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Existence and Uniqueness – Tim Anderson</title>
+
+        <meta charset="utf-8" />
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0'>
+
+    
+    <meta name="description" content="Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. ">
+    <meta property="og:description" content="Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. " />
+    
+    <meta name="author" content="Tim Anderson" />
+
+    
+    <meta property="og:title" content="Existence and Uniqueness" />
+    <meta property="twitter:title" content="Existence and Uniqueness" />
+    
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" type="text/css" href="../../../style.css" />
+    <link rel="alternate" type="application/rss+xml" title="Tim Anderson - Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. " href="../../../feed.xml" />
+
+<!-- 
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+ -->
+
+  <!-- Created with Jekyll Now - http://github.com/barryclark/jekyll-now -->
+  </head>
+
+  <body>
+    <div class="wrapper-masthead">
+      <div class="container">
+        <header class="masthead clearfix">
+          <a href="../../../index.html" class="site-avatar"><img src="../../../assets/images-general/duck.jpg" /></a>
+
+          <div class="site-info">
+            <h1 class="site-name"><a href="../../../index.html">Tim Anderson</a></h1>
+            <!-- <p class="site-description">Personal website and research blog for Timothy Anderson, Research Scientist at Meta. I post about research, books, cooking, and notes for courses I've TAed in the past. </p> -->
+          </div>
+
+          <nav>
+            <a href="../../../Research/index.html">Research</a>
+            <a href="../../../Publications/index.html">Publications</a>
+            <a href="../../index.html">Resources</a>
+            <a href="../../../Misc/index.html">Misc</a>
+            <!-- <a href="/Blog/">Blog</a> -->
+            <a href="../../../About/index.html">About</a>
+          </nav>
+        </header>
+      </div>
+    </div>
+
+    <div id="main" role="main" class="container">
+          <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<!-- 
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    });
+
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+    </script>
+<style>
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+</style>
+ -->
+<article class="page">
+
+  <h1>Existence and Uniqueness</h1>
+
+  <div class="entry">
+    <h3 id="takeaways">Takeaways</h3>
+
+<ul>
+  <li>For an ODE of the form \[ y’ = f(x,y) \] we are not trying to find the actual solution, we are just trying to characterize where \(f\) and \(\partial f / \partial y\) are continuous</li>
+  <li>A solution to the ODE exists in a region of the \((x,y)\) plane where \(f(x,y)\) is continuous and \(y_0\) is in that region</li>
+  <li>A solution to the ODE is also unique if and only if \(\partial f / \partial y\) is continuous in that same region or a subset of the region still containing \(y_0\)</li>
+</ul>
+
+<h3 id="why-this-is-probably-hard">Why This is (Probably) Hard</h3>
+
+<p>There’s no topic in differential equations that trips up more students than existence and uniqueness. So, if you are somewhat-to-very confused about this topic, do not distress: you are surely not alone.</p>
+
+<p>Existence and uniqueness is one of the hardest subject in CME 102 because if you are in this class, you are probably an engineer, and existence and uniqueness is very much something mathematicians—not engineers—worry about. Mathematicians are usually concerned with characterizing, bounding, or otherwise describing a solution, whereas engineers want to compute the actual solution. (Mathematicians want to tell you what a boat could look like, whereas engineers want to build a boat.) While the entire remainder of this class will be spent on computing solutions, you need to put on your mathematician hat for a little while and learn some basics of applying the existence and uniqueness theorems to an ODE.</p>
+
+<h3 id="the-existence-and-uniqueness-theorems">The Existence and Uniqueness Theorems</h3>
+
+<p>Deriving regions for existence and uniqueness revolves around two main theorems. Here, we’ll state the theorems and explain them a bit, and below we’ll work through a couple examples to see how to apply these to solving problems. Also note that here we’re exclusively referring to an ODE of the form \(y' = f(x,y)\)</p>
+
+<p><strong>Theorem 1 (existence theorem):</strong> if for a region \(R_1\) of the \((x,y)\) plane (i.e. a region in \(\mathbb{R}^2\)) we have:</p>
+<ol>
+  <li>\(f(x,y)\) continuous in this region</li>
+  <li>\(y_0 \in R_1\) (meaning “is in the set or region”)</li>
+</ol>
+
+<p>then the solution to the ODE exists in this region</p>
+
+<p><strong>Theorem 2 (uniqueness theorem):</strong> if for a region \(R_2\) of the \((x,y)\) plane we have</p>
+<ol>
+  <li>\(\partial f / \partial y\) continuous</li>
+  <li>
+\[y_0 \in R_2\]
+  </li>
+  <li>\(R_2 \subseteq R_1\) (meaning “is a subset of or equal to”)</li>
+</ol>
+
+<p>then the ODE is unique in the region \(R_2\).</p>
+
+<p>A final point to make is that existence is absolutely a condition for uniqueness (intuitively this is of course true, but make sure you can see that this follows from condition 3 of Theorem 2 above). I state this here since it is possible to have ODEs where conditions 1 and 2 hold for some \(R_2\) but not for \(R_1\). Condition 3 of the uniqueness theorem takes care of this issue.</p>
+
+<h3 id="an-example">An Example</h3>
+
+<p>After conceptual understanding of the theorems, the next big challenge is actually applying them to problems. In CME 102, these problems will usually follow the form of “For this ODE, if applicable give the region(s) where the solution exists and is unique.” To solve this, we use the following algorithm:</p>
+
+<ol>
+  <li>Identify the region(s) of \(\mathbb{R}^2\) where \(f(x,y)\) is continuous</li>
+  <li>Check that which region, if any, contains \(y_0\). If yes, then this is \(R_1\) where the solution exists.</li>
+  <li>Identify region(s) of \(\mathbb{R}^2\) where \(\partial f/\partial y\) is continuous</li>
+  <li>Check which region, if any, contains \(y_0\) *and is also a subset of \(R_1\). If yes, then this is \(R_2\) where the solution is also unique.</li>
+</ol>
+
+<p>Let’s apply this to an example. Consider the ODE</p>
+
+\[y' + x\ln y = \sqrt{x}, \quad y(0) = 1\]
+
+<p>Find the region(s) where the solution exists and is unique, if applicable.</p>
+
+<p>To do this, let’s first rearrange the ODE to look like the form in the statement of the theorems by putting \(y'\) on the left hand side:</p>
+
+\[y' = \sqrt{x} - x \ln y\]
+
+<p>Now, we need to determine for which regions \(f(x,y) = \sqrt{x} - x \ln y\) is continuous. Here, we see that \(\sqrt{x}\) is not defined for negative \(x\), so we need to have \(x \in [0, + \infty)\). Next, observe that \(\ln y\) is defined only for positive \(y\), so we need \(y \in (0, + \infty)\). So, our region of continuity is \((x,y) \in [0,+\infty) \times (0, + \infty)\). (This notation just means that \(x\) is in the first interval and \(y\) is in the second.)</p>
+
+<p>Next, we need to check that the initial condition \(y(0) = 1\) is contained in the region. We see that \((0,5) \in [0,+\infty) \times (0, + \infty)\), so for the region \(R_1 = [0,+\infty) \times (0, + \infty)\) the solution will exist.</p>
+
+<p>Next up is uniqueness. Taking the first derivative:</p>
+
+\[\frac{ \partial f}{\partial y} = - \frac{x}{y}\]
+
+<p>So, we need \(x \in \mathbb{R}\) and \(y \in \mathbb{R} \setminus \{0\}\) (any real number besides \(0\)). Here we see an example where Rule 3 of the uniqueness theorem applies. We need \(R_2 \subseteq R_1\), so enforcing this rule we have \(R_2 = [0,+\infty) \times (0, + \infty)\) as the possible region. We see that \(y_0 \in R_2\), so finally we arrive at \(R_2 = [0,+\infty) \times (0, + \infty)\) at the region where the solution is unique.</p>
+
+<p>A closing point is that you will sometimes be asked to apply these theorems to explain strange results when solving an ODE. An example of this would be a problem where you derive two distinct solutions to a first order ODE, and when asked why this was possible the answer is explained in terms of the ODE not being unique for the given initial condition, and therefore admitting two distinct solutions for a first order problem.</p>
+
+<p>For the remainder of this class, you will not need to worry about proving existence and uniqueness for ODEs (but if you do really like this, MATH 63CM is offered in the spring). We teach you this though so you have some exposure to the more theoretical side of ODEs, and are aware that sometimes ODEs cannot be solved—even numerically—because a solution simply does not exist for that region or initial condition.</p>
+
+<p>While in the CME 100/102/104 series we emphasize computing solutions or numerical methods, no numerical method can overcome a theoretical limitation of the problem. Existence and uniqueness of a solution is one such limitation, and is always important to keep in mind when trying to solve an ODE.</p>
+
+
+  </div>
+</article>
+
+    </div>
+
+    <div class="wrapper-footer">
+      <div class="container">
+        <footer class="footer">
+          
+<a href="mailto:timothy.isaac.anderson@gmail.com"><i class="svg-icon email"></i></a>
+
+
+<a href="https://github.com/timanderson1994"><i class="svg-icon github"></i></a>
+<a href="https://instagram.com/timmydingdong"><i class="svg-icon instagram"></i></a>
+<a href="https://www.linkedin.com/in/timanderson1994"><i class="svg-icon linkedin"></i></a>
+
+
+
+
+
+
+        </footer>
+      </div>
+    </div>
+
+    
+
+  </body>
+</html>
